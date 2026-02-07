@@ -3,18 +3,29 @@
  * Handles fetching markdown files, parsing them, and rendering blog views
  */
 
-import { getAllPosts, getPostBySlug } from './posts.js';
+import { getAllPosts, getPostBySlug } from "./posts.js";
 
 // We'll use marked.js for markdown parsing (loaded from CDN in HTML)
 // https://cdn.jsdelivr.net/npm/marked/marked.min.js
+
+// Store the original portfolio content on first load
+let originalPortfolioContent = null;
+
+// Capture it immediately
+if (!originalPortfolioContent) {
+  const app = document.getElementById("app");
+  if (app) {
+    originalPortfolioContent = app.innerHTML;
+  }
+}
 
 /**
  * Show the blog index (list of all posts)
  */
 export async function showBlogIndex() {
   const posts = getAllPosts();
-  const appContainer = document.getElementById('app');
-  
+  const appContainer = document.getElementById("app");
+
   // Build the HTML for the blog index
   const html = `
     <div class="blog-index">
@@ -24,26 +35,34 @@ export async function showBlogIndex() {
       </header>
       
       <div class="posts-list">
-        ${posts.map(post => `
+        ${posts
+          .map(
+            (post) => `
           <article class="post-preview">
             <h2>
               <a href="#/blog/${post.slug}">${post.title}</a>
             </h2>
-            ${post.subtitle ? `<p class="subtitle">${post.subtitle}</p>` : ''}
+            ${post.subtitle ? `<p class="subtitle">${post.subtitle}</p>` : ""}
             <div class="post-meta">
               <time datetime="${post.date}">${formatDate(post.date)}</time>
-              ${post.tags ? `
+              ${
+                post.tags
+                  ? `
                 <div class="tags">
-                  ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                  ${post.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </article>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     </div>
   `;
-  
+
   appContainer.innerHTML = html;
 }
 
@@ -54,8 +73,8 @@ export async function showBlogIndex() {
 export async function showBlogPost(params) {
   const { slug } = params;
   const post = getPostBySlug(slug);
-  const appContainer = document.getElementById('app');
-  
+  const appContainer = document.getElementById("app");
+
   if (!post) {
     appContainer.innerHTML = `
       <div class="error">
@@ -66,40 +85,44 @@ export async function showBlogPost(params) {
     `;
     return;
   }
-  
+
   // Show loading state
   appContainer.innerHTML = '<div class="loading">Loading post...</div>';
-  
+
   try {
     // Fetch the markdown file
     const response = await fetch(`/blog/posts/${slug}.md`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch post: ${response.status}`);
     }
-    
+
     const markdown = await response.text();
-    
+
     // Parse the markdown (remove frontmatter and convert to HTML)
     const { content, frontmatter } = parseFrontmatter(markdown);
     const html = marked.parse(content);
-    
+
     // Render the post
     appContainer.innerHTML = `
       <article class="blog-post">
         <header class="post-header">
           <a href="#/blog" class="back-link">← Back to blog</a>
           <h1>${frontmatter.title || post.title}</h1>
-          ${frontmatter.subtitle ? `<p class="subtitle">${frontmatter.subtitle}</p>` : ''}
+          ${frontmatter.subtitle ? `<p class="subtitle">${frontmatter.subtitle}</p>` : ""}
           <div class="post-meta">
             <time datetime="${frontmatter.date || post.date}">
               ${formatDate(frontmatter.date || post.date)}
             </time>
-            ${frontmatter.tags ? `
+            ${
+              frontmatter.tags
+                ? `
               <div class="tags">
-                ${frontmatter.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                ${frontmatter.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </header>
         
@@ -109,7 +132,7 @@ export async function showBlogPost(params) {
       </article>
     `;
   } catch (error) {
-    console.error('Error loading post:', error);
+    console.error("Error loading post:", error);
     appContainer.innerHTML = `
       <div class="error">
         <h1>Error loading post</h1>
@@ -124,21 +147,11 @@ export async function showBlogPost(params) {
  * Show the portfolio/CV (home view)
  */
 export function showPortfolio() {
-  const appContainer = document.getElementById('app');
-  
-  // For now, just show the existing content
-  // We'll style this properly later
-  const portfolioContent = document.querySelector('.portfolio-content');
-  
-  if (portfolioContent) {
-    appContainer.innerHTML = portfolioContent.innerHTML;
-  } else {
-    // Fallback if structure changes
-    appContainer.innerHTML = `
-      <div class="portfolio">
-        <p>Portfolio content will be shown here.</p>
-      </div>
-    `;
+  const appContainer = document.getElementById("app");
+
+  // Restore the original portfolio content
+  if (originalPortfolioContent) {
+    appContainer.innerHTML = originalPortfolioContent;
   }
 }
 
@@ -150,29 +163,32 @@ export function showPortfolio() {
 function parseFrontmatter(markdown) {
   const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
   const match = markdown.match(frontmatterRegex);
-  
+
   if (!match) {
     return { frontmatter: {}, content: markdown };
   }
-  
+
   const [, frontmatterText, content] = match;
   const frontmatter = {};
-  
+
   // Parse simple YAML (key: value pairs)
-  frontmatterText.split('\n').forEach(line => {
-    const [key, ...valueParts] = line.split(':');
+  frontmatterText.split("\n").forEach((line) => {
+    const [key, ...valueParts] = line.split(":");
     if (key && valueParts.length) {
-      let value = valueParts.join(':').trim();
-      
+      let value = valueParts.join(":").trim();
+
       // Handle arrays like tags: [web, css]
-      if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(item => item.trim());
+      if (value.startsWith("[") && value.endsWith("]")) {
+        value = value
+          .slice(1, -1)
+          .split(",")
+          .map((item) => item.trim());
       }
-      
+
       frontmatter[key.trim()] = value;
     }
   });
-  
+
   return { frontmatter, content };
 }
 
@@ -183,6 +199,6 @@ function parseFrontmatter(markdown) {
  */
 function formatDate(dateString) {
   const date = new Date(dateString);
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  return date.toLocaleDateString('en-GB', options);
+  const options = { day: "numeric", month: "long", year: "numeric" };
+  return date.toLocaleDateString("en-GB", options);
 }
