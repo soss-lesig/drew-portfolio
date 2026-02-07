@@ -15,6 +15,13 @@ export const posts = [
     subtitle: 'Hash routing, markdown parsing, and understanding what React abstracts away',
     date: '2025-02-07',
     tags: ['javascript', 'routing', 'markdown', 'web development', 'learning']
+  },
+  {
+    slug: 'wiring-it-all-up',
+    title: 'Wiring it all up and watching it work',
+    subtitle: 'From disconnected modules to a functioning blog system',
+    date: '2025-02-07',
+    tags: ['javascript', 'debugging', 'learning', 'testing']
   }
 ];
 
