@@ -17,6 +17,21 @@ The plan: build with semantic HTML, modern CSS, and vanilla JavaScript until the
 
 The Git history will show the evolution. The blog posts will explain the reasoning.
 
+## AI-assisted development
+
+This project is also an experiment in modern development workflows. I'm using Claude (Anthropic) as a development partner - not to write code for me, but to:
+
+- Validate technical decisions
+- Explain trade-offs I might not have considered
+- Suggest refactoring approaches
+- Help with documentation and explanation
+
+The human (me) makes all final decisions. The AI helps think through them. This mirrors how development teams actually work: collaborative, questioning, iterative.
+
+As AI tools become standard in software engineering, understanding how to use them effectively is as important as understanding the frameworks themselves.
+
+All code is reviewed, understood, and justified before committing. The goal is learning, not automation.
+
 ## Current state
 
 Building the foundations with vanilla web technologies:
