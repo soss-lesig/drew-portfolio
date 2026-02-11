@@ -54,6 +54,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+h2 {
+  margin-top: 0;
+}
+
 h3 {
   font-size: var(--fs-h3);
   margin: 0 0 var(--space-4);
@@ -174,6 +178,18 @@ site-nav a.active {
 .projects {
   background: var(--surface);
   padding: var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+/* =========================================================================
+Blog Posts
+========================================================================= */
+
+.post-preview {
+  background: var(--surface);
+  padding: var(--space-5);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   margin-bottom: var(--space-6);
