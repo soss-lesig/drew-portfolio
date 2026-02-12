@@ -173,13 +173,23 @@ export function showPortfolio() {
 /**
  * Show the about page
  */
-export function showAbout() {
+export async function showAbout() {
   const appContainer = document.getElementById("app");
-  appContainer.innerHTML = fetch("../pages/about.html")
-    .then((response) => response.text())
-    .then((html) => {
-      appContainer.innerHTML = html;
-    });
+
+  try {
+    const response = await fetch("/pages/about.html");
+    const html = await response.text();
+    appContainer.innerHTML = html;
+  } catch (error) {
+    console.error("Error loading about page:", error);
+    appContainer.innerHTML = `
+      <div class="error">
+        <h1>Error loading page</h1>
+        <p>Something went wrong.</p>
+        <a href="#/">← Back to home</a>
+      </div>
+    `;
+  }
 }
 
 /**
