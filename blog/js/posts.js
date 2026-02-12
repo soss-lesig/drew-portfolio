@@ -31,6 +31,20 @@ export const posts = [
     date: "2025-02-11T20:30:00",
     tags: ["deployment", "cloudflare", "design", "css", "infrastructure"],
   },
+  {
+    slug: "setting-up-vite-and-restructuring",
+    title: "Setting up Vite and restructuring the portfolio",
+    subtitle:
+      "Modern build tooling, syntax highlighting, and separating CV from portfolio",
+    date: "2025-02-12T10:00:00",
+    tags: [
+      "vite",
+      "build tools",
+      "infrastructure",
+      "syntax-highlighting",
+      "content strategy",
+    ],
+  },
 ];
 
 /**

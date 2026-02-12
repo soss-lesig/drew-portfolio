@@ -1,5 +1,5 @@
 /**
- * Blog Controller
+ * Posts Controller
  * Handles fetching markdown files, parsing them, and rendering blog views
  */
 
@@ -168,6 +168,18 @@ export function showPortfolio() {
   if (originalPortfolioContent) {
     appContainer.innerHTML = originalPortfolioContent;
   }
+}
+
+/**
+ * Show the about page
+ */
+export function showAbout() {
+  const appContainer = document.getElementById("app");
+  appContainer.innerHTML = fetch("../pages/about.html")
+    .then((response) => response.text())
+    .then((html) => {
+      appContainer.innerHTML = html;
+    });
 }
 
 /**
