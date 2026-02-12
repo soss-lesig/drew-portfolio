@@ -4,9 +4,23 @@
  */
 
 import { getAllPosts, getPostBySlug } from "./posts.js";
+import { marked } from "marked";
+import hljs from "highlight.js";
 
-// We'll use marked.js for markdown parsing (loaded from CDN in HTML)
-// https://cdn.jsdelivr.net/npm/marked/marked.min.js
+// Configure marked to use highlight.js for syntax highlighting
+marked.setOptions({
+  highlight: function (code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(code, { language: lang }).value;
+      } catch (err) {
+        console.error("Highlight.js error:", err);
+      }
+    }
+    // Fallback: auto-detect language
+    return hljs.highlightAuto(code).value;
+  },
+});
 
 // Store the original portfolio content on first load
 let originalPortfolioContent = null;
@@ -56,7 +70,7 @@ export async function showBlogIndex() {
               }
             </div>
           </article>
-        `,
+        `
           )
           .join("")}
       </div>
@@ -131,6 +145,7 @@ export async function showBlogPost(params) {
         </div>
       </article>
     `;
+    hljs.highlightAll(); // Apply syntax highlighting to any new code blocks
   } catch (error) {
     console.error("Error loading post:", error);
     appContainer.innerHTML = `

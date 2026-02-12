@@ -1,3 +1,6 @@
+// Import highlight.js CSS for syntax highlighting
+import "highlight.js/styles/github-dark.css";
+
 // Import the router and blog controller functions
 import { router } from "./blog/js/router.js";
 import {

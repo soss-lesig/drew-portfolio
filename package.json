@@ -1,0 +1,37 @@
+{
+  "name": "drew-portfolio",
+  "version": "1.0.0",
+  "description": "A portfolio site that starts with vanilla fundamentals and evolves as complexity demands it.",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write \"**/*.{js,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,css,md}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soss-lesig/drew-portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soss-lesig/drew-portfolio/issues"
+  },
+  "homepage": "https://github.com/soss-lesig/drew-portfolio#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "highlight.js": "^11.11.1",
+    "prettier": "^3.8.1",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "marked": "^17.0.2"
+  }
+}

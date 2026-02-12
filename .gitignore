@@ -9,9 +9,17 @@
 *.log
 npm-debug.log*
 
-# Dependencies (if you add any later)
+# Dependencies
 node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
 
 # Environment variables
 .env
 .env.local
+
+# Vite
+.vite/
