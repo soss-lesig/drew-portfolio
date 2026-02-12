@@ -45,6 +45,13 @@ export const posts = [
       "content strategy",
     ],
   },
+  {
+    slug: "fixing-production-blog-posts",
+    title: "Why my blog posts weren't showing in production",
+    subtitle: "Understanding Vite's build process and the publicDir solution",
+    date: "2025-02-12T14:00:00",
+    tags: ["vite", "debugging", "build-tools", "deployment", "troubleshooting"],
+  },
 ];
 
 /**
