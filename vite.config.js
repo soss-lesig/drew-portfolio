@@ -4,6 +4,9 @@ export default defineConfig({
   // Base public path - adjust if deploying to a subdirectory
   base: "/",
 
+  // Copy everything from public/ to dist/ during build
+  publicDir: "public",
+
   // Server config for local development
   server: {
     port: 3000,
