@@ -189,6 +189,27 @@ site-nav a.active {
   margin-bottom: var(--space-6);
 }
 
+.project-links a {
+  margin: 0;
+  colour: var(--text);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.project-links a:visited {
+  color: var(--text);
+}
+
+.project-links a:hover,
+.project-links a:focus {
+  color: var(--accent);
+}
+
 /* =========================================================================
 Blog Posts
 ========================================================================= */
