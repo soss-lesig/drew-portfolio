@@ -38,6 +38,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  padding-bottom: var(--space-7);
 }
 
 body {
@@ -92,7 +93,7 @@ section:first-of-type {
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--bg);
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
   z-index: 100;
 }
@@ -158,7 +159,7 @@ a:active {
   text-decoration: none;
   transition: color 0.3s ease;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--bg);
   padding: var(--space-2);
   border-radius: var(--radius);
 }
@@ -198,4 +199,46 @@ Blog Posts
   border-radius: var(--radius);
   border: 1px solid var(--border);
   margin-bottom: var(--space-6);
+}
+/* =========================================================================
+Footer
+========================================================================= */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4);
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.footer-links a {
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+footer p {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.project-status {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
 }
