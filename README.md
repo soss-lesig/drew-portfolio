@@ -22,6 +22,7 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 ## Evolution timeline
 
 **Phase 1: Pure vanilla (February 7-11, 2025)**
+
 - Semantic HTML structure with design token system
 - Zero dependencies, no build step
 - CDN-based markdown parser (marked.js)
@@ -29,18 +30,21 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Manual file management
 
 **Phase 2: Client-side blog system (February 7, 2025)**
+
 - Hash-based routing built from scratch
 - Markdown file fetching and parsing
 - Manual frontmatter extraction
 - Module-based architecture (ES6 imports)
 
 **Phase 3: Deployment and design (February 11, 2025)**
+
 - Bought drewbs.dev domain
 - Deployed to Cloudflare Pages (static hosting)
 - Chose sage green colour palette
 - Added visual hierarchy with surface colours
 
 **Phase 4: Modern build tooling (February 12, 2025)**
+
 - Migrated from CDN to npm dependencies
 - Added Vite for bundling and dev server
 - Integrated ESLint and Prettier
@@ -48,6 +52,7 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Fixed production build issues (publicDir)
 
 **What triggered the tooling migration:**
+
 - Need for syntax highlighting in blog posts
 - Managing multiple dependencies becoming cumbersome
 - Production deployment broke (markdown files not in build output)
@@ -58,12 +63,14 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 ## Current state
 
 **Infrastructure:**
+
 - ✅ Vite build system with hot module replacement
 - ✅ ESLint + Prettier for code quality
 - ✅ Deployed to Cloudflare Pages with automatic deployments
 - ✅ Custom domain (drewbs.dev) with DNS configured
 
 **Features:**
+
 - ✅ Client-side blog system with hash routing
 - ✅ Markdown post rendering with frontmatter parsing
 - ✅ Syntax highlighting for code blocks (highlight.js)
@@ -72,6 +79,7 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - ✅ Responsive layout with fluid typography
 
 **Content:**
+
 - ✅ Six published blog posts documenting the build process
 - ✅ Homepage focused on work output (projects)
 - ✅ About page with skills and experience
@@ -79,21 +87,25 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 ## Tech stack
 
 **Core:**
+
 - HTML5 - Semantic markup, accessibility-first
 - CSS3 - Custom properties, modern layout, fluid typography
 - JavaScript (ES6+) - Modular, ES modules, async/await
 
 **Build & Tooling:**
+
 - Vite - Fast dev server, optimised production builds
 - ESLint - Code quality and consistency
 - Prettier - Automatic code formatting
 - Terser - Production minification
 
 **Libraries:**
+
 - marked - Markdown parsing
 - highlight.js - Syntax highlighting for code blocks
 
 **Deployment:**
+
 - Cloudflare Pages - Static hosting with automatic deployments
 - GitHub - Version control and deployment source
 
@@ -120,22 +132,26 @@ drew-portfolio/
 ## Key decisions documented
 
 **Why Vite over Webpack/Parcel?**
+
 - Speed: instant dev server, near-instant HMR
 - Simplicity: minimal config, works with vanilla JS now and React later
 - Modern: growing adoption, good DX, future-proof
 
 **Why separate About page?**
+
 - Portfolio should lead with work output, not credentials
 - Matches industry best practice: homepage = projects, about = background
 - Sets up transformation to work-focused portfolio
 
 **Why Cloudflare Pages over Vercel/Netlify?**
+
 - Already using Cloudflare for DNS
 - Zero-config static hosting
 - Generous free tier
 - One service instead of two
 
 **Why local CSS instead of npm package import?**
+
 - Vite can't resolve bare specifiers for CSS in production
 - Local copy guarantees build reliability
 - Trade-off: slight duplication vs guaranteed deployment success
@@ -143,25 +159,30 @@ drew-portfolio/
 ## Running locally
 
 **Prerequisites:**
+
 - Node.js 18+ (for npm and Vite)
 
 **Install dependencies:**
+
 ```bash
 npm install
 ```
 
 **Development server:**
+
 ```bash
 npm run dev
 ```
 
 **Production build:**
+
 ```bash
 npm run build
 npm run preview
 ```
 
 **Code quality:**
+
 ```bash
 npm run lint
 npm run format
@@ -177,36 +198,31 @@ The site auto-deploys to Cloudflare Pages on every push to `main`:
 4. Deploys `dist/` to global CDN
 
 **Build configuration:**
+
 - Build command: `npm run build`
 - Build output: `dist`
 - Production branch: `main`
 
 ## AI-assisted development
 
-This project documents an AI-assisted development workflow. Claude (Anthropic) acts as a development partner to:
-
-- Validate technical decisions and suggest alternatives
-- Explain trade-offs and architectural patterns
-- Provide real-time learning and explanation
-- Help debug and troubleshoot issues
-
-**Important distinction:** The AI doesn't write code for me - it explains, suggests, and teaches. All code is written, reviewed, understood, and justified by the human developer.
-
-This workflow mirrors real team collaboration: questioning, iterative, focused on learning.
+This project documents an AI-assisted workflow where AI tools provide technical validation, suggest refactoring approaches, and explain trade-offs. All implementation decisions are reviewed and understood before committing. As AI tools become standard in software engineering, understanding how to use them effectively is as important as understanding the frameworks themselves.
 
 ## What comes next
 
 **Immediate priorities:**
+
 - Add contact links (GitHub, LinkedIn) to About page
 - Improve navigation styling and active states
 - Mobile responsiveness refinements
 
 **Content development:**
+
 - Expand projects section into case studies with screenshots
 - Add visual proof of technical work
 - Strengthen homepage hero section
 
 **Future evolution:**
+
 - Migrate to React when component reuse becomes painful
 - Add backend (Node/Express + PostgreSQL) when content management demands it
 - Document the refactoring process through blog posts
