@@ -212,6 +212,7 @@ footer {
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding: var(--space-5) var(--space-4);
+  text-align: center;
 }
 
 .footer-links {
