@@ -7,21 +7,6 @@ import { getAllPosts, getPostBySlug } from "./posts.js";
 import { marked } from "marked";
 import hljs from "highlight.js";
 
-// Configure marked to use highlight.js for syntax highlighting
-marked.setOptions({
-  highlight: function (code, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(code, { language: lang }).value;
-      } catch (err) {
-        console.error("Highlight.js error:", err);
-      }
-    }
-    // Fallback: auto-detect language
-    return hljs.highlightAuto(code).value;
-  },
-});
-
 // Store the original portfolio content on first load
 let originalPortfolioContent = null;
 

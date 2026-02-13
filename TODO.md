@@ -5,6 +5,7 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 ## High Priority
 
 ### Content & Polish
+
 - [ ] Add contact links (GitHub, LinkedIn) to About page
 - [ ] Improve navigation styling and active states
 - [ ] Mobile responsiveness refinements
@@ -13,12 +14,14 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 - [ ] Strengthen homepage hero section with clearer value proposition
 
 ### Technical Debt
-- [ ] Remove unused `marked.setOptions()` config block from pageController.js
-- [ ] Clean up empty `blog/posts/` and `pages/` directories
+
+- [x] Remove unused `marked.setOptions()` config block from pageController.js
+- [x] Clean up empty `blog/posts/` and `pages/` directories
 
 ## Medium Priority
 
 ### Features
+
 - [ ] Interactive evolution timeline page
   - Show progression through phases (vanilla → blog system → deployment → build tools)
   - Cool animations/transitions between phases
@@ -34,6 +37,7 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 - [ ] Dark/light mode toggle (or respect system preference)
 
 ### Content
+
 - [ ] Take screenshots of drewBrew project for case study
 - [ ] Write case study for drewBrew (problem, approach, tech decisions)
 - [ ] Document portfolio site itself as a case study
@@ -45,6 +49,7 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 ## Low Priority / Future
 
 ### React Migration (when pain points emerge)
+
 - [ ] Identify specific pain points that justify React
 - [ ] Document pre-migration state
 - [ ] Incremental migration plan
@@ -52,6 +57,7 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 - [ ] Compare bundle sizes before/after
 
 ### Backend & CMS (when content management becomes painful)
+
 - [ ] Set up Node/Express backend
 - [ ] PostgreSQL database for blog posts
 - [ ] Simple CMS for content management
@@ -59,18 +65,21 @@ This file tracks planned features, improvements, and ideas for the portfolio sit
 - [ ] API endpoints for blog data
 
 ### Performance & Optimization
+
 - [ ] Lazy load blog posts (only fetch when navigated to)
 - [ ] Image optimization pipeline
 - [ ] Service worker for offline capability
 - [ ] Performance budgets and monitoring
 
 ### Testing
+
 - [ ] Unit tests for router
 - [ ] Integration tests for blog system
 - [ ] E2E tests for critical user flows
 - [ ] Visual regression testing
 
 ### Analytics & SEO
+
 - [ ] Add privacy-respecting analytics (Plausible/Fathom)
 - [ ] Improve SEO metadata (Open Graph, Twitter Cards)
 - [ ] Sitemap generation

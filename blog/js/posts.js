@@ -52,6 +52,13 @@ export const posts = [
     date: "2025-02-12T14:00:00",
     tags: ["vite", "debugging", "build-tools", "deployment", "troubleshooting"],
   },
+  {
+    slug: "quiz-system-justifies-react-migration",
+    title: "Building an interactive quiz system (and why it forced my hand on React)",
+    subtitle: "When a feature requirement drives architectural evolution across the entire stack",
+    date: "2025-02-14T10:00:00",
+    tags: ["react", "supabase", "architecture", "teaching", "feature-driven-design"],
+  },
 ];
 
 /**
