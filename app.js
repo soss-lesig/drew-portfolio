@@ -7,13 +7,15 @@ import {
   showPortfolio,
   showBlogIndex,
   showBlogPost,
-  showAbout
+  showAbout,
+  showContact,
 } from "./blog/js/pageController.js";
 
 // Register routes
 router.addRoute("/", showPortfolio);
 router.addRoute("/blog", showBlogIndex);
 router.addRoute("/about", showAbout);
+router.addRoute("/contact", showContact);
 router.addRoute("/blog/:slug", showBlogPost);
 
 // Router is already initialized in router.js constructor

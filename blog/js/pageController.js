@@ -176,6 +176,27 @@ export async function showAbout() {
     `;
   }
 }
+/**
+ * Show the contact page
+ */
+export async function showContact() {
+  const appContainer = document.getElementById("app");
+
+  try {
+    const response = await fetch("/pages/contact.html");
+    const html = await response.text();
+    appContainer.innerHTML = html;
+  } catch (error) {
+    console.error("Error loading contact page:", error);
+    appContainer.innerHTML = `
+      <div class="error">
+        <h1>Error loading page</h1>
+        <p>Something went wrong.</p>
+        <a href="#/">← Back to home</a>
+      </div>
+    `;
+  }
+}
 
 /**
  * Parse YAML frontmatter from markdown
