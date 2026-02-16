@@ -21,7 +21,7 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 
 ## Evolution timeline
 
-**Phase 1: Pure vanilla (February 7-11, 2025)**
+**Phase 1: Pure vanilla (February 7-11, 2026)**
 
 - Semantic HTML structure with design token system
 - Zero dependencies, no build step
@@ -29,21 +29,21 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Python HTTP server for local development
 - Manual file management
 
-**Phase 2: Client-side blog system (February 7, 2025)**
+**Phase 2: Client-side blog system (February 7, 2026)**
 
 - Hash-based routing built from scratch
 - Markdown file fetching and parsing
 - Manual frontmatter extraction
 - Module-based architecture (ES6 imports)
 
-**Phase 3: Deployment and design (February 11, 2025)**
+**Phase 3: Deployment and design (February 11, 2026)**
 
 - Bought drewbs.dev domain
 - Deployed to Cloudflare Pages (static hosting)
 - Chose sage green colour palette
 - Added visual hierarchy with surface colours
 
-**Phase 4: Modern build tooling (February 12, 2025)**
+**Phase 4: Modern build tooling (February 12, 2026)**
 
 - Migrated from CDN to npm dependencies
 - Added Vite for bundling and dev server
