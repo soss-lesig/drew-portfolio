@@ -29,6 +29,7 @@ export async function showBlogIndex() {
   const html = `
     <div class="blog-index">
       <header class="blog-header">
+          <a href="#/" class="back-link">← Back to home</a>
         <h1>Blog</h1>
         <p>Thoughts on building, learning, and refactoring.</p>
       </header>
