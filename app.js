@@ -9,6 +9,7 @@ import {
   showBlogPost,
   showAbout,
   showContact,
+  showDrewBrew,
 } from "./blog/js/pageController.js";
 
 // Register routes
@@ -16,6 +17,7 @@ router.addRoute("/", showPortfolio);
 router.addRoute("/blog", showBlogIndex);
 router.addRoute("/about", showAbout);
 router.addRoute("/contact", showContact);
+router.addRoute("/drewbrew", showDrewBrew);
 router.addRoute("/blog/:slug", showBlogPost);
 
 // Router is already initialized in router.js constructor

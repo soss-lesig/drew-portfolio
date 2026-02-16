@@ -199,6 +199,51 @@ export async function showContact() {
 }
 
 /**
+ * Show the drewBrew architecture case study page
+ */
+export async function showDrewBrew() {
+  const appContainer = document.getElementById("app");
+
+  try {
+    const response = await fetch("/pages/drewbrew.html");
+    const html = await response.text();
+    appContainer.innerHTML = html;
+
+    // Dynamically import and render Mermaid diagrams
+    const mermaid = (await import("mermaid")).default;
+
+    // Initialize mermaid with dark theme
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#a78bfa",
+        primaryTextColor: "#e7eaf0",
+        primaryBorderColor: "#a8b0bf",
+        background: "#0b0c0f",
+        mainBkg: "#10131a",
+        secondBkg: "#0b0c0f",
+        lineColor: "#a8b0bf",
+      },
+    });
+
+    // Render all mermaid diagrams on the page
+    await mermaid.run({
+      querySelector: ".mermaid",
+    });
+  } catch (error) {
+    console.error("Error loading drewBrew page:", error);
+    appContainer.innerHTML = `
+      <div class="error">
+        <h1>Error loading page</h1>
+        <p>Something went wrong.</p>
+        <a href="#/">← Back to home</a>
+      </div>
+    `;
+  }
+}
+
+/**
  * Parse YAML frontmatter from markdown
  * @param {string} markdown - Raw markdown with frontmatter
  * @returns {Object} - { frontmatter: {...}, content: '...' }
