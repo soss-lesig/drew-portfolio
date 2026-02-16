@@ -209,6 +209,8 @@ export async function showDrewBrew() {
     const html = await response.text();
     appContainer.innerHTML = html;
 
+    hljs.highlightAll(); // Apply syntax highlighting to any code blocks
+
     // Dynamically import and render Mermaid diagrams
     const mermaid = (await import("mermaid")).default;
 
