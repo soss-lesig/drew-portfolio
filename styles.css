@@ -579,3 +579,19 @@ footer p {
   margin: var(--space-2) 0;
   line-height: 1.7;
 }
+
+/* Timeline/context note */
+.project-note {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: rgba(181, 201, 154, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.project-note strong {
+  color: var(--text);
+}
