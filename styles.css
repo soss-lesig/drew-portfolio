@@ -434,3 +434,148 @@ footer p {
   color: var(--muted);
   margin: 0;
 }
+
+/* =========================================================================
+   drewBrew Page - Architecture Case Study
+   ========================================================================= */
+
+/* Main container - uses existing max-width pattern */
+.drewbrew-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* Page header - consistent with contact page style */
+.drewbrew-page .page-header {
+  background: var(--surface);
+  padding: var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+.drewbrew-page .page-header h1 {
+  font-size: var(--fs-h3);
+  margin: var(--space-4) 0;
+}
+
+.back-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+  display: inline-block;
+  margin-bottom: var(--space-3);
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* Section containers - match the home page style */
+.drewbrew-section {
+  background: var(--surface);
+  padding: var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+/* Typography hierarchy within sections */
+.drewbrew-section h2 {
+  font-size: var(--fs-h3);
+  margin: 0 0 var(--space-4);
+}
+
+.drewbrew-section h3 {
+  font-size: var(--fs-h4);
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+.drewbrew-section h4 {
+  font-size: 1.05rem;
+  margin: var(--space-4) 0 var(--space-2);
+  color: var(--muted);
+}
+
+/* Status badges - show what's implemented vs designed */
+.implemented-badge,
+.designed-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: var(--space-3);
+  vertical-align: middle;
+}
+
+.implemented-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.designed-badge {
+  background: rgba(181, 201, 154, 0.15); /* Uses your --accent sage colour */
+  color: var(--accent);
+  border: 1px solid rgba(181, 201, 154, 0.3);
+}
+
+/* Code blocks - general styling */
+.drewbrew-section pre {
+  background: var(--bg); /* Darker than surface for contrast */
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  overflow-x: auto;
+  margin: var(--space-4) 0;
+}
+
+.drewbrew-section code {
+  font-family:
+    "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New",
+    monospace;
+  font-size: 0.9em;
+}
+
+/* Inline code styling */
+.drewbrew-section p code,
+.drewbrew-section li code {
+  background: rgba(181, 201, 154, 0.15); /* Accent colour with transparency */
+  color: var(--accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Code block text colour - let highlight.js handle syntax colours */
+.drewbrew-section pre code {
+  color: var(--text);
+  background: transparent;
+  padding: 0;
+}
+
+/* Mermaid diagram containers */
+.drewbrew-section .mermaid {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin: var(--space-5) 0;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+/* Lists within sections */
+.drewbrew-section ul {
+  margin: var(--space-3) 0;
+  padding-left: var(--space-5);
+}
+
+.drewbrew-section ul li {
+  margin: var(--space-2) 0;
+  line-height: 1.7;
+}
