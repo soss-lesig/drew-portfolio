@@ -59,6 +59,13 @@ export const posts = [
     date: "2025-02-14T10:00:00",
     tags: ["react", "supabase", "architecture", "teaching", "feature-driven-design"],
   },
+  {
+    slug: "contact-page-css-refactor",
+    title: "Small wins: Contact page and CSS organisation",
+    subtitle: "Sometimes the best refactoring is the kind that makes your future self less annoyed",
+    date: "2025-02-16T10:00:00",
+    tags: ["css", "refactoring", "ux"],
+  },
 ];
 
 /**
