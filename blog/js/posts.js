@@ -66,6 +66,13 @@ export const posts = [
     date: "2025-02-16T10:00:00",
     tags: ["css", "refactoring", "ux"],
   },
+  {
+    slug: "post-09",
+    title: "Making invisible work visible: The drewBrew case study",
+    subtitle: "Architecture exercises are worthless if no one can see them",
+    date: "2025-02-16T14:00:00",
+    tags: ["architecture", "documentation", "portfolio"],
+  },
 ];
 
 /**
