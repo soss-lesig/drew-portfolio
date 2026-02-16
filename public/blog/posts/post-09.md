@@ -1,6 +1,6 @@
 ---
-title: "Making invisible work visible: The drewBrew case study"
-subtitle: "Architecture exercises are worthless if no one can see them"
+title: Making invisible work visible: The drewBrew case study
+subtitle: Architecture exercises are worthless if no one can see them
 date: 2025-02-16
 tags: [architecture, documentation, portfolio]
 ---
