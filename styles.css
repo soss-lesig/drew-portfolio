@@ -1,3 +1,7 @@
+/* =========================================================================
+   CSS Custom Properties (Design Tokens)
+   ========================================================================= */
+
 :root {
   /* Colours */
   --bg: #0b0c0f;
@@ -28,6 +32,10 @@
   --fs-hero: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
 }
 
+/* =========================================================================
+   CSS Reset & Base Styles
+   ========================================================================= */
+
 *,
 *::before,
 *::after {
@@ -54,10 +62,10 @@ body {
   line-height: var(--line);
   -webkit-font-smoothing: antialiased;
 }
-a {
-  color: inherit;
-  text-decoration: none;
-}
+
+/* =========================================================================
+   Typography
+   ========================================================================= */
 
 h2 {
   margin-top: 0;
@@ -77,6 +85,31 @@ p {
   margin: 0 0 var(--space-4);
 }
 
+/* =========================================================================
+   Links (Global Reset)
+   ========================================================================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a:hover {
+  color: inherit;
+}
+
+a:active {
+  color: inherit;
+}
+
+/* =========================================================================
+   Layout Containers
+   ========================================================================= */
+
 main {
   width: min(var(--max-width), 100% - (var(--space-6) * 2));
   margin: 0 auto;
@@ -91,6 +124,10 @@ section {
 section:first-of-type {
   border-top: none;
 }
+
+/* =========================================================================
+   Site Header
+   ========================================================================= */
 
 .site-header {
   position: fixed;
@@ -115,47 +152,9 @@ section:first-of-type {
   text-transform: lowercase;
 }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-}
-
-.tag {
-  display: inline-block;
-  padding: var(--space-1) var(--space-3);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--accent);
-  text-transform: lowercase;
-  letter-spacing: 0.01em;
-}
-
 /* =========================================================================
-Navigation
-========================================================================= */
-
-/* Global link reset - kill all browser defaults */
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-a:visited {
-  color: inherit;
-}
-
-a:hover {
-  color: inherit;
-}
-
-a:active {
-  color: inherit;
-}
+   Navigation
+   ========================================================================= */
 
 .site-nav a {
   margin: 0;
@@ -177,9 +176,13 @@ a:active {
   color: var(--accent);
 }
 
-site-nav a.active {
+.site-nav a.active {
   color: var(--accent);
 }
+
+/* =========================================================================
+   Portfolio/Home Sections
+   ========================================================================= */
 
 .intro,
 .about,
@@ -192,6 +195,10 @@ site-nav a.active {
   border: 1px solid var(--border);
   margin-bottom: var(--space-6);
 }
+
+/* =========================================================================
+   Project Cards
+   ========================================================================= */
 
 .project-links a {
   margin: 0;
@@ -214,54 +221,6 @@ site-nav a.active {
   color: var(--accent);
 }
 
-/* =========================================================================
-Blog Posts
-========================================================================= */
-
-.post-preview {
-  background: var(--surface);
-  padding: var(--space-5);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  margin-bottom: var(--space-6);
-}
-/* =========================================================================
-Footer
-========================================================================= */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: var(--space-5) var(--space-4);
-  text-align: center;
-}
-
-.footer-links {
-  display: flex;
-  gap: var(--space-4);
-  justify-content: center;
-  margin-bottom: var(--space-4);
-}
-
-.footer-links a {
-  color: var(--muted);
-  transition: color 0.2s ease;
-}
-
-.footer-links a:hover {
-  color: var(--accent);
-}
-
-footer p {
-  font-size: 0.875rem;
-  color: var(--muted);
-  margin: 0;
-}
-
 .project-status {
   margin-top: var(--space-3);
   font-size: 0.9rem;
@@ -270,11 +229,47 @@ footer p {
 }
 
 /* =========================================================================
-   Contact Page
+   Tags (Blog & General)
+   ========================================================================= */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.tag {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+}
+
+/* =========================================================================
+   Blog Index & Post Previews
+   ========================================================================= */
+
+.post-preview {
+  background: var(--surface);
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+/* =========================================================================
+   Contact Page - Layout
    ========================================================================= */
 
 .contact-page {
-  max-width: min(var(--max-width), 100% - (var(--space-6) * 2));
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -303,6 +298,10 @@ footer p {
   flex-direction: column;
   gap: var(--space-6);
 }
+
+/* =========================================================================
+   Contact Page - Method Cards
+   ========================================================================= */
 
 .contact-method {
   background: var(--surface);
@@ -333,6 +332,10 @@ footer p {
   margin-bottom: var(--space-4);
 }
 
+/* =========================================================================
+   Contact Page - Links & Buttons
+   ========================================================================= */
+
 .contact-link,
 .contact-link:link,
 .contact-link:visited {
@@ -354,6 +357,10 @@ footer p {
   background: var(--surface);
   color: var(--accent) !important;
 }
+
+/* =========================================================================
+   Contact Page - Additional Elements
+   ========================================================================= */
 
 .contact-note {
   font-size: 0.9rem;
@@ -388,4 +395,42 @@ footer p {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+/* =========================================================================
+   Site Footer
+   ========================================================================= */
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.footer-links a {
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+footer p {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0;
 }
