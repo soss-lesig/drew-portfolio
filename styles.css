@@ -4,12 +4,17 @@
 
 :root {
   /* Colours */
-  --bg: #0b0c0f;
-  --surface: #13161a;
-  --text: #e7eaf0;
-  --muted: #a8b0bf;
-  --border: rgba(231, 234, 240, 0.12);
-  --accent: #b5c99a; /* Soft Sage */
+  --bg: hsl(40 13% 92%);
+  --surface: hsl(40 13% 87%);
+  --text: hsl(240 6% 3%);
+  --muted: hsl(340 17% 35%);
+  --border: hsl(33 17% 20% / 0.15);
+  --accent-h: 340;
+  --accent-s: 80%;
+  --accent-l: 65%;
+  --accent: hsl(
+    var(--accent-h) var(--accent-s) var(--accent-l)
+  ); /* Meeko Pink */
 
   /* Spacing scale */
   --space-1: 4px;
@@ -22,7 +27,7 @@
 
   /* Type + sizing */
   --radius: 14px;
-  --max-width: 800px;
+  --max-width: 1100px;
   --line: 1.6;
 
   /* Clamp function for fluid typography */
@@ -46,19 +51,23 @@ html,
 body {
   margin: 0;
   padding: 0;
-  padding-bottom: var(--space-7);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family:
+    "Jost Variable",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
   font-size: var(--fs-body);
+  font-weight: 400;
   line-height: var(--line);
   -webkit-font-smoothing: antialiased;
 }
@@ -113,7 +122,8 @@ a:active {
 main {
   width: min(var(--max-width), 100% - (var(--space-6) * 2));
   margin: 0 auto;
-  padding: calc(var(--space-7) + 72px) 0 var(--space-7);
+  padding: var(--space-6);
+  flex: 1;
 }
 
 section {
@@ -130,7 +140,6 @@ section:first-of-type {
    ========================================================================= */
 
 .site-header {
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -142,7 +151,11 @@ section:first-of-type {
 .header-inner {
   width: min(var(--max-width), 100% - (var(--space-6) * 2));
   margin: 0 auto;
-  padding: var(--space-4) 0;
+  padding: var(--space-2) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
 }
 
 .site-title {
@@ -151,15 +164,50 @@ section:first-of-type {
   letter-spacing: 0.2em;
   text-transform: lowercase;
 }
+/* ========================================================================
+   Header Portrait
+   ========================================================================= */
 
+.header-portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.portrait-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+}
+
+.portrait-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.portrait-wrapper {
+  border: 2px solid var(--border);
+  border-radius: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg);
+  padding: var(--space-1);
+}
 /* =========================================================================
    Navigation
    ========================================================================= */
 
 .site-nav a {
   margin: 0;
-  colour: var(--text);
+  color: var(--text);
   text-decoration: none;
+  text-transform: lowercase;
   transition: color 0.3s ease;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -202,7 +250,7 @@ section:first-of-type {
 
 .project-links a {
   margin: 0;
-  colour: var(--text);
+  color: var(--text);
   text-decoration: none;
   transition: color 0.3s ease;
   border: 1px solid var(--border);
@@ -402,11 +450,6 @@ section:first-of-type {
    ========================================================================= */
 
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding: var(--space-5) var(--space-4);
@@ -513,14 +556,14 @@ footer p {
 }
 
 .implemented-badge {
-  background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: hsla(340, 60%, 75%, 0.5);
+  color: var(--accent);
+  border: 1px solid rgba(340, 197, 94, 0.3);
 }
 
 .designed-badge {
-  background: rgba(181, 201, 154, 0.15); /* Uses your --accent sage colour */
-  color: var(--accent);
+  background: hsla(340, 17%, 50%, 0.15);
+  color: var(--muted);
   border: 1px solid rgba(181, 201, 154, 0.3);
 }
 

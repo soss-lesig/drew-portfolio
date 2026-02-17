@@ -2,6 +2,8 @@
 import "./highlight-theme.css";
 import typescript from "highlight.js/lib/languages/typescript";
 
+import "@fontsource-variable/jost";
+
 // Import the router and blog controller functions
 import { router } from "./blog/js/router.js";
 import {
