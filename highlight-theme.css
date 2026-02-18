@@ -1,118 +1,126 @@
 pre code.hljs {
   display: block;
   overflow-x: auto;
-  padding: 1em
+  padding: 1em;
 }
-code.hljs {
-  padding: 3px 5px
-}
-/*!
-  Theme: GitHub Dark
-  Description: Dark theme as seen on github.com
-  Author: github.com
-  Maintainer: @Hirse
-  Updated: 2021-05-15
 
-  Outdated base version: https://github.com/primer/github-syntax-dark
-  Current colors taken from GitHub's CSS
+code.hljs {
+  padding: 3px 5px;
+}
+
+/*
+  Theme: Meeko
+  Author: drewbs
+  Built around the Meeko pink palette (hsl 340)
 */
+
 .hljs {
-  color: #c9d1d9;
-  background: #0d1117
+  background: hsl(40 13% 84%);
+  color: hsl(240 6% 20%);
 }
-.hljs-doctag,
-.hljs-keyword,
-.hljs-meta .hljs-keyword,
-.hljs-template-tag,
-.hljs-template-variable,
-.hljs-type,
-.hljs-variable.language_ {
-  /* prettylights-syntax-keyword */
-  color: #ff7b72
-}
-.hljs-title,
-.hljs-title.class_,
-.hljs-title.class_.inherited__,
-.hljs-title.function_ {
-  /* prettylights-syntax-entity */
-  color: #d2a8ff
-}
-.hljs-attr,
-.hljs-attribute,
-.hljs-literal,
-.hljs-meta,
-.hljs-number,
-.hljs-operator,
-.hljs-variable,
-.hljs-selector-attr,
-.hljs-selector-class,
-.hljs-selector-id {
-  /* prettylights-syntax-constant */
-  color: #79c0ff
-}
-.hljs-regexp,
-.hljs-string,
-.hljs-meta .hljs-string {
-  /* prettylights-syntax-string */
-  color: #a5d6ff
-}
-.hljs-built_in,
-.hljs-symbol {
-  /* prettylights-syntax-variable */
-  color: #ffa657
-}
+
+/* Comments - muted rose */
 .hljs-comment,
-.hljs-code,
-.hljs-formula {
-  /* prettylights-syntax-comment */
-  color: #8b949e
+.hljs-quote {
+  color: hsl(340 17% 55%);
+  font-style: italic;
 }
-.hljs-name,
-.hljs-quote,
+
+/* Keywords - deep Meeko pink */
+.hljs-keyword,
 .hljs-selector-tag,
-.hljs-selector-pseudo {
-  /* prettylights-syntax-entity-tag */
-  color: #7ee787
+.hljs-operator {
+  color: hsl(340 65% 52%);
+  font-weight: 600;
 }
-.hljs-subst {
-  /* prettylights-syntax-storage-modifier-import */
-  color: #c9d1d9
-}
-.hljs-section {
-  /* prettylights-syntax-markup-heading */
-  color: #1f6feb;
-  font-weight: bold
-}
-.hljs-bullet {
-  /* prettylights-syntax-markup-list */
-  color: #f2cc60
-}
-.hljs-emphasis {
-  /* prettylights-syntax-markup-italic */
-  color: #c9d1d9;
-  font-style: italic
-}
-.hljs-strong {
-  /* prettylights-syntax-markup-bold */
-  color: #c9d1d9;
-  font-weight: bold
-}
+
+/* Strings - teal complement to pink */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
 .hljs-addition {
-  /* prettylights-syntax-markup-inserted */
-  color: #aff5b4;
-  background-color: #033a16
+  color: hsl(180 40% 35%);
 }
-.hljs-deletion {
-  /* prettylights-syntax-markup-deleted */
-  color: #ffdcd7;
-  background-color: #67060c
+
+/* Functions & titles - Meeko pink */
+.hljs-title,
+.hljs-title.function_,
+.hljs-title.class_,
+.hljs-title.class_.inherited__ {
+  color: hsl(340 70% 57%);
 }
-.hljs-char.escape_,
-.hljs-link,
+
+/* Numbers, booleans, constants - warm amber */
+.hljs-number,
+.hljs-literal,
+.hljs-type,
 .hljs-params,
+.hljs-link {
+  color: hsl(25 70% 45%);
+}
+
+/* Variables & template vars - dusty pink */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr,
+.hljs-attribute {
+  color: hsl(340 40% 45%);
+}
+
+/* Built-ins - deeper teal */
+.hljs-built_in,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: hsl(195 50% 38%);
+}
+
+/* Tags - muted rose */
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: hsl(340 50% 57%);
+}
+
+/* Meta, doctag */
+.hljs-meta,
+.hljs-doctag {
+  color: hsl(340 17% 50%);
+}
+
+/* Deletions */
+.hljs-deletion {
+  color: hsl(340 65% 45%);
+  background: hsl(340 80% 93%);
+}
+
+/* Additions */
+.hljs-addition {
+  color: hsl(150 40% 35%);
+  background: hsl(150 40% 93%);
+}
+
+/* Punctuation - soft */
+.hljs-punctuation {
+  color: hsl(240 6% 40%);
+}
+
+/* Properties */
 .hljs-property,
-.hljs-punctuation,
-.hljs-tag {
-  /* purposely ignored */
-  
+.hljs-subst {
+  color: hsl(240 6% 25%);
+}
+
+/* Section headings */
+.hljs-section {
+  color: hsl(340 70% 50%);
+  font-weight: bold;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
 }
