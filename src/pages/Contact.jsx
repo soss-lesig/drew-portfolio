@@ -1,0 +1,175 @@
+import { Link } from "react-router-dom";
+
+export default function Contact() {
+  return (
+    <div className="contact-page">
+      <header className="page-header">
+        <Link to="/" className="back-link">
+          ← Back to home
+        </Link>
+
+        <h1>Get in touch</h1>
+        <p>
+          Open to software engineering opportunities and interesting
+          conversations.
+        </p>
+      </header>
+
+      <div className="contact-sections">
+        <section className="contact-method">
+          <div className="method-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="method-icon"
+            >
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <h2>Email</h2>
+          </div>
+          <p>
+            Best for: job opportunities, project enquiries, detailed discussions
+          </p>
+          <a href="mailto:hello@drewbs.dev" className="contact-link">
+            hello@drewbs.dev
+          </a>
+          <p className="contact-note">
+            I typically respond within 24 hours during the week. If you're a
+            recruiter, please include the role, location (remote/hybrid/office),
+            and rough salary range.
+          </p>
+        </section>
+
+        <section className="contact-method">
+          <div className="method-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="method-icon"
+            >
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+              <rect x="2" y="9" width="4" height="12"></rect>
+              <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+            <h2>LinkedIn</h2>
+          </div>
+          <p>
+            Best for: professional networking, connection requests, quick
+            messages
+          </p>
+
+          <a
+            href="https://uk.linkedin.com/in/andrew-pendlebury-9549051a2"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-link"
+          >
+            View profile
+          </a>
+          <p className="contact-note">
+            I'm open to connecting with other developers, hiring managers, and
+            people working on interesting projects. If you're sending a
+            connection request, a quick note about why helps.
+          </p>
+        </section>
+
+        <section className="contact-method">
+          <div className="method-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="method-icon"
+            >
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            <h2>GitHub</h2>
+          </div>
+          <p>
+            Best for: code review, technical discussions, open source
+            contributions
+          </p>
+
+          <a
+            href="https://github.com/soss-lesig"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-link"
+          >
+            github.com/soss-lesig
+          </a>
+          <p className="contact-note">
+            Check out my repos for examples of my work. The portfolio site
+            itself is open source and documents its own evolution. Issues and
+            PRs welcome if you spot improvements.
+          </p>
+        </section>
+
+        <section className="contact-method">
+          <div className="method-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="method-icon"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <h2>Quick chat</h2>
+          </div>
+          <p>Currently open to discussions about:</p>
+          <ul className="chat-topics">
+            <li>
+              Junior/Associate software engineering roles
+              (JavaScript/React/Node)
+            </li>
+            <li>Contract or freelance web development work</li>
+            <li>Technical mentorship or pair programming</li>
+            <li>Collaborative projects in EdTech or developer tooling</li>
+          </ul>
+          <p className="contact-note">
+            Not currently available for: unpaid "exposure" opportunities, MLM
+            schemes, cryptocurrency ventures, or anything requiring me to
+            "disrupt" an industry I don't understand.
+          </p>
+        </section>
+      </div>
+
+      <div className="contact-footer">
+        <p>
+          Based in Leeds, UK (GMT/BST timezone).
+          <br />
+          Generally working remotely or hybrid within reasonable commuting
+          distance.
+        </p>
+      </div>
+    </div>
+  );
+}

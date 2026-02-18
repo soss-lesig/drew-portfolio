@@ -25,6 +25,7 @@
   "homepage": "https://github.com/soss-lesig/drew-portfolio#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "highlight.js": "^11.11.1",
@@ -35,6 +36,9 @@
   "dependencies": {
     "@fontsource-variable/jost": "^5.2.8",
     "marked": "^17.0.2",
-    "mermaid": "^11.12.2"
+    "mermaid": "^11.12.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.0"
   }
 }
