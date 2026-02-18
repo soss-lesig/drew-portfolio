@@ -73,6 +73,13 @@ export const posts = [
     date: "2025-02-16T14:00:00",
     tags: ["architecture", "documentation", "portfolio"],
   },
+  {
+    slug: "meeko-takes-over",
+    title: "Meeko takes over: A rebrand, a hero section, and a lot of CSS",
+    subtitle: "What happens when you stop treating your portfolio like a CV and start treating it like a product",
+    date: "2026-02-18T10:00:00",
+    tags: ["design", "css", "responsive", "branding", "portfolio"],
+  },
 ];
 
 /**
