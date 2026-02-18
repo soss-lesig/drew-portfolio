@@ -277,8 +277,8 @@ section:first-of-type {
 }
 
 .hero-image img {
-  width: 440px;
-  height: 440px;
+  width: clamp(120px, 20vw, 440px);
+  height: clamp(120px, 20vw, 440px);
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--border);
