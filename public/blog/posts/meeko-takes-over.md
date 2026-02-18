@@ -201,6 +201,49 @@ Looking back at where the site was after post 09 and where it is now, the change
 
 None of this is the React migration. None of it is the quiz system. None of it is Supabase. But it was necessary work - a site with character is more memorable than a technically impressive but forgettable one.
 
+## Custom syntax theme
+
+The last thing before committing - and genuinely the last thing before the React migration - was the code block syntax theme.
+
+The site had been using GitHub Dark from highlight.js, which was a dark `#0d1117` background that clashed badly with the warm parchment colour scheme. Tried a couple of light alternatives (Rose Pine Dawn, Kimbie Light) but neither felt like they belonged.
+
+So built a custom one instead. Named it Meeko, naturally.
+
+The whole theme is derived from the existing design tokens - same hue (340), same warm background, complementary teal for strings:
+
+```css
+.hljs {
+  background: hsl(40 13% 84%);
+  color: hsl(240 6% 20%);
+}
+
+/* Keywords - Meeko pink */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-operator {
+  color: hsl(340 65% 52%);
+  font-weight: 600;
+}
+
+/* Strings - teal complement */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: hsl(180 40% 35%);
+}
+
+/* Numbers - warm amber */
+.hljs-number,
+.hljs-literal,
+.hljs-type {
+  color: hsl(25 70% 45%);
+}
+```
+
+Because it targets `.hljs` classes that highlight.js applies universally, it works across every code block on the site - blog posts and the drewBrew case study included.
+
+It looks good enough that porting it to a VSCode theme is on the list. Different format (JSON rather than CSS) but the same colour values. Probably worth a blog post in itself.
+
 ## What's next
 
 The React migration is genuinely next. The routing limitations are real - hash-based URLs don't index properly, social media previews don't work, and the state management is getting messy enough that adding new features is starting to feel fiddly.
