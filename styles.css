@@ -203,6 +203,10 @@ section:first-of-type {
    Navigation
    ========================================================================= */
 
+.site-nav {
+  padding-bottom: var(--space-2);
+}
+
 .site-nav a {
   margin: 0;
   color: var(--text);
