@@ -156,6 +156,19 @@ section:first-of-type {
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav {
+    width: 100%;
+    padding-bottom: var(--space-3);
+  }
 }
 
 .site-title {
@@ -205,6 +218,10 @@ section:first-of-type {
 
 .site-nav {
   padding-bottom: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
 }
 
 .site-nav a {
