@@ -253,6 +253,7 @@ section:first-of-type {
    ========================================================================= */
 .hero {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-6);
@@ -261,6 +262,11 @@ section:first-of-type {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   margin-bottom: var(--space-6);
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 280px;
 }
 
 .hero-text h1 {
@@ -277,6 +283,7 @@ section:first-of-type {
 }
 
 .hero-image img {
+  flex-shrink: 0;
   width: clamp(120px, 20vw, 440px);
   height: clamp(120px, 20vw, 440px);
   object-fit: cover;
