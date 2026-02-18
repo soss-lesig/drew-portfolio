@@ -7,12 +7,12 @@ class Router {
   constructor() {
     this.routes = {};
     this.currentRoute = null;
-    
+
     // Listen for hash changes
-    window.addEventListener('hashchange', () => this.handleRouteChange());
-    
+    window.addEventListener("hashchange", () => this.handleRouteChange());
+
     // Handle initial load
-    window.addEventListener('load', () => this.handleRouteChange());
+    window.addEventListener("load", () => this.handleRouteChange());
   }
 
   /**
@@ -28,8 +28,9 @@ class Router {
    * Parse the current hash and match it to a route
    */
   handleRouteChange() {
-    const hash = window.location.hash.slice(1) || '/'; // Remove # and default to '/'
-    
+    window.scrollTo(0, 0); // Scroll to top on route change
+    const hash = window.location.hash.slice(1) || "/"; // Remove # and default to '/'
+
     // Try exact match first
     if (this.routes[hash]) {
       this.currentRoute = hash;
@@ -49,7 +50,7 @@ class Router {
 
     // No match found - show 404 or default
     console.warn(`No route found for: ${hash}`);
-    this.navigateTo('/');
+    this.navigateTo("/");
   }
 
   /**
@@ -59,8 +60,8 @@ class Router {
    * @returns {Object|null} - Params object if match, null otherwise
    */
   matchRoute(pattern, hash) {
-    const patternParts = pattern.split('/');
-    const hashParts = hash.split('/');
+    const patternParts = pattern.split("/");
+    const hashParts = hash.split("/");
 
     // Must have same number of parts
     if (patternParts.length !== hashParts.length) {
@@ -74,10 +75,10 @@ class Router {
       const hashPart = hashParts[i];
 
       // Dynamic segment (starts with :)
-      if (patternPart.startsWith(':')) {
+      if (patternPart.startsWith(":")) {
         const paramName = patternPart.slice(1);
         params[paramName] = hashPart;
-      } 
+      }
       // Static segment must match exactly
       else if (patternPart !== hashPart) {
         return null;
