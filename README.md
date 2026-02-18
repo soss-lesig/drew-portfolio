@@ -64,25 +64,25 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 
 **Infrastructure:**
 
-- ✅ Vite build system with hot module replacement
-- ✅ ESLint + Prettier for code quality
-- ✅ Deployed to Cloudflare Pages with automatic deployments
-- ✅ Custom domain (drewbs.dev) with DNS configured
+- Vite build system with hot module replacement
+- ESLint + Prettier for code quality
+- Deployed to Cloudflare Pages with automatic deployments
+- Custom domain (drewbs.dev) with DNS configured
 
 **Features:**
 
-- ✅ Client-side blog system with hash routing
-- ✅ Markdown post rendering with frontmatter parsing
-- ✅ Syntax highlighting for code blocks (highlight.js)
-- ✅ Separate About page for CV content
-- ✅ Design token system with CSS variables
-- ✅ Responsive layout with fluid typography
+- Client-side blog system with hash routing
+- Markdown post rendering with frontmatter parsing
+- Syntax highlighting for code blocks (highlight.js)
+- Separate About page for CV content
+- Design token system with CSS variables
+- Responsive layout with fluid typography
 
 **Content:**
 
-- ✅ Six published blog posts documenting the build process
-- ✅ Homepage focused on work output (projects)
-- ✅ About page with skills and experience
+- Six published blog posts documenting the build process
+- Homepage focused on work output (projects)
+- About page with skills and experience
 
 ## Tech stack
 
