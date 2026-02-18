@@ -249,6 +249,41 @@ section:first-of-type {
 }
 
 /* =========================================================================
+   Intro Hero Section
+   ========================================================================= */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  background: var(--surface);
+  padding: var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+.hero-text h1 {
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  margin: 0 0 var(--space-4);
+}
+
+.hero-text p {
+  font-size: var(--fs-h4);
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.8;
+}
+
+.hero-image img {
+  width: 440px;
+  height: 440px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+/* =========================================================================
    Project Cards
    ========================================================================= */
 
