@@ -262,30 +262,42 @@ section:first-of-type {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   margin-bottom: var(--space-6);
+  min-height: 400px;
 }
 
 .hero-text {
   flex: 1;
-  min-width: 280px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: var(--space-6);
 }
 
 .hero-text h1 {
-  font-size: var(--fs-hero);
+  font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 700;
   margin: 0 0 var(--space-4);
 }
 
 .hero-text p {
-  font-size: var(--fs-h4);
+  font-size: clamp(1rem, 2vw, 1.5rem);
   color: var(--muted);
   margin: 0;
   line-height: 1.8;
 }
 
+.hero-image {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .hero-image img {
-  flex-shrink: 0;
-  width: clamp(120px, 20vw, 440px);
-  height: clamp(120px, 20vw, 440px);
+  width: clamp(120px, 25vw, 500px);
+  height: clamp(120px, 25vw, 500px);
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--border);
