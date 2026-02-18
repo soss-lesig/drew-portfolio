@@ -218,15 +218,18 @@ export async function showDrewBrew() {
     // Initialize mermaid with dark theme
     mermaid.initialize({
       startOnLoad: false,
-      theme: "dark",
+      theme: "base",
       themeVariables: {
-        primaryColor: "#a78bfa",
-        primaryTextColor: "#e7eaf0",
-        primaryBorderColor: "#a8b0bf",
-        background: "#0b0c0f",
-        mainBkg: "#10131a",
-        secondBkg: "#0b0c0f",
-        lineColor: "#a8b0bf",
+        primaryColor: "hsl(340 80% 85%)",
+        primaryTextColor: "hsl(240 6% 10%)",
+        primaryBorderColor: "hsl(340 80% 65%)",
+        background: "hsl(40 13% 92%)",
+        mainBkg: "hsl(40 13% 87%)",
+        secondBkg: "hsl(40 13% 92%)",
+        lineColor: "hsl(340 17% 35%)",
+        edgeLabelBackground: "hsl(40 13% 87%)",
+        tertiaryColor: "hsl(40 13% 82%)",
+        fontSize: "14px",
       },
     });
 
