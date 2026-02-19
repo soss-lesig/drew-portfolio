@@ -42,13 +42,13 @@ export default function Home() {
             <p>
               A deliberately engineered portfolio that evolved from vanilla
               HTML/CSS/JS to modern tooling as real constraints emerged. Built
-              to document feature-driven architecture decisions.
+              to document feature-driven architectural decisions.
             </p>
             <ul>
-              <li>Vanilla foundations → React migration (in progress)</li>
-              <li>Hash-based routing → React Router</li>
-              <li>Markdown blog system with syntax highlighting</li>
-              <li>Full Git history documenting every architectural decision</li>
+              <li>Vanilla HTML/CSS/JS foundations, migrated to React as real pain points emerged</li>
+              <li>React Router replacing custom hash-based routing</li>
+              <li>Client-side markdown blog system with custom syntax highlighting</li>
+              <li>Full Git history and blog series documenting every architectural decision</li>
             </ul>
             <p className="project-links">
               <a href="https://github.com/soss-lesig/drew-portfolio">
@@ -60,18 +60,15 @@ export default function Home() {
           <article className="project-card">
             <h4>drewBrew</h4>
             <p>
-              A coffee tracking system designed architecture-first. Demonstrates
-              end-to-end thinking from business requirements through data
-              modelling to future-state analytics capability.
+              A coffee tracking system designed architecture-first - starting
+              from validated business requirements and working backwards to data
+              modelling, application structure, and a planned analytics pipeline.
             </p>
             <ul>
-              <li>
-                PostgreSQL + Prisma ORM with hybrid relational + JSONB schema
-              </li>
-              <li>
-                Planned modular Node/TypeScript backend and Next.js frontend
-              </li>
-              <li>Designed analytics pipeline for brewing pattern insights</li>
+              <li>PostgreSQL + Prisma ORM with hybrid relational + JSONB schema</li>
+              <li>Architecture validated against real user needs with a competitive barista</li>
+              <li>Designed analytics pipeline (BeanSights) for brewing pattern insights</li>
+              <li>Modular Node/TypeScript backend and Next.js frontend planned and documented</li>
             </ul>
             <p className="project-links">
               <Link to="/drewbrew">Read the case study</Link>

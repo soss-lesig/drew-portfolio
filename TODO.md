@@ -1,116 +1,77 @@
 # TODO
 
-This file tracks planned features, improvements, and ideas for the portfolio site.
-
 ## High Priority
 
-### Content & Polish
+### In Progress
+
+- [ ] Card component system with CSS Modules (base Card + ProjectCard variants)
+
+### Technical
+
+- [ ] Static site generation (vite-plugin-ssg) - fixes SEO and crawlability
+- [ ] Open Graph meta tags for social media previews
+- [ ] Mobile responsiveness refinements
+
+### Content
 
 - [ ] Add contact links (GitHub, LinkedIn) to About page
-- [ ] Improve navigation styling and active states
-- [ ] Mobile responsiveness refinements
-- [ ] Expand projects section into case studies with screenshots/demos
-- [ ] Add visual proof of technical work to project cards
-- [ ] Strengthen homepage hero section with clearer value proposition
-
-### Technical Debt
-
-- [x] Remove unused `marked.setOptions()` config block from pageController.js
-- [x] Clean up empty `blog/posts/` and `pages/` directories
+- [ ] Add visual proof elements to project cards
+- [ ] Strengthen homepage hero with clearer value proposition
 
 ## Medium Priority
 
 ### Features
 
-- [ ] Interactive evolution timeline page
-  - Show progression through phases (vanilla → blog system → deployment → build tools)
-  - Cool animations/transitions between phases
-  - Code examples or screenshots from each stage
-  - Visual representation of architectural decisions
-  - Could become a key portfolio differentiator
-- [ ] Improve blog post styling
-  - Better typography rhythm
-  - Enhanced code block styling (maybe add copy button, line numbers)
-  - Pull quotes or callouts for emphasis
-- [ ] Add footer with persistent contact links
-- [ ] RSS feed for blog posts
-- [ ] Dark/light mode toggle (or respect system preference)
+- [ ] Interactive quiz system with Supabase integration
+- [ ] MeekoBubble as database health indicator
+- [ ] Blog post previews on homepage
+- [ ] Improve blog post styling (typography, code blocks, copy button)
+- [ ] Dark/light mode toggle
+- [ ] RSS feed
 
 ### Content
 
-- [ ] Take screenshots of drewBrew project for case study
-- [ ] Write case study for drewBrew (problem, approach, tech decisions)
-- [ ] Document portfolio site itself as a case study
-- [ ] Consider adding more blog posts about:
-  - The router implementation deep-dive
-  - Design token system and why it matters
-  - CSS architecture decisions
+- [ ] Screenshots of drewBrew for case study
+- [ ] More blog posts: design token system, CSS architecture decisions
 
 ## Low Priority / Future
 
-### React Migration (when pain points emerge)
+### Performance
 
-- [ ] Identify specific pain points that justify React
-- [ ] Document pre-migration state
-- [ ] Incremental migration plan
-- [ ] Blog post series about the migration process
-- [ ] Compare bundle sizes before/after
-
-### Backend & CMS (when content management becomes painful)
-
-- [ ] Set up Node/Express backend
-- [ ] PostgreSQL database for blog posts
-- [ ] Simple CMS for content management
-- [ ] Authentication for admin area
-- [ ] API endpoints for blog data
-
-### Performance & Optimization
-
-- [ ] Lazy load blog posts (only fetch when navigated to)
-- [ ] Image optimization pipeline
+- [ ] Image optimisation pipeline
 - [ ] Service worker for offline capability
-- [ ] Performance budgets and monitoring
 
 ### Testing
 
-- [ ] Unit tests for router
-- [ ] Integration tests for blog system
+- [ ] Unit tests for key components
 - [ ] E2E tests for critical user flows
-- [ ] Visual regression testing
 
-### Analytics & SEO
+### Analytics and SEO
 
-- [ ] Add privacy-respecting analytics (Plausible/Fathom)
-- [ ] Improve SEO metadata (Open Graph, Twitter Cards)
+- [ ] Privacy-respecting analytics (Plausible/Fathom)
 - [ ] Sitemap generation
-- [ ] Structured data for blog posts
 
 ## Ideas / Maybe
 
-- [ ] Add a "Now" page (what I'm currently working on/learning)
-- [ ] Code playground/sandbox for demonstrating concepts
-- [ ] Interactive demos embedded in blog posts
-- [ ] Newsletter signup for new blog posts
-- [ ] Search functionality for blog posts
-- [ ] Tags/categories filtering for blog posts
+- [ ] "Now" page (what I'm currently working on)
+- [ ] Interactive evolution timeline
+- [ ] Search for blog posts
+- [ ] Estimated reading time on blog posts
+- [ ] Table of contents for long posts
 - [ ] Related posts suggestions
-- [ ] Estimated reading time for blog posts
-- [ ] Table of contents for long blog posts
-- [ ] Bookmark/save functionality (localStorage)
-- [ ] Print stylesheet for blog posts
 
-## Completed ✅
+## Completed
 
 - [x] Set up Vite build system
-- [x] Add ESLint and Prettier
-- [x] Integrate syntax highlighting (highlight.js)
+- [x] ESLint and Prettier
+- [x] Syntax highlighting (highlight.js + custom Meeko theme)
 - [x] Deploy to Cloudflare Pages
-- [x] Buy and configure custom domain (drewbs.dev)
-- [x] Create About page for CV content
-- [x] Restructure homepage to lead with projects
-- [x] Fix production build issues (publicDir configuration)
-- [x] Write initial blog posts documenting build process
-
----
-
-**Note:** This list is intentionally aspirational. Not everything will get built. The goal is to capture ideas and prioritize based on real needs, not build features for the sake of it.
+- [x] Custom domain (drewbs.dev)
+- [x] About page
+- [x] React migration
+- [x] React Router (replacing hash-based routing)
+- [x] Mermaid diagram integration
+- [x] MeekoBubble component
+- [x] drewBrew architecture case study
+- [x] Blog posts documenting build process
+- [x] Fix production build issues
