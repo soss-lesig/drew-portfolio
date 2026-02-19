@@ -3,6 +3,20 @@
 
 export const posts = [
   {
+    slug: "why-i-migrated-to-react",
+    title: "Why I migrated to React (and why I waited)",
+    subtitle: "On engineering judgement, deliberate constraints, and knowing when a tool has earned its place",
+    date: "2026-02-18T10:00:00",
+    tags: ["react", "architecture", "engineering-judgement", "vanilla-js", "portfolio"],
+  },
+  {
+    slug: "migrating-vanilla-js-to-react",
+    title: "Migrating from vanilla JS to React: a complete walkthrough",
+    subtitle: "Every decision, every file, and what each React primitive actually replaced",
+    date: "2026-02-18T11:00:00",
+    tags: ["react", "javascript", "routing", "components", "hooks", "migration", "architecture"],
+  },
+  {
     slug: "building-a-cv-site-properly",
     title: "Building a CV site properly",
     subtitle: "and why I didn't start with React",
@@ -76,7 +90,7 @@ export const posts = [
     tags: ["css", "refactoring", "ux"],
   },
   {
-    slug: "post-09",
+    slug: "making-invisible-work-visible",
     title: "Making invisible work visible: The drewBrew case study",
     subtitle: "Architecture exercises are worthless if no one can see them",
     date: "2025-02-16T14:00:00",
