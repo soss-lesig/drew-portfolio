@@ -300,12 +300,15 @@ section:first-of-type {
 
 .about,
 .skills,
-.experience,
-.projects {
+.experience {
   background: var(--surface);
   padding: var(--space-6);
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+.projects {
   margin-bottom: var(--space-6);
 }
 
@@ -322,7 +325,7 @@ section:first-of-type {
   padding: var(--space-6);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-3);
   min-height: 400px;
 }
 
@@ -369,9 +372,10 @@ section:first-of-type {
    Intro Text Section
    ========================================================================= */
 .intro-text {
-  padding: var(--space-6) var(--space-4);
-  margin-bottom: var(--space-2);
+  padding: var(--space-4) var(--space-4);
+  margin-bottom: var(--space-6);
   font-weight: 450;
+  text-align: center;
 }
 
 .intro-text p {

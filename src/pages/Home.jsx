@@ -1,4 +1,43 @@
 import { Link } from "react-router-dom";
+import { ProjectCard } from "../components/Card";
+
+const projects = [
+  {
+    projectTitle: "This portfolio site",
+    projectDescription:
+      "A deliberately engineered portfolio that evolved from vanilla HTML/CSS/JS to modern tooling as real constraints emerged. Built to document feature-driven architectural decisions.",
+    projectBullets: [
+      "Vanilla HTML/CSS/JS foundations, migrated to React as real pain points emerged",
+      "React Router replacing custom hash-based routing",
+      "Client-side markdown blog system with custom syntax highlighting",
+      "Full Git history and blog series documenting every architectural decision",
+    ],
+    projectLinks: [
+      {
+        label: "View source",
+        href: "https://github.com/soss-lesig/drew-portfolio",
+        external: true,
+      },
+      { label: "Read the blog", href: "/blog", external: false },
+    ],
+    projectImage: "/images/meeks.jpg",
+  },
+  {
+    projectTitle: "drewBrew",
+    projectDescription:
+      "A coffee tracking system designed architecture-first - starting from validated business requirements and working backwards to data modelling, application structure, and a planned analytics pipeline.",
+    projectBullets: [
+      "PostgreSQL + Prisma ORM with hybrid relational + JSONB schema",
+      "Architecture validated against real user needs with a competitive barista",
+      "Designed analytics pipeline (BeanSights) for brewing pattern insights",
+      "Modular Node/TypeScript backend and Next.js frontend planned and documented",
+    ],
+    projectLinks: [
+      { label: "Read the case study", href: "/drewbrew", external: false },
+    ],
+    projectImage: "/images/meeks.jpg",
+  },
+];
 
 export default function Home() {
   return (
@@ -37,43 +76,13 @@ export default function Home() {
         </p>
 
         <div className="project-grid">
-          <article className="project-card">
-            <h4>This portfolio site</h4>
-            <p>
-              A deliberately engineered portfolio that evolved from vanilla
-              HTML/CSS/JS to modern tooling as real constraints emerged. Built
-              to document feature-driven architectural decisions.
-            </p>
-            <ul>
-              <li>Vanilla HTML/CSS/JS foundations, migrated to React as real pain points emerged</li>
-              <li>React Router replacing custom hash-based routing</li>
-              <li>Client-side markdown blog system with custom syntax highlighting</li>
-              <li>Full Git history and blog series documenting every architectural decision</li>
-            </ul>
-            <p className="project-links">
-              <a href="https://github.com/soss-lesig/drew-portfolio">
-                View source
-              </a>
-              <Link to="/blog">Read the blog</Link>
-            </p>
-          </article>
-          <article className="project-card">
-            <h4>drewBrew</h4>
-            <p>
-              A coffee tracking system designed architecture-first - starting
-              from validated business requirements and working backwards to data
-              modelling, application structure, and a planned analytics pipeline.
-            </p>
-            <ul>
-              <li>PostgreSQL + Prisma ORM with hybrid relational + JSONB schema</li>
-              <li>Architecture validated against real user needs with a competitive barista</li>
-              <li>Designed analytics pipeline (BeanSights) for brewing pattern insights</li>
-              <li>Modular Node/TypeScript backend and Next.js frontend planned and documented</li>
-            </ul>
-            <p className="project-links">
-              <Link to="/drewbrew">Read the case study</Link>
-            </p>
-          </article>
+          {projects.map((project, i) => (
+            <ProjectCard
+              key={project.projectTitle}
+              {...project}
+              imagePosition={i % 2 === 0 ? "right" : "left"}
+            />
+          ))}
         </div>
       </section>
     </>

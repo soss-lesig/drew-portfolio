@@ -1,0 +1,93 @@
+.projectCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.projectLayout {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0;
+  min-height: 400px;
+}
+
+.imageLeft {
+  flex-direction: row;
+}
+
+.projectImage {
+  flex: 0 0 330px;
+  width: 330px;
+  min-height: 330px;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+.projectImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.projectContent {
+  flex: 1;
+  padding: var(--space-6);
+}
+
+.projectContent h4 {
+  margin: 0 0 var(--space-4);
+  display: inline-block;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+}
+
+.projectContent p {
+  margin: 0 0 var(--space-4);
+}
+
+.projectContent ul {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+
+.projectContent ul li {
+  margin-bottom: var(--space-2);
+}
+
+.projectLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.projectLinks a {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.projectLinks a:hover,
+.projectLinks a:focus {
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .projectLayout {
+    flex-direction: column;
+  }
+
+  .projectImage {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 200px;
+  }
+}
