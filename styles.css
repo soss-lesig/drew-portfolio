@@ -459,7 +459,7 @@ section:first-of-type {
    ========================================================================= */
 
 .contact-page {
-  max-width: 800px;
+  max-width: var(--max-width);
   margin: 0 auto;
 }
 
@@ -817,13 +817,33 @@ footer p {
   border-color: transparent var(--bg) transparent transparent;
 }
 
+/* =========================================================================
+   Responsive Adjustments
+   ========================================================================= */
+
 @media (max-width: 480px) {
-  .header-portrait-group {
-    flex-direction: column;
+  main {
+    width: 100%;
+    padding: var(--space-4);
+    margin: 0;
   }
 
-  .speech-bubble {
-    max-width: 100%;
+  .header-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .site-nav {
+    width: 100%;
+    padding-bottom: var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .header-portrait-group {
+    flex-direction: column;
+    align-items: center;
   }
 
   .speech-bubble::before,
