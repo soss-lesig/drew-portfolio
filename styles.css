@@ -298,7 +298,6 @@ section:first-of-type {
    Portfolio/Home Sections
    ========================================================================= */
 
-.intro,
 .about,
 .skills,
 .experience,
@@ -364,6 +363,25 @@ section:first-of-type {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--border);
+}
+
+/* =========================================================================
+   Intro Text Section
+   ========================================================================= */
+.intro-text {
+  padding: var(--space-6) var(--space-4);
+  margin-bottom: var(--space-2);
+  font-weight: 450;
+}
+
+.intro-text p {
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  margin-bottom: var(--space-3);
+}
+
+.intro-text p:last-child {
+  margin-bottom: 0;
 }
 /* =========================================================================
    Project Cards

@@ -18,7 +18,7 @@ export default function Home() {
           <img src="/images/meeks.jpg" alt="Meeks the site mascot" />
         </div>
       </section>
-      <section className="intro">
+      <section className="intro-text">
         <p>
           Building web applications with JavaScript, React, and pragmatic
           technical decisions.
