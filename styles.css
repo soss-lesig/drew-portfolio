@@ -451,6 +451,27 @@ section:first-of-type {
 }
 
 /* =========================================================================
+   Blog Post Inline Links
+   ========================================================================= */
+
+.post-content a {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: hsl(var(--accent-h) var(--accent-s) 90%);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.post-content a:hover,
+.post-content a:focus {
+  color: var(--accent);
+}
+
+/* =========================================================================
    Blog Post Images
    ========================================================================= */
 

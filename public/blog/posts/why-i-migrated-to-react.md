@@ -6,6 +6,7 @@ tags: [react, architecture, engineering-judgement, vanilla-js, portfolio]
 ---
 
 Post 10 ended with a single line: "Starting a `react-migration` branch is the next commit.", or something to that affect.
+
 ## The original decision
 
 When I started this portfolio, I made a deliberate choice not to use React. Not because I don't know it - I shipped production React at Flutter - but because I wanted the site to demonstrate something more nuanced than framework familiarity.
@@ -41,6 +42,7 @@ The story is: I understood the fundamentals before reaching for abstractions. I 
 That's demonstrably more useful to me than "I initialised a Vite React project."
 
 The vanilla-first approach also created genuine documentation. The blog posts explaining the hash router, the `innerHTML` swapping, the frontmatter parser - those are case studies in understanding web fundamentals. The migration post gets to reference all of that as the "before" state.
+
 ## What the migration enables
 
 Beyond fixing the routing problems, the React migration unblocks the whole next phase of the site:
@@ -61,4 +63,4 @@ The narrative about "deliberate constraints" and "earning the migration" while t
 
 The right reasons were there. The migration happened.
 
-The technical details of how it went are in the next post, and can be found [next post](/blog/migrating-vanilla-js-to-react)
+The technical details of how it went are in the next post, and can be found [here!](/blog/migrating-vanilla-js-to-react)
