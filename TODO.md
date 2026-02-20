@@ -56,6 +56,7 @@
 
 - [ ] Privacy-respecting analytics (Plausible/Fathom)
 - [ ] Sitemap generation
+- [ ] Lighthouse report storage strategy - decide between separate GitHub repo or gists for storing/sharing HTML reports without bundling into site build
 
 ## Ideas / Maybe
 
