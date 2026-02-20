@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "componentising-the-portfolio",
+    title: "Componentising the portfolio: CSS Modules and a reusable ProjectCard",
+    subtitle: "Building a scoped card system, fixing content drift, and earning the component architecture React promised",
+    date: "2026-02-19T10:00:00",
+    tags: ["react", "css-modules", "components", "refactoring", "portfolio"],
+  },
+  {
     slug: "why-i-migrated-to-react",
     title: "Why I migrated to React (and why I waited)",
     subtitle: "On engineering judgement, deliberate constraints, and knowing when a tool has earned its place",
