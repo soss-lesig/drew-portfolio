@@ -7,6 +7,11 @@ export default function useScrollReveal(options = {}) {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.classList.add("revealed");
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
