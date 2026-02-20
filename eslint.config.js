@@ -12,6 +12,7 @@ export default [
         document: "readonly",
         console: "readonly",
         fetch: "readonly",
+        IntersectionObserver: "readonly",
       },
     },
     rules: {

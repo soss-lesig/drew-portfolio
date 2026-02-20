@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Card from "./Card";
 import styles from "./ProjectCard.module.css";
+import useScrollReveal from "../../hooks/useScrollReveal.js";
 
 export default function ProjectCard({
   projectTitle,
@@ -10,8 +11,9 @@ export default function ProjectCard({
   projectImage,
   imagePosition = "right",
 }) {
+  const ref = useScrollReveal();
   return (
-    <Card as="article" className={styles.projectCard}>
+    <Card as="article" className={styles.projectCard} ref={ref}>
       <div
         className={`${styles.projectLayout} ${imagePosition === "left" ? styles.imageLeft : ""}`}
       >

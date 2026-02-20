@@ -1,10 +1,19 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* =========================================================================
    CSS Custom Properties (Design Tokens)
    ========================================================================= */
 
 :root {
   /* Colours */
-  --bg: hsl(40 13% 92%);
+  --bg: hsl(40 13% 97%);
   --surface: hsl(40 13% 87%);
   --text: hsl(240 6% 3%);
   --muted: hsl(340 17% 35%);
@@ -29,6 +38,9 @@
   --radius: 14px;
   --max-width: 1100px;
   --line: 1.6;
+
+  /* Animation */
+  --animation-delay: 0.4s;
 
   /* Clamp function for fluid typography */
   --fs-body: clamp(1rem, 0.95rem + 0.35vw, 1.125rem);
@@ -310,6 +322,8 @@ section:first-of-type {
 
 .projects {
   margin-bottom: var(--space-6);
+  animation: fadeIn 0.6s ease calc(var(--animation-delay) * 2) forwards;
+  opacity: 0;
 }
 
 /* =========================================================================
@@ -376,6 +390,8 @@ section:first-of-type {
   margin-bottom: var(--space-6);
   font-weight: 450;
   text-align: center;
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
 }
 
 .intro-text p {
@@ -823,6 +839,9 @@ footer p {
   align-items: center;
 }
 
+/* TODO: when wiring Supabase, account for the 0.4s bubble animation delay
+ before swapping loading state - crossfade the text rather than a hard swap */
+
 .speech-bubble {
   position: relative;
   background: var(--bg);
@@ -833,6 +852,8 @@ footer p {
   font-weight: 600;
   max-width: 180px;
   line-height: 1.4;
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
 }
 
 .speech-bubble p {
@@ -910,4 +931,26 @@ footer p {
     border-style: solid;
     border-color: transparent transparent var(--bg) transparent;
   }
+}
+
+/* =========================================================================
+   Scroll Reveal Animation
+   ========================================================================= */
+
+.project-grid > * {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.project-grid > *.revealed {
+  opacity: 1;
+}
+
+/* =========================================================================
+   Hero Fade In
+   ========================================================================= */
+
+.hero {
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
 }

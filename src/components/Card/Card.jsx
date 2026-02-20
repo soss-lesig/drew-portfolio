@@ -1,5 +1,15 @@
+import { forwardRef } from "react";
 import styles from "./Card.module.css";
 
-export default function Card({ children, as: Tag = "div", className = "" }) {
-  return <Tag className={`${styles.card} ${className}`.trim()}>{children}</Tag>;
-}
+const Card = forwardRef(function Card(
+  { children, as: Tag = "div", className = "" },
+  ref
+) {
+  return (
+    <Tag ref={ref} className={`${styles.card} ${className}`.trim()}>
+      {children}
+    </Tag>
+  );
+});
+
+export default Card;
