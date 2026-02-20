@@ -60,6 +60,8 @@
 
 ## Ideas / Maybe
 
+- [ ] Create `drewbs-ui` public repo -- extract `useScrollReveal`, design tokens (`tokens.css`), `parseFrontmatter` util, and speech bubble CSS pattern as a reusable starter kit
+
 - [ ] "Now" page (what I'm currently working on)
 - [ ] Interactive evolution timeline
 - [ ] Search for blog posts
