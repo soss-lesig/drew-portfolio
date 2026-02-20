@@ -31,7 +31,7 @@ export default function MeekoBubble() {
   return (
     <div className="meeko-bubble-wrapper">
       <div className="speech-bubble">
-        <p>{quote}</p>
+        <p>"{quote}"</p>
       </div>
     </div>
   );

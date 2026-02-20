@@ -889,8 +889,25 @@ footer p {
     align-items: center;
   }
 
-  .speech-bubble::before,
+  .speech-bubble::before {
+    content: "";
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 6px 13px 6px;
+    border-style: solid;
+    border-color: transparent transparent var(--border) transparent;
+  }
+
   .speech-bubble::after {
-    display: none;
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 5px 11px 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--bg) transparent;
   }
 }
