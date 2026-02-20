@@ -16,8 +16,12 @@ export default function BlogIndex() {
       </header>
 
       <div className="posts-list">
-        {posts.map((post) => (
-          <article key={post.slug} className="post-preview">
+        {posts.map((post, i) => (
+          <article
+            key={post.slug}
+            className="post-preview"
+            style={{ animationDelay: `calc(var(--animation-delay) + ${i * 0.3}s)` }}
+          >
             <h2>
               <Link to={`/blog/${post.slug}`}>{post.title}</Link>
             </h2>

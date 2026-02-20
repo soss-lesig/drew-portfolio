@@ -1,8 +1,24 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import hljs from "highlight.js";
+import useScrollReveal from "../hooks/useScrollReveal.js";
 
 export default function DrewBrew() {
+  const refOverview = useScrollReveal();
+  const refProblem = useScrollReveal();
+  const refVision = useScrollReveal();
+  const refBusiness = useScrollReveal();
+  const refData = useScrollReveal();
+  const refApp = useScrollReveal();
+  const refTech = useScrollReveal();
+  const refFuture = useScrollReveal();
+  const refDecisions = useScrollReveal();
+  const refDiagrams = useScrollReveal();
+  const refLearned = useScrollReveal();
+  const refStatus = useScrollReveal();
+  const refTechnologies = useScrollReveal();
+  const refWhy = useScrollReveal();
+
   useEffect(() => {
     async function initMermaid() {
       const mermaid = (await import("mermaid")).default;
@@ -45,7 +61,7 @@ export default function DrewBrew() {
         </p>
       </header>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refOverview}>
         <h2>Overview</h2>
         <p>
           drewBrew is a coffee tracking system designed to help specialty coffee
@@ -68,7 +84,7 @@ export default function DrewBrew() {
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refProblem}>
         <h2>The Problem</h2>
         <p>
           Specialty coffee brewing is deceptively complex. Variables like bean
@@ -88,7 +104,7 @@ export default function DrewBrew() {
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refVision}>
         <h2>Architecture Vision</h2>
         <p>I approached this like an enterprise architecture problem:</p>
         <p>
@@ -126,7 +142,7 @@ export default function DrewBrew() {
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refBusiness}>
         <h2>Business Architecture</h2>
         <p>
           I validated requirements with a competitive barista at a Leeds
@@ -157,7 +173,7 @@ export default function DrewBrew() {
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refData}>
         <h2>
           Data Architecture{" "}
           <span className="implemented-badge">Implemented</span>
@@ -251,7 +267,7 @@ brews → gear (many-to-many)`}</code>
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refApp}>
         <h2>
           Application Architecture{" "}
           <span className="designed-badge">Designed</span>
@@ -314,7 +330,7 @@ brews → gear (many-to-many)`}</code>
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refTech}>
         <h2>
           Technology Architecture{" "}
           <span className="designed-badge">Designed</span>
@@ -358,7 +374,7 @@ brews → gear (many-to-many)`}</code>
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refFuture}>
         <h2>Future State: BeanSights Analytics</h2>
         <p>This is where the architecture really shows its value.</p>
         <p>
@@ -423,7 +439,7 @@ flowchart TB
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refDecisions}>
         <h2>Technical Decisions &amp; Trade-Offs</h2>
 
         <h3>Why PostgreSQL + JSONB over Pure NoSQL?</h3>
@@ -474,7 +490,7 @@ flowchart TB
         </ul>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refDiagrams}>
         <h2>System Diagrams</h2>
 
         <h3>High-Level Architecture</h3>
@@ -541,7 +557,7 @@ classDiagram
         `}</div>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refLearned}>
         <h2>What I Learned</h2>
         <p>
           This project taught me that{" "}
@@ -584,7 +600,7 @@ classDiagram
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refStatus}>
         <h2>Current Status</h2>
         <p>
           <strong>Implemented:</strong>
@@ -622,7 +638,7 @@ classDiagram
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refTechnologies}>
         <h2>Technologies</h2>
         <p>
           <strong>Database:</strong> PostgreSQL, Prisma ORM
@@ -639,7 +655,7 @@ classDiagram
         </p>
       </section>
 
-      <section className="drewbrew-section">
+      <section className="drewbrew-section" ref={refWhy}>
         <h2>Why This Matters</h2>
         <p>This project demonstrates:</p>
         <ul>
