@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "ssg-react-router-v7-refactor",
+    title: "SSG, React Router v7, and an unexpected refactor",
+    subtitle: "Looking for a quick win, finding a better long-term answer",
+    date: "2026-02-21T15:00:00",
+    tags: ["ssg", "react", "react-router", "typescript", "architecture", "engineering-judgement", "portfolio"],
+  },
+  {
     slug: "two-approaches-to-animation",
     title: "Two approaches to animation: CSS keyframes vs IntersectionObserver",
     subtitle: "When pure CSS is enough, when it isn't, and what the difference teaches you about React hooks",
