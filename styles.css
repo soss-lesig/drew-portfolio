@@ -337,9 +337,15 @@ section:first-of-type {
   opacity: 0;
 }
 
-.about-page .about { animation-delay: calc(var(--animation-delay) + 0.3s); }
-.about-page .skills { animation-delay: calc(var(--animation-delay) + 0.6s); }
-.about-page .experience { animation-delay: calc(var(--animation-delay) + 0.9s); }
+.about-page .about {
+  animation-delay: calc(var(--animation-delay) + 0.3s);
+}
+.about-page .skills {
+  animation-delay: calc(var(--animation-delay) + 0.6s);
+}
+.about-page .experience {
+  animation-delay: calc(var(--animation-delay) + 0.9s);
+}
 
 .projects {
   margin-bottom: var(--space-6);
@@ -577,10 +583,18 @@ section:first-of-type {
   opacity: 0;
 }
 
-.contact-page .contact-method:nth-child(1) { animation-delay: calc(var(--animation-delay) + 0.3s); }
-.contact-page .contact-method:nth-child(2) { animation-delay: calc(var(--animation-delay) + 0.6s); }
-.contact-page .contact-method:nth-child(3) { animation-delay: calc(var(--animation-delay) + 0.9s); }
-.contact-page .contact-method:nth-child(4) { animation-delay: calc(var(--animation-delay) + 1.2s); }
+.contact-page .contact-method:nth-child(1) {
+  animation-delay: calc(var(--animation-delay) + 0.3s);
+}
+.contact-page .contact-method:nth-child(2) {
+  animation-delay: calc(var(--animation-delay) + 0.6s);
+}
+.contact-page .contact-method:nth-child(3) {
+  animation-delay: calc(var(--animation-delay) + 0.9s);
+}
+.contact-page .contact-method:nth-child(4) {
+  animation-delay: calc(var(--animation-delay) + 1.2s);
+}
 
 .contact-page .contact-footer {
   animation: fadeIn 0.6s ease calc(var(--animation-delay) + 1.5s) forwards;
@@ -929,7 +943,10 @@ footer p {
   padding: var(--space-2) var(--space-3);
   font-size: 0.8rem;
   font-weight: 600;
-  max-width: 180px;
+  width: 180px;
+  height: 80px;
+  display: flex;
+  align-items: flex-start;
   line-height: 1.4;
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
@@ -958,6 +975,19 @@ footer p {
   border-width: 5px 11px 5px 0;
   border-style: solid;
   border-color: transparent var(--bg) transparent transparent;
+}
+
+.thinking-dots {
+  animation: pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* =========================================================================
