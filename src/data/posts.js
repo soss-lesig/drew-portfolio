@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "two-approaches-to-animation",
+    title: "Two approaches to animation: CSS keyframes vs IntersectionObserver",
+    subtitle: "When pure CSS is enough, when it isn't, and what the difference teaches you about React hooks",
+    date: "2026-02-20T10:00:00",
+    tags: ["css", "animation", "react", "hooks", "intersection-observer", "javascript"],
+  },
+  {
     slug: "componentising-the-portfolio",
     title: "Componentising the portfolio: CSS Modules and a reusable ProjectCard",
     subtitle: "Building a scoped card system, fixing content drift, and earning the component architecture React promised",
