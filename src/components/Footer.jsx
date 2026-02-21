@@ -1,3 +1,5 @@
+import CommitBanner from "./CommitBanner";
+
 export default function Footer() {
   return (
     <footer>
@@ -60,6 +62,9 @@ export default function Footer() {
             <polyline points="22,6 12,13 2,6"></polyline>
           </svg>
         </a>
+      </div>
+      <div className="footer-commit">
+        <CommitBanner />
       </div>
       <p>&copy; 2026 d r e w b s. All rights reserved.</p>
     </footer>

@@ -944,7 +944,7 @@ footer p {
   font-size: 0.8rem;
   font-weight: 600;
   width: 180px;
-  height: 80px;
+  height: 100px;
   display: flex;
   align-items: flex-start;
   line-height: 1.4;
@@ -975,6 +975,78 @@ footer p {
   border-width: 5px 11px 5px 0;
   border-style: solid;
   border-color: transparent var(--bg) transparent transparent;
+}
+
+/* =========================================================================
+   Commit Banner
+   ========================================================================= */
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+.commit-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  transition: color 0.2s ease;
+  max-width: 420px;
+}
+
+.commit-banner:hover {
+  color: var(--accent);
+}
+
+.footer-commit {
+  display: none;
+  margin-bottom: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .commit-banner {
+    display: none;
+  }
+
+  .footer-commit {
+    display: flex;
+    justify-content: center;
+  }
+
+  .footer-commit .commit-banner {
+    display: flex;
+  }
+}
+
+.commit-label {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.commit-hash {
+  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.commit-divider {
+  flex-shrink: 0;
+}
+
+.commit-message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .thinking-dots {
