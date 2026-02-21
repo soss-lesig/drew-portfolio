@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "small-components-real-decisions",
+    title: "Small components, real decisions: typewriter effects, API calls, and knowing when to fix your CSS",
+    subtitle: "Three small features that taught three distinct lessons about React, browser APIs, and pragmatic CSS",
+    date: "2026-02-21T16:00:00",
+    tags: ["react", "javascript", "css", "hooks", "api", "portfolio", "meeko"],
+  },
+  {
     slug: "ssg-react-router-v7-refactor",
     title: "SSG, React Router v7, and an unexpected refactor",
     subtitle: "Looking for a quick win, finding a better long-term answer",
