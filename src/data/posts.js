@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "css-modular-architecture",
+    title: "CSS doesn't have to be a mess",
+    subtitle: "How splitting one unwieldy stylesheet into a proper module system made everything easier to work with",
+    date: "2026-02-24T10:00:00",
+    tags: ["css", "refactor", "architecture", "portfolio", "javascript"],
+  },
+  {
     slug: "small-components-real-decisions",
     title: "Small components, real decisions: typewriter effects, API calls, and knowing when to fix your CSS",
     subtitle: "Three small features that taught three distinct lessons about React, browser APIs, and pragmatic CSS",
