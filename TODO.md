@@ -67,6 +67,7 @@
 - [ ] Estimated reading time on blog posts
 - [ ] Table of contents for long posts (especially DrewBrew)
 - [ ] Related posts suggestions
+- [ ] Leitner system for quiz questions
 
 ## Completed
 
