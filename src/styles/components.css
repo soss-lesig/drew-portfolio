@@ -1,0 +1,218 @@
+/* =========================================================================
+   Components
+   Reusable UI pieces not tied to any specific page.
+   ========================================================================= */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.tag {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+}
+
+.page-header {
+  background: var(--surface);
+  padding: var(--space-6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.page-header h1 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-h3);
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.back-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+  display: inline-block;
+  margin-bottom: var(--space-3);
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.project-links a {
+  margin: 0;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.project-links a:visited {
+  color: var(--text);
+}
+
+.project-links a:hover,
+.project-links a:focus {
+  color: var(--accent);
+}
+
+.project-status {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.meeko-bubble-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* TODO: when wiring Supabase, account for the 0.4s bubble animation delay
+   before swapping loading state - crossfade the text rather than a hard swap */
+
+.speech-bubble {
+  position: relative;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: 180px;
+  height: 100px;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.4;
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
+}
+
+.speech-bubble p {
+  margin: 0;
+}
+
+.speech-bubble::before {
+  content: "";
+  position: absolute;
+  left: -13px;
+  top: 14px;
+  border-width: 6px 13px 6px 0;
+  border-style: solid;
+  border-color: transparent var(--border) transparent transparent;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 15px;
+  border-width: 5px 11px 5px 0;
+  border-style: solid;
+  border-color: transparent var(--bg) transparent transparent;
+}
+
+@media (max-width: 480px) {
+  .speech-bubble::before {
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 6px 13px 6px;
+    border-color: transparent transparent var(--border) transparent;
+  }
+
+  .speech-bubble::after {
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 5px 11px 5px;
+    border-color: transparent transparent var(--bg) transparent;
+  }
+}
+
+.commit-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: inherit;
+  padding: var(--space-1) 0;
+  transition: color 0.2s ease;
+}
+
+.commit-banner::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+
+.commit-banner:hover {
+  color: var(--accent);
+}
+.commit-banner:hover::after {
+  width: 100%;
+}
+
+.commit-hash {
+  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+  color: var(--accent);
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.commit-message {
+  color: var(--muted);
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.nav-divider {
+  color: var(--muted);
+  user-select: none;
+  font-weight: 300;
+  opacity: 0.4;
+}
+
+.thinking-dots {
+  animation: pulse 0.8s ease-in-out infinite alternate;
+}

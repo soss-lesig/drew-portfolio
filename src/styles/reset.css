@@ -1,0 +1,108 @@
+/* =========================================================================
+   Reset & Base Styles
+   Targets bare HTML elements only. No classes.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    "Jost Variable",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--line);
+  -webkit-font-smoothing: antialiased;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  margin: 0 0 var(--space-4);
+}
+
+h4 {
+  font-size: var(--fs-h4);
+  margin: 0 0 var(--space-2);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:visited {
+  color: inherit;
+}
+a:hover {
+  color: inherit;
+}
+a:active {
+  color: inherit;
+}
+
+pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  overflow-x: auto;
+  margin: var(--space-4) 0;
+  font-size: 0.875rem;
+}
+
+code {
+  font-family:
+    "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New",
+    monospace;
+  font-size: 0.875rem;
+}
+
+pre code {
+  color: var(--text);
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+@media (max-width: 600px) {
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

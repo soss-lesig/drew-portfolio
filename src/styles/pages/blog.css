@@ -1,0 +1,62 @@
+/* =========================================================================
+   Blog Index
+   ========================================================================= */
+
+.blog-header {
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
+}
+
+.posts-list .post-preview {
+  animation: fadeIn 0.6s ease both;
+  opacity: 0;
+}
+
+.post-preview {
+  background: var(--surface);
+  padding: var(--space-5);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+/* =========================================================================
+   Blog Post
+   ========================================================================= */
+
+.post-header {
+  animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
+}
+
+.post-content {
+  animation: fadeIn 0.6s ease calc(var(--animation-delay) * 2) forwards;
+  opacity: 0;
+}
+
+.post-content a {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: hsl(var(--accent-h) var(--accent-s) 90%);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.post-content a:hover,
+.post-content a:focus {
+  color: var(--accent);
+}
+
+.post-content img {
+  display: block;
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  margin: var(--space-5) auto;
+}

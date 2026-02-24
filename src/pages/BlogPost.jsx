@@ -5,6 +5,19 @@ import hljs from "highlight.js";
 import { getPostBySlug } from "../data/posts.js";
 import { formatDate, parseFrontmatter } from "../utils/helpers.js";
 
+marked.use({
+  renderer: {
+    code(token) {
+      const language = token.lang || "plaintext";
+      const validLang = hljs.getLanguage(language) ? language : "plaintext";
+      const highlighted = hljs.highlight(token.text, {
+        language: validLang,
+      }).value;
+      return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`;
+    },
+  },
+});
+
 export default function BlogPost() {
   const { slug } = useParams();
   const [content, setContent] = useState(null);
@@ -38,12 +51,6 @@ export default function BlogPost() {
 
     fetchPost();
   }, [slug]);
-
-  useEffect(() => {
-    if (content) {
-      hljs.highlightAll();
-    }
-  }, [content]);
 
   if (loading) return <div className="loading">Loading post...</div>;
   if (error)
