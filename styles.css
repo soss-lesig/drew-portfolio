@@ -23,11 +23,11 @@
 
 :root {
   /* Colours */
-  --bg: hsl(40 13% 97%);
-  --surface: hsl(40 13% 87%);
+  --bg: hsl(38 25% 92%);
+  --surface: hsl(40 30% 98%);
   --text: hsl(240 6% 3%);
   --muted: hsl(340 17% 35%);
-  --border: hsl(33 17% 20% / 0.15);
+  --border: hsl(33 30% 20% / 0.10);
   --accent-h: 340;
   --accent-s: 80%;
   --accent-l: 65%;
