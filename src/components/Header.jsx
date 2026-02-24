@@ -21,16 +21,15 @@ export default function Header() {
           </div>
           <MeekoBubble />
         </div>
-        <div className="nav-group">
+        <nav className="site-nav">
           <CommitBanner />
-          <nav className="site-nav">
-            <NavLink to="/" end>home.</NavLink>
-            <NavLink to="/blog">blog.</NavLink>
-            <NavLink to="/about">about.</NavLink>
-            <NavLink to="/drewbrew">drewbrew.</NavLink>
-            <NavLink to="/contact">contact.</NavLink>
-          </nav>
-        </div>
+          <span className="nav-divider">|</span>
+          <NavLink to="/" end>home.</NavLink>
+          <NavLink to="/blog">blog.</NavLink>
+          <NavLink to="/about">about.</NavLink>
+          <NavLink to="/drewbrew">drewbrew.</NavLink>
+          <NavLink to="/contact">contact.</NavLink>
+        </nav>
       </div>
     </header>
   );
