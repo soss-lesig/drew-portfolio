@@ -27,7 +27,7 @@
   --surface: hsl(40 30% 98%);
   --text: hsl(240 6% 3%);
   --muted: hsl(340 17% 35%);
-  --border: hsl(33 30% 20% / 0.10);
+  --border: hsl(33 30% 20% / 0.1);
   --accent-h: 340;
   --accent-s: 80%;
   --accent-l: 65%;
@@ -293,14 +293,25 @@ section:first-of-type {
 
 .site-nav a {
   margin: 0;
+  position: relative;
   color: var(--text);
   text-decoration: none;
   text-transform: lowercase;
-  transition: color 0.3s ease;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  padding: var(--space-2);
-  border-radius: var(--radius);
+  font-weight: 500;
+  padding: var(--space-1) 0;
+  transition: color 0.2s ease;
+}
+
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.25s ease;
 }
 
 .site-nav a:visited {
@@ -312,8 +323,17 @@ section:first-of-type {
   color: var(--accent);
 }
 
+.site-nav a:hover::after,
+.site-nav a:focus::after {
+  width: 100%;
+}
+
 .site-nav a.active {
   color: var(--accent);
+}
+
+.site-nav a.active::after {
+  width: 100%;
 }
 
 /* =========================================================================
