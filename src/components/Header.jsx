@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import MeekoBubble from "./MeekoBubble";
 import CommitBanner from "./CommitBanner";
 
@@ -24,11 +24,11 @@ export default function Header() {
         <div className="nav-group">
           <CommitBanner />
           <nav className="site-nav">
-            <Link to="/">home.</Link>
-            <Link to="/blog">blog.</Link>
-            <Link to="/about">about.</Link>
-            <Link to="/drewbrew">drewbrew.</Link>
-            <Link to="/contact">contact.</Link>
+            <NavLink to="/" end>home.</NavLink>
+            <NavLink to="/blog">blog.</NavLink>
+            <NavLink to="/about">about.</NavLink>
+            <NavLink to="/drewbrew">drewbrew.</NavLink>
+            <NavLink to="/contact">contact.</NavLink>
           </nav>
         </div>
       </div>
