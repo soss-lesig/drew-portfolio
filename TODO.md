@@ -32,7 +32,7 @@
 
 ### Refactoring
 
-- [ ] `styles.css` refactor - migrate component-specific styles into CSS Modules. Priority order: Header, BlogPost, Contact, DrewBrew
+
 - [ ] Blog index pagination or filtering if post count grows significantly
 
 ### Content
@@ -70,7 +70,7 @@
 - [ ] Leitner system for quiz questions
 
 ## Completed
-
+- [x] `styles.css` refactor - migrate component-specific styles into CSS Modules. Priority order: Header, BlogPost, Contact, DrewBrew
 - [x] Set up Vite build system
 - [x] ESLint and Prettier
 - [x] Syntax highlighting (highlight.js + custom Meeko theme)
