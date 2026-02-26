@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "meeko-speaks-from-the-database",
+    title: "Meeko speaks from the database now",
+    subtitle: "How I wired Supabase into the portfolio's MeekoBubble component, and everything that went wrong before it went right",
+    date: "2026-02-26T20:00:00",
+    tags: ["supabase", "postgresql", "react", "database", "portfolio", "javascript"],
+  },
+  {
     slug: "css-modular-architecture",
     title: "CSS doesn't have to be a mess",
     subtitle: "How splitting one unwieldy stylesheet into a proper module system made everything easier to work with",
