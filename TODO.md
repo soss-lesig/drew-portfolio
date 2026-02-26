@@ -24,6 +24,7 @@
 
 ### Features
 
+- [ ] **Admin panel** - protected `/admin` route with Supabase Auth (email/password). Needs: `ProtectedRoute` component checking auth state, login page, affirmations manager (add/toggle active), blog post manager (create/edit). Update RLS policies to allow authenticated writes. Research: `supabase.auth.signInWithPassword()`, `supabase.auth.onAuthStateChange()`, React Router `<Navigate>` for redirect
 - [ ] Interactive quiz system with Supabase integration
 - [ ] MeekoBubble dynamic quotes via Supabase (with crossfade on text swap - see comment in MeekoBubble.jsx)
 - [ ] Blog post previews on homepage
@@ -93,3 +94,5 @@
 - [x] Fade-in animations on About, Contact, DrewBrew, BlogPost pages
 - [x] prefers-reduced-motion support
 - [x] hello@drewbs.dev email routing via Cloudflare
+- [x] Supabase integration - drew_portfolio schema, meeko_affirmations table, RLS policies, MeekoBubble wired to live database
+- [x] Cloudflare Pages environment variables configured for Supabase credentials

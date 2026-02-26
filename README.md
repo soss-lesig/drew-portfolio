@@ -55,7 +55,24 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Component architecture with proper separation of concerns
 - Vite + React toolchain
 
-**Phase 6: React Router framework mode (planned)**
+**Phase 6: Supabase integration (February 2026)**
+
+- `drew_portfolio` schema with custom PostgreSQL permissions
+- `meeko_affirmations` table with RLS and public read policies
+- Supabase JS client wired into React via environment variables
+- MeekoBubble fetching live affirmations from database
+- Cloudflare Pages environment variables configured for production
+- Groundwork laid for admin panel and quiz system
+
+**Phase 7: Admin panel (planned)**
+
+- Supabase Auth with email/password login
+- Protected `/admin` route with `ProtectedRoute` component
+- Affirmations and blog post management UI
+- RLS policies extended for authenticated writes
+- Full-stack feature demonstrating security-first thinking
+
+**Phase 8: React Router framework mode (planned)**
 
 - Migration from declarative to framework mode
 - TypeScript adoption using generated route types
@@ -81,10 +98,16 @@ Each tool was added to solve a real, experienced pain point - not added preempti
 
 - Client-side markdown blog system
 - Syntax highlighting with custom Meeko theme
-- MeekoBubble component with developer affirmations
+- MeekoBubble component with live affirmations via Supabase
 - Design token system with HSL-based CSS custom properties
 - Responsive layout with fluid typography
 - Scroll reveal animations via IntersectionObserver
+
+**Database:**
+
+- Supabase (PostgreSQL) with `drew_portfolio` custom schema
+- Row Level Security on all tables
+- Supabase JS client with publishable key via environment variables
 
 **Content:**
 
@@ -112,6 +135,7 @@ Each tool was added to solve a real, experienced pain point - not added preempti
 
 - highlight.js with custom Meeko syntax theme
 - Mermaid for architecture diagrams
+- @supabase/supabase-js
 
 **Deployment:**
 
@@ -163,6 +187,10 @@ Documented in full on the blog. Short version: hash routing limitations, growing
 **Why React Router?**
 
 Proper URL handling without hash-based workarounds. Industry standard. Chosen in declarative mode initially to keep complexity low. Framework mode migration is planned as the next significant change.
+
+**Why Supabase over a custom backend?**
+
+The portfolio's architecture is frontend-only with no custom server. Supabase provides a hosted PostgreSQL database with a JavaScript client that talks directly from React, eliminating the need for a backend layer entirely. RLS policies enforce access control at the database level, making the security model robust without server-side code.
 
 **Why React Router framework mode next?**
 
