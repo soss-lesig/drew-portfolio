@@ -1,37 +1,12 @@
 import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
-const affirmations = [
-  // genuine
-  "you're more capable than you give yourself credit for.",
-  "every expert was once a beginner.",
-  "the fact you care this much means you're already good.",
-  "slow progress is still progress.",
-  "you've solved hard problems before. you'll solve this one.",
-  "being curious is a superpower.",
-  "it's okay not to know. it's not okay not to try.",
-  "rest is part of the process.",
-  "you don't have to figure it all out today.",
-  "asking for help is a skill, not a weakness.",
-  // dev humour
-  "meeko has reviewed your code. meeko is unimpressed. ship it anyway.",
-  "it worked on my machine.",
-  "undefined is not a function. but you are.",
-  'git commit -m "fixed it (no idea why)"',
-  "works in production. don't touch it.",
-  "the bug was a feature all along.",
-  "have you tried turning it off and on again?",
-  "the rubber duck said you're fine.",
-  "99 little bugs in the code...",
-  "to understand recursion, see: recursion.",
-];
-//TODO: swap for supabase fetch when ready
-
-const DOT_CYCLES = 3; // how many times ... loops before the quote appears
+const DOT_CYCLES = 2; // how many times ... loops before the quote appears
 const DOT_DELAY = 300;
 const CHAR_DELAY = 35;
 
 export default function MeekoBubble() {
-  const quote = affirmations[Math.floor(Math.random() * affirmations.length)];
+  const [quote, setQuote] = useState("");
   const [displayed, setDisplayed] = useState("");
   const [showQuote, setShowQuote] = useState(false);
 
@@ -60,8 +35,28 @@ export default function MeekoBubble() {
     return () => clearInterval(dotInterval);
   }, []);
 
+useEffect(() => {
+  async function fetchAffirmation() {
+    const {data, error} = await supabase
+    .schema("drew_portfolio")
+    .from("meeko_affirmations")
+    .select("text")
+    .eq("active", true);
+
+    if (error) {
+      console.error("Failed to fetch affirmation:", error);
+      setQuote("meeko tried to say something. the database said no. :(");
+    }
+
+    const random = data[Math.floor(Math.random() * data.length)];
+    setQuote(random.text);
+  }
+
+  fetchAffirmation();
+}, []);
+
   useEffect(() => {
-    if (!showQuote) return;
+    if (!showQuote || !quote) return;
     let i = 0;
 
     const interval = setInterval(() => {
