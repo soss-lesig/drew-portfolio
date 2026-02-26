@@ -12,6 +12,7 @@
 ### UX
 
 - [ ] **Back to top button** - floating, appears after scrolling ~1 viewport height, positioned bottom right. Critical UX missing on long pages (DrewBrew, blog posts). Needs a `useScrollPosition` hook + fixed positioned button in Layout so it applies everywhere automatically
+- [ ] **Sticky Header on scroll up/down** - better UX than above implementation
 
 ### Content
 
