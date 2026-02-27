@@ -4,6 +4,8 @@
 
 ### Technical
 
+- [ ] **Development database** - create a second Supabase project as a dev environment. Same schema and seed data. Vite switches between dev/prod via `import.meta.env.MODE`. Add `VITE_SUPABASE_URL_DEV` and `VITE_SUPABASE_ANON_KEY_DEV` to `.env`. Must be set up before the next feature that touches the database.
+
 - [ ] **React Router framework mode migration** - enables native SSG via `prerender()`, replaces declarative mode setup. See `drafts/framework-mode-migration-plan.md` in Obsidian for full plan
 - [ ] **TypeScript adoption** - migrate alongside framework mode, use generated route types throughout
 - [ ] **Static pre-rendering** - implemented via `react-router.config.ts` `prerender()` once framework mode migration is complete. Fixes SEO and crawlability
