@@ -216,3 +216,45 @@
 .thinking-dots {
   animation: pulse 0.8s ease-in-out infinite alternate;
 }
+
+/* =========================================================================
+   Toast Notifications
+   ========================================================================= */
+
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 1000;
+}
+
+.toast {
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius);
+  font-size: var(--fs-body);
+  color: var(--surface);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.15);
+  animation: toast-in 0.25s ease forwards;
+}
+
+.toast--success {
+  background: hsl(145 55% 40%);
+}
+
+.toast--error {
+  background: hsl(0 65% 50%);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
