@@ -6,6 +6,7 @@ import BlogPost from "./pages/BlogPost.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import DrewBrew from "./pages/DrewBrew.jsx";
+import Login from "./pages/Login.jsx";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="drewbrew" element={<DrewBrew />} />
+          <Route path="admin" element={<Login />} />
         </Route>
       </Routes>
     </BrowserRouter>

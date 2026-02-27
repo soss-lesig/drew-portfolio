@@ -35,25 +35,26 @@ export default function MeekoBubble() {
     return () => clearInterval(dotInterval);
   }, []);
 
-useEffect(() => {
-  async function fetchAffirmation() {
-    const {data, error} = await supabase
-    .schema("drew_portfolio")
-    .from("meeko_affirmations")
-    .select("text")
-    .eq("active", true);
+  useEffect(() => {
+    async function fetchAffirmation() {
+      const { data, error } = await supabase
+        .schema("drew_portfolio")
+        .from("meeko_affirmations")
+        .select("text")
+        .eq("active", true);
 
-    if (error) {
-      console.error("Failed to fetch affirmation:", error);
-      setQuote("meeko tried to say something. the database said no. :(");
+      if (error) {
+        console.error("Failed to fetch affirmation:", error);
+        setQuote("meeko tried to say something. the database said no. :(");
+        return;
+      }
+
+      const random = data[Math.floor(Math.random() * data.length)];
+      setQuote(random.text);
     }
 
-    const random = data[Math.floor(Math.random() * data.length)];
-    setQuote(random.text);
-  }
-
-  fetchAffirmation();
-}, []);
+    fetchAffirmation();
+  }, []);
 
   useEffect(() => {
     if (!showQuote || !quote) return;
