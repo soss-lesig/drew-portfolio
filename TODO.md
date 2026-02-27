@@ -22,6 +22,7 @@
 - [ ] Add contact links (GitHub, LinkedIn) to About page
 - [ ] Add visual proof elements to project cards
 - [ ] Strengthen homepage hero with clearer value proposition
+- [ ] Remove github most recent commit link from footer in mobile view
 
 ## Medium Priority
 
