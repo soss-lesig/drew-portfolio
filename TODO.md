@@ -25,7 +25,9 @@
 
 ### Features
 
-- [ ] **Admin panel** - protected `/admin` route with Supabase Auth (email/password). Needs: `ProtectedRoute` component checking auth state, login page, affirmations manager (add/toggle active), blog post manager (create/edit). Update RLS policies to allow authenticated writes. Research: `supabase.auth.signInWithPassword()`, `supabase.auth.onAuthStateChange()`, React Router `<Navigate>` for redirect
+- [ ] **Admin role architecture** - migrate RLS write policies from blunt `authenticated` role to explicit admin check. Create `drew_portfolio.users` table (id UUID FK to auth.users, role TEXT default 'user'). Update all write policies to check `auth.uid()` against this table with `role = 'admin'`. Critical before quiz system introduces public user auth, otherwise any authenticated user gets write access. Grant sequence permissions to new role too.
+- [ ] **BlogPanel.jsx** - UI for managing blog posts in the admin panel. Blog posts currently live as markdown files in repo - requires data model design and migration to Supabase before this is buildable
+- [ ] **QuizPanel.jsx** - UI for managing quiz questions in the admin panel. Depends on quiz system being built first
 - [ ] **Interactive quiz system** - `QuizCard` component at bottom of blog posts, only renders if quiz exists for that slug. MeekoBubble reused with `mode` prop (`affirmation` | `quiz`) - mode determines data source, not rendering logic. `affirmation` fetches from `meeko_affirmations`, `quiz` fetches from `quiz_questions` filtered by `post_slug`. Mayu as quiz enforcer character. Table: `drew_portfolio.quiz_questions` (id, post_slug TEXT, question TEXT, answers JSONB, correct_answer INT, active BOOL). `post_slug` is TEXT now but becomes a proper FK to `drew_portfolio.blog_posts(slug)` once blog posts are migrated to Supabase - document this decision in the blog post. Demonstrates relational data understanding.
 - [ ] MeekoBubble dynamic quotes via Supabase (with crossfade on text swap - see comment in MeekoBubble.jsx)
 - [ ] Blog post previews on homepage
@@ -97,3 +99,4 @@
 - [x] hello@drewbs.dev email routing via Cloudflare
 - [x] Supabase integration - drew_portfolio schema, meeko_affirmations table, RLS policies, MeekoBubble wired to live database
 - [x] Cloudflare Pages environment variables configured for Supabase credentials
+- [x] Admin panel - Login.jsx, ProtectedRoute.jsx, Admin.jsx accordion shell, AffirmationsPanel.jsx (fetch, toggle, add, delete, toast notifications), useToast hook, Toast component, Supabase RLS write policies (INSERT, UPDATE, DELETE), sequence permissions

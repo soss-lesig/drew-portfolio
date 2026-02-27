@@ -64,13 +64,16 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Cloudflare Pages environment variables configured for production
 - Groundwork laid for admin panel and quiz system
 
-**Phase 7: Admin panel (planned)**
+**Phase 7: Admin panel (complete)**
 
 - Supabase Auth with email/password login
 - Protected `/admin` route with `ProtectedRoute` component
-- Affirmations and blog post management UI
-- RLS policies extended for authenticated writes
-- Full-stack feature demonstrating security-first thinking
+- Accordion-based admin UI with panel-per-section architecture
+- AffirmationsPanel: fetch, toggle active, add, delete with confirmation
+- Reusable `useToast` hook and `Toast` component for database feedback
+- RLS policies extended for authenticated writes (INSERT, UPDATE, DELETE)
+- BIGSERIAL sequence permissions required for inserts in custom schemas
+- Known debt: write policies use `authenticated` role - must migrate to admin role check before public user auth is introduced
 
 **Phase 8: React Router framework mode (planned)**
 
