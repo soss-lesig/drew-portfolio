@@ -40,7 +40,6 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <br />
         <label htmlFor="password">password:</label>
         <input
           type="password"
@@ -50,7 +49,6 @@ export default function Login() {
           required
         />
         {error && <div className="error">{error}</div>}
-        <br />
         <button type="submit" disabled={loading}>
           {loading ? "logging in..." : "login"}
         </button>

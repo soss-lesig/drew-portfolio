@@ -7,6 +7,8 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import DrewBrew from "./pages/DrewBrew.jsx";
 import Login from "./pages/Login.jsx";
+import Admin from "./pages/Admin.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
   return (
@@ -19,7 +21,15 @@ export default function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="drewbrew" element={<DrewBrew />} />
-          <Route path="admin" element={<Login />} />
+          <Route path="login" element={<Login />} />
+          <Route
+            path="admin"
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
