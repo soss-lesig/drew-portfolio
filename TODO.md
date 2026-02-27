@@ -13,6 +13,7 @@
 
 - [ ] **Back to top button** - floating, appears after scrolling ~1 viewport height, positioned bottom right. Critical UX missing on long pages (DrewBrew, blog posts). Needs a `useScrollPosition` hook + fixed positioned button in Layout so it applies everywhere automatically
 - [ ] **Sticky Header on scroll up/down** - better UX than above implementation
+- [ ] **Latest blog post link in header** - similar to the GitHub commit banner, shows the most recent post title and links to it. Pulls from `getAllPosts()` which is already sorted by date
 
 ### Content
 
@@ -25,7 +26,7 @@
 ### Features
 
 - [ ] **Admin panel** - protected `/admin` route with Supabase Auth (email/password). Needs: `ProtectedRoute` component checking auth state, login page, affirmations manager (add/toggle active), blog post manager (create/edit). Update RLS policies to allow authenticated writes. Research: `supabase.auth.signInWithPassword()`, `supabase.auth.onAuthStateChange()`, React Router `<Navigate>` for redirect
-- [ ] Interactive quiz system with Supabase integration
+- [ ] **Interactive quiz system** - `QuizCard` component at bottom of blog posts, only renders if quiz exists for that slug. MeekoBubble reused with `mode` prop (`affirmation` | `quiz`) - mode determines data source, not rendering logic. `affirmation` fetches from `meeko_affirmations`, `quiz` fetches from `quiz_questions` filtered by `post_slug`. Mayu as quiz enforcer character. Table: `drew_portfolio.quiz_questions` (id, post_slug TEXT, question TEXT, answers JSONB, correct_answer INT, active BOOL). `post_slug` is TEXT now but becomes a proper FK to `drew_portfolio.blog_posts(slug)` once blog posts are migrated to Supabase - document this decision in the blog post. Demonstrates relational data understanding.
 - [ ] MeekoBubble dynamic quotes via Supabase (with crossfade on text swap - see comment in MeekoBubble.jsx)
 - [ ] Blog post previews on homepage
 - [ ] Improve blog post styling (typography, code blocks, copy button)
