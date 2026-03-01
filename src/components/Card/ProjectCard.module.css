@@ -27,17 +27,30 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transform: perspective(500px) rotateY(-28deg);
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center center;
+  scale: 1.25;
+}
+
+.imageLeft .projectImage img {
+  transform: perspective(500px) rotateY(28deg);
+}
+
+/* settled state - fires when IntersectionObserver adds .revealed to the card */
+.projectCard:global(.revealed) .projectImage img {
+  transform: perspective(600px) rotateY(-14deg);
+  scale: 1.2;
+}
+
+.projectCard:global(.revealed) .imageLeft .projectImage img {
+  transform: perspective(600px) rotateY(14deg);
 }
 
 .projectImage img[src$=".png"] {
   object-fit: cover;
   object-position: left top;
   background: hsl(220 13% 18%);
-}
-
-.projectCard:hover .projectImage img {
-  transform: scale(1.02);
 }
 
 .projectContent {
