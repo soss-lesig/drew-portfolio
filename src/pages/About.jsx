@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { getAllPosts } from "../data/posts.js";
 
 export default function About() {
+  const postCount = getAllPosts().length;
   return (
     <div className="about-page">
       <header className="page-header">
@@ -89,7 +91,7 @@ export default function About() {
           treat every AI-assisted session as a learning opportunity: I write the
           code myself, I understand every decision, and I can explain it without
           the AI in the room. The portfolio documents that process in real time
-          across twenty-one blog posts.
+          across {postCount} blog posts and counting.
         </p>
       </section>
 
