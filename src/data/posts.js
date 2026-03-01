@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "coffee-beans-frosted-glass-css-transform",
+    title: "Coffee Beans, Frosted Glass, and a CSS Transform Rabbit Hole",
+    subtitle: "Adding a custom illustrated background to the drewBrew page and project card, and what a scroll tilt hook taught me about browser rendering",
+    date: "2026-03-01T19:00:00",
+    tags: ["css", "components", "design", "debugging"],
+  },
+  {
     slug: "making-the-rest-of-the-site-match",
     title: "Making the rest of the site match the homepage",
     subtitle: "Applying the editorial redesign consistently - and fixing a frontmatter bug that had been hiding in plain sight",
