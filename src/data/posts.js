@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "making-the-rest-of-the-site-match",
+    title: "Making the rest of the site match the homepage",
+    subtitle: "Applying the editorial redesign consistently - and fixing a frontmatter bug that had been hiding in plain sight",
+    date: "2026-03-01T13:00:00",
+    tags: ["css", "design", "refactor", "typography", "blog", "portfolio", "javascript"],
+  },
+  {
     slug: "editorial-redesign-scroll-tilt-hook",
     title: "Redesigning the hero: editorial layout, scroll-driven perspective, and knowing when a cat needs a transparent background",
     subtitle: "How a job application deadline forced a proper visual overhaul - and the interesting technical problems that came with it",
