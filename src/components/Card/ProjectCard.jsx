@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Card from "./Card";
 import styles from "./ProjectCard.module.css";
 import useScrollReveal from "../../hooks/useScrollReveal.js";
+import useScrollTilt from "../../hooks/useScrollTilt.js";
 
 export default function ProjectCard({
   projectTitle,
@@ -11,7 +12,15 @@ export default function ProjectCard({
   projectImage,
   imagePosition = "right",
 }) {
-  const ref = useScrollReveal();
+  const revealRef = useScrollReveal();
+  const tiltRef = useScrollTilt();
+
+  // Merge both refs onto the same element
+  const ref = (el) => {
+    revealRef.current = el;
+    tiltRef.current = el;
+  };
+
   return (
     <Card as="article" className={styles.projectCard} ref={ref}>
       <div
