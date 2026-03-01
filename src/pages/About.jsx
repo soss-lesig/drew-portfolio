@@ -9,109 +9,111 @@ export default function About() {
         </Link>
         <h1>About me</h1>
       </header>
+
       <section className="about">
         <p>
-          I didn’t take the straight line into software, which turns out to be
-          useful.
+          I didn't take the straight line into software. I took the scenic
+          route - picked up a degree, ended up teaching A-Level Computer
+          Science, shipped production code at a large engineering org, and
+          somehow came out the other side with a clearer idea of what I actually
+          want to build and how I want to build it.
         </p>
         <p>
-          I’ve shipped production code in a large engineering organisation,
-          taught computer science to humans who absolutely did not ask for it,
-          and spent a lot of time learning how systems actually behave once they
-          leave the whiteboard.
+          That background turns out to be useful. I've explained recursion to
+          a seventeen-year-old who definitely wasn't listening, debugged a
+          live incident at 4pm on a Friday, and sat in enough architecture
+          meetings to know the difference between a good trade-off and someone
+          just vibing with microservices.
         </p>
         <p>
-          I care about clarity, maintainability, and making sensible trade-offs.
-          I’m not allergic to complexity, I just don’t invite it round unless it
-          has a good reason to be there.
+          I care about code that's readable, maintainable, and doesn't make the
+          next person swear. I'm not allergic to complexity - I just want it to
+          earn its place.
         </p>
       </section>
+
       <section className="skills">
         <h3>Skills</h3>
         <div className="skills-groups">
           <div className="skills-core">
-            <h4>Core</h4>
+            <h4>Confident with</h4>
             <ul>
-              <li>
-                JavaScript (ES6+), with a realistic understanding of its edges
-              </li>
-              <li>TypeScript for safer, more predictable code</li>
-              <li>React for building calm, usable interfaces</li>
-              <li>
-                HTML and CSS, written deliberately rather than by accident
-              </li>
-              <li>
-                Git, pull requests, and explaining decisions in code reviews
-              </li>
+              <li>JavaScript and HTML/CSS - the foundations, done properly</li>
+              <li>React - hooks, component architecture, state management</li>
+              <li>TypeScript - enough to appreciate it, enough to use it</li>
+              <li>SQL and relational data modelling (PostgreSQL)</li>
+              <li>Node.js and Express for backend work</li>
+              <li>Git, PRs, and explaining decisions like a person</li>
+              <li>I make a genuinely excellent pour over</li>
             </ul>
           </div>
 
           <div className="skills-working">
-            <h4>Working knowledge</h4>
+            <h4>Worked with in production</h4>
             <ul>
-              <li>Node.js and Express for pragmatic backend work</li>
-              <li>REST APIs with sensible structure and naming</li>
-              <li>SQL and relational data modelling (PostgreSQL)</li>
-              <li>Testing and debugging in production-minded environments</li>
-              <li>Modern development workflows in Agile teams</li>
-              <li>Knowing when not to add another abstraction</li>
+              <li>Docker and Kubernetes - deployed, not just theorised</li>
+              <li>CI/CD pipelines - GitHub Actions, build and deploy flows</li>
+              <li>Supabase - auth, RLS policies, real-time queries</li>
+              <li>Testing with Jest and Node's built-in test runner</li>
+              <li>Agile teams - standups, retros, the full ceremony</li>
             </ul>
           </div>
         </div>
       </section>
+
       <section className="experience">
         <h3>Experience</h3>
 
         <article className="role">
           <header className="role-header">
             <h4>Graduate Software Engineer</h4>
-            <p className="role-meta">Flutter UK &amp; Ireland</p>
+            <p className="role-meta">Flutter UK &amp; Ireland · 2022–2024</p>
           </header>
           <p>
-            Worked in a cross-functional team on a large, production React and
-            Node.js codebase.
+            Worked in a cross-functional product team on a large React and
+            Node.js codebase serving millions of users. Learned very quickly
+            that production code and tutorial code are different sports.
           </p>
           <ul>
             <li>
-              Built and maintained features across the full stack, collaborating
-              closely with product and design.
+              Built and shipped features across the full stack, working closely
+              with product and design from ticket to deployment.
             </li>
             <li>
-              Contributed through code reviews, testing, and sensible
-              incremental improvements (the boring stuff that makes software
-              survive).
+              Contributed to code reviews, wrote tests, and made the kind of
+              incremental improvements that keep software alive long-term.
             </li>
             <li>
-              Got very familiar with real-world constraints: performance,
-              reliability, and shipping without breaking everything.
+              Got hands-on with Docker, Kubernetes, and CI/CD in an environment
+              where things actually had to work.
             </li>
           </ul>
         </article>
 
         <article className="role">
           <header className="role-header">
-            <h4>Computer Science Teacher (Supply / Long-Term)</h4>
-            <p className="role-meta">
-              A-Level &amp; T-Level Software Development
-            </p>
+            <h4>Computer Science Teacher · Supply &amp; Long-Term</h4>
+            <p className="role-meta">A-Level &amp; T-Level · 2024–present</p>
           </header>
           <p>
-            Taught programming and systems thinking, and learned fast that
-            explaining something clearly is a stricter test than implementing
-            it.
+            Teaching programming and systems thinking to people who range from
+            genuinely curious to aggressively indifferent. Turns out explaining
+            something clearly is a harder test than implementing it.
           </p>
           <ul>
             <li>
-              Planned and delivered lessons on HTML/CSS/JavaScript and Python,
-              adjusting pace and scaffolding for mixed confidence levels.
+              Planned and delivered lessons on HTML, CSS, JavaScript and Python
+              across mixed confidence levels.
             </li>
             <li>
               Built structured resources and coursework support aligned to
-              specification requirements.
+              specification - which is basically technical writing under
+              deadline.
             </li>
             <li>
-              Improved my communication and debugging under pressure, because a
-              classroom is basically a live incident response exercise.
+              Significantly improved my ability to debug under pressure, because
+              a Year 12 class is effectively a live incident with 25 concurrent
+              users.
             </li>
           </ul>
         </article>
