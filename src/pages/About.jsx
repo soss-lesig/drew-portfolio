@@ -61,6 +61,38 @@ export default function About() {
         </div>
       </section>
 
+      <section className="built-to-learn">
+        <h3>Built to learn</h3>
+        <p>
+          The portfolio itself is the most honest demonstration of how I work.
+          Rather than reaching for a template or a boilerplate, I built it from
+          scratch - deliberately, in layers. Vanilla JavaScript first to
+          understand what React actually solves, then a staged migration once
+          the pain points were real rather than theoretical.
+        </p>
+        <p>
+          Along the way that meant building things I could have imported: a
+          custom markdown parser and frontmatter system, a client-side router
+          before switching to React Router, a reusable hook system for scroll
+          animations using IntersectionObserver and RAF-throttled scroll
+          tracking, a CSS design token architecture using HSL custom properties
+          and fluid typography with <code>clamp()</code>. Each one was a
+          deliberate choice to understand the problem before reaching for the
+          abstraction.
+        </p>
+        <p>
+          I've also thought carefully about how to work with AI tooling in a
+          way that actually builds understanding rather than bypassing it. The
+          landscape is changing fast enough that knowing how to learn alongside
+          AI - using it for pair programming, technical validation, and targeted
+          explanation rather than copy-paste generation - is its own skill. I
+          treat every AI-assisted session as a learning opportunity: I write the
+          code myself, I understand every decision, and I can explain it without
+          the AI in the room. The portfolio documents that process in real time
+          across twenty-one blog posts.
+        </p>
+      </section>
+
       <section className="experience">
         <h3>Experience</h3>
 

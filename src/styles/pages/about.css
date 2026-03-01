@@ -37,6 +37,7 @@
    the same approach used between sections on the homepage. */
 .about-page .about,
 .about-page .skills,
+.about-page .built-to-learn,
 .about-page .experience {
   background: transparent;
   border: none;
@@ -55,12 +56,17 @@
   animation-delay: calc(var(--animation-delay) + 0.4s);
 }
 
-.about-page .experience {
+.about-page .built-to-learn {
   animation-delay: calc(var(--animation-delay) + 0.6s);
 }
 
+.about-page .experience {
+  animation-delay: calc(var(--animation-delay) + 0.8s);
+}
+
 /* Intro prose - larger than body, sets the tone */
-.about-page .about p {
+.about-page .about p,
+.about-page .built-to-learn p {
   font-size: clamp(1.05rem, 1rem + 0.4vw, 1.2rem);
   line-height: 1.8;
   color: var(--text);
@@ -70,6 +76,7 @@
 
 /* Section headings with border-top separator - same editorial rule used in blog posts */
 .about-page .skills h3,
+.about-page .built-to-learn h3,
 .about-page .experience h3 {
   font-size: var(--fs-h3);
   font-weight: 700;
