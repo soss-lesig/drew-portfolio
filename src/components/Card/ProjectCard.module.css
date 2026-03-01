@@ -32,14 +32,14 @@
   /* --tilt-progress: -1 (above centre) to 1 (below centre)
      scrolling down = positive value = tilt inward
      imageLeft flips sign in JS via the CSS calc */
-  transform: perspective(600px)
-    rotateY(calc(var(--tilt-progress, 0) * -14deg));
+  transform: perspective(400px)
+    rotateY(calc(var(--tilt-progress, 0) * -25deg));
   transition: transform 0.1s linear;
 }
 
 .imageLeft .projectImage img {
-  transform: perspective(600px)
-    rotateY(calc(var(--tilt-progress, 0) * 14deg));
+  transform: perspective(400px)
+    rotateY(calc(var(--tilt-progress, 0) * 25deg));
 }
 
 .projectImage img[src$=".png"] {
