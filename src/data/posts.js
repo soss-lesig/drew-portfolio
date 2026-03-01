@@ -3,6 +3,20 @@
 
 export const posts = [
   {
+    slug: "editorial-redesign-scroll-tilt-hook",
+    title: "Redesigning the hero: editorial layout, scroll-driven perspective, and knowing when a cat needs a transparent background",
+    subtitle: "How a job application deadline forced a proper visual overhaul - and the interesting technical problems that came with it",
+    date: "2026-03-01T12:00:00",
+    tags: ["css", "react", "hooks", "design", "animation", "javascript", "portfolio"],
+  },
+  {
+    slug: "building-the-admin-panel",
+    title: "Building the admin panel",
+    subtitle: "Accordion shells, Supabase mutations, RLS debugging, and a reusable toast system - building the first real full-stack feature",
+    date: "2026-02-27T12:00:00",
+    tags: ["supabase", "react", "admin", "rls", "postgresql", "hooks", "portfolio", "javascript"],
+  },
+  {
     slug: "meeko-speaks-from-the-database",
     title: "Meeko speaks from the database now",
     subtitle: "How I wired Supabase into the portfolio's MeekoBubble component, and everything that went wrong before it went right",
