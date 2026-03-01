@@ -101,7 +101,7 @@
   height: auto;
   display: block;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  mix-blend-mode: darken;
   /* slight lift so Meeko feels like she's peeking in */
   transform: translateY(8px);
 }
