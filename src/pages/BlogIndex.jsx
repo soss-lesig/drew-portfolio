@@ -11,7 +11,7 @@ export default function BlogIndex() {
         <Link to="/" className="back-link">
           ← Back to home
         </Link>
-        <h1>Blog</h1>
+        <h1><em>blog.</em></h1>
         <p>Thoughts on building, learning, and refactoring.</p>
       </header>
 

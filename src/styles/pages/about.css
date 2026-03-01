@@ -24,6 +24,11 @@
   text-align: left;
 }
 
+.about-page .page-header h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
 .about-page .page-header h1 {
   font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
   font-weight: 900;

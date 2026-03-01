@@ -51,7 +51,7 @@ export default function DrewBrew() {
         <Link to="/" className="back-link">
           ← Back to home
         </Link>
-        <h1>drewBrew: Architecture-First Coffee Tracking</h1>
+        <h1><em>drewBrew.</em> Architecture-First Coffee Tracking</h1>
         <p className="project-note">
           This architecture was designed in late 2025 as an exercise in systems
           thinking and end-to-end planning. Some components (like a standalone

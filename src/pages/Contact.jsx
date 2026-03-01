@@ -8,7 +8,7 @@ export default function Contact() {
           ← Back to home
         </Link>
 
-        <h1>Get in touch</h1>
+        <h1><em>contact.</em></h1>
         <p>
           Open to software engineering opportunities and interesting
           conversations.

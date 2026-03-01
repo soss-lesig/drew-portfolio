@@ -9,7 +9,7 @@ export default function About() {
         <Link to="/" className="back-link">
           ← Back to home
         </Link>
-        <h1>About me</h1>
+        <h1><em>about me.</em></h1>
       </header>
 
       <section className="about">

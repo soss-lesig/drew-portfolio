@@ -11,6 +11,11 @@
 }
 
 /* Large display title matching the homepage hero tone */
+.blog-index .blog-header h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
 .blog-index .blog-header h1 {
   font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
   font-weight: 900;

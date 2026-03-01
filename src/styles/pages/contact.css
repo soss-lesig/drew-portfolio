@@ -8,8 +8,30 @@
 }
 
 .contact-page .page-header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
+  background: transparent;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+}
+
+.contact-page .page-header h1 {
+  font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--space-4);
+}
+
+.contact-page .page-header h1 em {
+  font-style: normal;
+  color: var(--accent);
 }
 
 .contact-page .contact-method {
