@@ -44,28 +44,28 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="hero-text">
-          <h1>I'm drewbs.</h1>
-          <p>
-            Full stack software engineer.
-            <br />
-            Contract teacher.
-            <br />
-            Pour-over enthusiast.
+          <h1>
+            I'm <em>drewbs.</em>
+          </h1>
+          <p className="hero-tagline">
+            Full stack engineer. Building things that work, and documenting why.
           </p>
+          <p className="hero-sub">
+            JavaScript, React, pragmatic decisions. Currently seeking junior
+            and associate engineering roles.
+          </p>
+          <div className="hero-cta">
+            <Link to="/blog" className="cta-primary">
+              Read the blog
+            </Link>
+            <Link to="/about" className="cta-secondary">
+              About me →
+            </Link>
+          </div>
         </div>
         <div className="hero-image">
-          <img src="/images/meeks.jpg" alt="Meeks the site mascot" />
+          <img src="/images/meeks.jpg" alt="Meeko the site mascot" />
         </div>
-      </section>
-      <section className="intro-text">
-        <p>
-          Building web applications with JavaScript, React, and pragmatic
-          technical decisions.
-        </p>
-        <p>
-          Currently interested in clean interfaces, thoughtful systems, and
-          making software that doesn't shout at the user.
-        </p>
       </section>
 
       <section className="projects">
