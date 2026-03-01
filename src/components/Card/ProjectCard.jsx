@@ -11,6 +11,7 @@ export default function ProjectCard({
   projectLinks = [],
   projectImage,
   imagePosition = "right",
+  backgroundImage,
 }) {
   const revealRef = useScrollReveal();
   const tiltRef = useScrollTilt();
@@ -20,6 +21,10 @@ export default function ProjectCard({
     revealRef.current = el;
     tiltRef.current = el;
   };
+
+  const contentStyle = backgroundImage
+    ? { backgroundImage: `url('${backgroundImage}')`, backgroundSize: "cover", backgroundPosition: "center" }
+    : {};
 
   return (
     <Card as="article" className={styles.projectCard} ref={ref}>
@@ -31,35 +36,71 @@ export default function ProjectCard({
             <img src={projectImage} alt={`${projectTitle} preview`} />
           </div>
         )}
-        <div className={styles.projectContent}>
-          <h4>{projectTitle}</h4>
-          <p>{projectDescription}</p>
-          {projectBullets.length > 0 && (
-            <ul>
-              {projectBullets.map((bullet, i) => (
-                <li key={i}>{bullet}</li>
-              ))}
-            </ul>
-          )}
-          {projectLinks.length > 0 && (
-            <div className={styles.projectLinks}>
-              {projectLinks.map((link, i) =>
-                link.external ? (
-                  <a
-                    key={i}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link key={i} to={link.href}>
-                    {link.label}
-                  </Link>
-                )
+        <div className={styles.projectContent} style={contentStyle}>
+          {backgroundImage ? (
+            <div className={styles.projectContentFrosted}>
+              <h4>{projectTitle}</h4>
+              <p>{projectDescription}</p>
+              {projectBullets.length > 0 && (
+                <ul>
+                  {projectBullets.map((bullet, i) => (
+                    <li key={i}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+              {projectLinks.length > 0 && (
+                <div className={styles.projectLinks}>
+                  {projectLinks.map((link, i) =>
+                    link.external ? (
+                      <a
+                        key={i}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link key={i} to={link.href}>
+                        {link.label}
+                      </Link>
+                    )
+                  )}
+                </div>
               )}
             </div>
+          ) : (
+            <>
+              <h4>{projectTitle}</h4>
+              <p>{projectDescription}</p>
+              {projectBullets.length > 0 && (
+                <ul>
+                  {projectBullets.map((bullet, i) => (
+                    <li key={i}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+              {projectLinks.length > 0 && (
+                <div className={styles.projectLinks}>
+                  {projectLinks.map((link, i) =>
+                    link.external ? (
+                      <a
+                        key={i}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link key={i} to={link.href}>
+                        {link.label}
+                      </Link>
+                    )
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

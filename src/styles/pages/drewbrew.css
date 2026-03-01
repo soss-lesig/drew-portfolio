@@ -9,17 +9,41 @@
 
 /* Page header: border-bottom separator, flush left, display-scale title */
 .drewbrew-page .page-header {
-  padding: var(--space-8) 0 var(--space-6);
+  padding: var(--space-8) var(--space-7) var(--space-6);
   border-bottom: 1px solid var(--border);
   margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
-  background: transparent;
-  border-radius: 0;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  background-image: url('/images/bean-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
   text-align: left;
+  /* Pull header to full content width so background fills edge to edge */
+  margin-left: calc(var(--space-6) * -1);
+  margin-right: calc(var(--space-6) * -1);
+  padding-left: var(--space-7);
+  padding-right: var(--space-7);
+}
+
+.drewbrew-page .page-header .back-link {
+  display: inline-block;
+  background: hsl(0 0% 100% / 0.8);
+  backdrop-filter: blur(6px);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  margin-bottom: var(--space-4);
+}
+
+.drewbrew-page .page-header h1 {
+  display: inline-block;
+  background: hsl(0 0% 100% / 0.8);
+  backdrop-filter: blur(6px);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-5);
 }
 
 .drewbrew-page .page-header h1 em {
@@ -27,12 +51,18 @@
   color: var(--accent);
 }
 
+.drewbrew-page .page-header .project-note {
+  background: hsl(0 0% 100% / 0.75);
+  backdrop-filter: blur(4px);
+  border-left-color: var(--accent);
+  max-width: 640px;
+}
+
 .drewbrew-page .page-header h1 {
   font-size: clamp(2rem, 1.2rem + 3.5vw, 4rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.03em;
-  margin: 0 0 var(--space-4);
 }
 
 /* Sections: no cards. A border-top rule separates each section visually.

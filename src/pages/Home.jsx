@@ -40,6 +40,7 @@ export default function Home() {
       { label: "Read the case study", href: "/drewbrew", external: false },
     ],
     projectImage: "/images/bean-model.png",
+    backgroundImage: "/images/bean-background.png",
   },
 ];
 
