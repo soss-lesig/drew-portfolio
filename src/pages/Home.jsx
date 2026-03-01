@@ -5,12 +5,12 @@ const projects = [
   {
     projectTitle: "This portfolio site",
     projectDescription:
-      "A deliberately engineered portfolio that evolved from vanilla HTML/CSS/JS to modern tooling as real constraints emerged. Built to document feature-driven architectural decisions.",
+      "A deliberately engineered portfolio that evolved from vanilla HTML/CSS/JS to modern React as real constraints emerged. Every architectural decision is documented - including the one that produced the component you're looking at right now.",
     projectBullets: [
-      "Vanilla HTML/CSS/JS foundations, migrated to React as real pain points emerged",
-      "React Router replacing custom hash-based routing",
-      "Client-side markdown blog system with custom syntax highlighting",
-      "Full Git history and blog series documenting every architectural decision",
+      "Vanilla foundations migrated to React as genuine pain points justified it",
+      "Supabase integration with custom PostgreSQL schema and RLS policies",
+      "Client-side markdown blog with custom syntax highlighting theme",
+      "Full Git history and 19-post blog series documenting every decision",
     ],
     projectLinks: [
       {
@@ -20,22 +20,22 @@ const projects = [
       },
       { label: "Read the blog", href: "/blog", external: false },
     ],
-    projectImage: "/images/meeks.jpg",
+    projectImage: "/images/portfolio-code.png",
   },
   {
     projectTitle: "drewBrew",
     projectDescription:
-      "A coffee tracking system designed architecture-first - starting from validated business requirements and working backwards to data modelling, application structure, and a planned analytics pipeline.",
+      "A coffee tracking system designed architecture-first - starting from real user needs and working backwards to data modelling, application structure, and a planned analytics pipeline before writing significant code.",
     projectBullets: [
       "PostgreSQL + Prisma ORM with hybrid relational + JSONB schema",
-      "Architecture validated against real user needs with a competitive barista",
+      "Requirements validated against a competitive barista before any code",
       "Designed analytics pipeline (BeanSights) for brewing pattern insights",
       "Modular Node/TypeScript backend and Next.js frontend planned and documented",
     ],
     projectLinks: [
       { label: "Read the case study", href: "/drewbrew", external: false },
     ],
-    projectImage: "/images/meeks.jpg",
+    projectImage: "/images/bean-model.png",
   },
 ];
 
