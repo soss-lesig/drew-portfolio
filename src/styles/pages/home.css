@@ -101,7 +101,7 @@
   height: auto;
   display: block;
   object-fit: contain;
-  mix-blend-mode: darken;
+  /* background removed at source - no blend mode needed */
   /* slight lift so Meeko feels like she's peeking in */
   transform: translateY(8px);
 }

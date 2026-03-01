@@ -64,7 +64,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="/images/meeks.jpg" alt="Meeko the site mascot" />
+          <img src="/images/meeks-transparent.png" alt="Meeko the site mascot" />
         </div>
       </section>
 
