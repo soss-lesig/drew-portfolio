@@ -28,18 +28,18 @@
   object-fit: cover;
   display: block;
   transform-origin: center center;
-  scale: 1.2;
+  scale: 1.3;
   /* --tilt-progress: -1 (above centre) to 1 (below centre)
      scrolling down = positive value = tilt inward
      imageLeft flips sign in JS via the CSS calc */
-  transform: perspective(400px)
-    rotateY(calc(var(--tilt-progress, 0) * -25deg));
+  transform: perspective(300px)
+    rotateY(calc(var(--tilt-progress, 0) * -40deg));
   transition: transform 0.1s linear;
 }
 
 .imageLeft .projectImage img {
-  transform: perspective(400px)
-    rotateY(calc(var(--tilt-progress, 0) * 25deg));
+  transform: perspective(300px)
+    rotateY(calc(var(--tilt-progress, 0) * 40deg));
 }
 
 .projectImage img[src$=".png"] {
