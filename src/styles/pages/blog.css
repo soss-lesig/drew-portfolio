@@ -2,61 +2,221 @@
    Blog Index
    ========================================================================= */
 
-.blog-header {
+.blog-index .blog-header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
 }
 
-.posts-list .post-preview {
-  animation: fadeIn 0.6s ease both;
-  opacity: 0;
+/* Large display title matching the homepage hero tone */
+.blog-index .blog-header h1 {
+  font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--space-4);
 }
 
-.post-preview {
-  background: var(--surface);
-  padding: var(--space-5);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  margin-bottom: var(--space-6);
+.blog-index .blog-header p {
+  color: var(--muted);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
+  margin: 0;
+}
+
+/* Post list: no cards, clean editorial rows */
+.posts-list .post-preview {
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.6s ease both;
+  opacity: 0;
+  /* No background, no border-radius, no box shadow */
+}
+
+.post-preview h2 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin: 0 0 var(--space-2);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.post-preview h2 a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.post-preview h2 a:hover {
+  color: var(--accent);
+}
+
+.post-preview .subtitle {
+  color: var(--muted);
+  margin: 0 0 var(--space-4);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
+  line-height: 1.5;
+}
+
+.post-preview .post-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.post-preview .post-meta time {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* Tags inline with date, smaller and more subtle than before */
+.post-preview .tags {
+  margin: 0;
 }
 
 /* =========================================================================
    Blog Post
    ========================================================================= */
 
-.post-header {
+.blog-post .post-header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
 }
 
+/* Display-scale post title - posts deserve the same typographic weight as the homepage */
+.blog-post .post-header h1 {
+  font-size: clamp(2rem, 1.2rem + 3.5vw, 4rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 0 var(--space-4);
+}
+
+.blog-post .post-header .subtitle {
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+  color: var(--muted);
+  margin: 0 0 var(--space-5);
+  line-height: 1.5;
+  font-weight: 400;
+  /* No quotes - the parseFrontmatter issue adds them, we remove via CSS display only
+     but the real fix is in parseFrontmatter */
+}
+
+.blog-post .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.blog-post .post-header .post-meta time {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Constrain body text width for readability.
+   ~680px is the accepted sweet spot - wide lines cause eye fatigue.
+   This is a well-established typographic principle, not arbitrary. */
 .post-content {
+  max-width: 680px;
   animation: fadeIn 0.6s ease calc(var(--animation-delay) * 2) forwards;
   opacity: 0;
 }
 
+.post-content p {
+  line-height: 1.8;
+  margin: 0 0 var(--space-5);
+}
+
+.post-content h2 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: var(--space-8) 0 var(--space-4);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.post-content h3 {
+  font-size: var(--fs-h4);
+  font-weight: 700;
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+.post-content h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: var(--space-5) 0 var(--space-2);
+  color: var(--muted);
+}
+
+/* Inline links: accent underline rather than pill/badge style.
+   The old pill style (border + background) was heavy and interrupted reading flow. */
 .post-content a {
   color: var(--text);
   text-decoration: none;
-  border: 1px solid var(--border);
-  background: hsl(var(--accent-h) var(--accent-s) 90%);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius);
-  font-weight: 600;
-  transition: color 0.3s ease;
-  white-space: nowrap;
+  border-bottom: 1.5px solid var(--accent);
+  padding-bottom: 1px;
+  font-weight: 500;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.post-content a:hover,
-.post-content a:focus {
+.post-content a:hover {
   color: var(--accent);
+}
+
+.post-content ul,
+.post-content ol {
+  padding-left: var(--space-5);
+  margin: 0 0 var(--space-5);
+}
+
+.post-content li {
+  line-height: 1.7;
+  margin-bottom: var(--space-2);
+}
+
+.post-content pre {
+  margin: var(--space-5) 0;
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.post-content code:not(pre code) {
+  font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+  font-size: 0.875em;
+  background: hsl(var(--accent-h) var(--accent-s) 93%);
+  color: hsl(var(--accent-h) var(--accent-s) 35%);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.post-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-7) 0;
+}
+
+.post-content blockquote {
+  border-left: 3px solid var(--accent);
+  margin: var(--space-5) 0;
+  padding: var(--space-3) var(--space-5);
+  color: var(--muted);
+  font-style: italic;
 }
 
 .post-content img {
   display: block;
-  max-width: 320px;
-  width: 100%;
+  max-width: 100%;
   height: auto;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  margin: var(--space-5) auto;
+  border-radius: var(--radius);
+  margin: var(--space-6) 0;
 }

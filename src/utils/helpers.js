@@ -32,6 +32,16 @@ export function parseFrontmatter(markdown) {
           .map((item) => item.trim());
       }
 
+      // Strip surrounding quotes from string values - YAML allows quoted strings
+      // but our naive parser was keeping them literally, producing "Title" on screen
+      if (
+        typeof value === "string" &&
+        ((value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'")))
+      ) {
+        value = value.slice(1, -1);
+      }
+
       frontmatter[key.trim()] = value;
     }
   });

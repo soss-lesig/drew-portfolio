@@ -23,13 +23,13 @@
   letter-spacing: 0.01em;
 }
 
+/* Base page-header: minimal, left-aligned.
+   Pages override this with their own border-bottom separator pattern
+   matching the homepage hero style. The old card style (background, border,
+   border-radius, text-align: center) has been removed - it belonged to the
+   previous design language and conflicted with the editorial direction. */
 .page-header {
-  background: var(--surface);
-  padding: var(--space-6);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
   margin-bottom: var(--space-6);
-  text-align: center;
 }
 
 .page-header h1 {

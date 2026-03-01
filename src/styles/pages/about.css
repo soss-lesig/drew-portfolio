@@ -2,19 +2,166 @@
    About Page
    ========================================================================= */
 
+.about-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+/* Page header: matches the blog/hero border-bottom separator pattern.
+   Previously a centred card - now flush left with a bottom rule. */
 .about-page .page-header {
+  padding: var(--space-8) 0 var(--space-6);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
+  opacity: 0;
+  /* Override the shared .page-header card style */
+  background: transparent;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+}
+
+.about-page .page-header h1 {
+  font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+/* Sections flow as open content - no card containers.
+   Visual separation comes from spacing and border-top rules,
+   the same approach used between sections on the homepage. */
+.about-page .about,
+.about-page .skills,
+.about-page .experience {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: var(--space-8);
+  animation: fadeIn 0.6s ease both;
   opacity: 0;
 }
 
 .about-page .about {
-  animation-delay: calc(var(--animation-delay) + 0.3s);
+  animation-delay: calc(var(--animation-delay) + 0.2s);
 }
 
 .about-page .skills {
-  animation-delay: calc(var(--animation-delay) + 0.6s);
+  animation-delay: calc(var(--animation-delay) + 0.4s);
 }
 
 .about-page .experience {
-  animation-delay: calc(var(--animation-delay) + 0.9s);
+  animation-delay: calc(var(--animation-delay) + 0.6s);
+}
+
+/* Intro prose - larger than body, sets the tone */
+.about-page .about p {
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--text);
+  margin: 0 0 var(--space-5);
+  max-width: 680px;
+}
+
+/* Section headings with border-top separator - same editorial rule used in blog posts */
+.about-page .skills h3,
+.about-page .experience h3 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.about-page h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 var(--space-3);
+}
+
+/* Skills groups side by side on wider screens */
+.skills-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-7);
+}
+
+.about-page .skills ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-page .skills li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Experience: roles spaced apart with a subtle top rule */
+.role {
+  margin-bottom: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.role:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.role-header {
+  margin-bottom: var(--space-4);
+}
+
+.role-header h4 {
+  font-size: var(--fs-h4);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-1);
+  color: var(--text);
+  text-transform: none;
+}
+
+.role-meta {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.role p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 var(--space-3);
+  max-width: 640px;
+}
+
+.role ul {
+  padding-left: var(--space-5);
+  margin: 0;
+}
+
+.role li {
+  line-height: 1.7;
+  margin-bottom: var(--space-2);
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .skills-groups {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
 }
