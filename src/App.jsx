@@ -22,9 +22,9 @@ export default function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="drewbrew" element={<DrewBrew />} />
-          <Route path="login" element={<Login />} />
+          <Route path="studio/login" element={<Login />} />
           <Route
-            path="admin"
+            path="studio"
             element={
               <ProtectedRoute>
                 <Admin />

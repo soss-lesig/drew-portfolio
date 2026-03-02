@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 import AffirmationsPanel from "../components/admin/AffirmationsPanel";
 import BlogPanel from "../components/admin/BlogPanel";
 import QuizPanel from "../components/admin/QuizPanel";

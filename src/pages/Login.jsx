@@ -25,7 +25,7 @@ export default function Login() {
       return;
     }
     setLoading(false);
-    navigate("/admin");
+    navigate("/studio");
   };
 
   return (

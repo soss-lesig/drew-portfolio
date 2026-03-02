@@ -69,7 +69,7 @@ export default function Footer() {
       </div>
       <div className="footer-copyright">
         <p>&copy; 2026 d r e w b s. All rights reserved.</p>
-        <Link to="/admin" aria-label="Admin" className="footer-admin-link">
+        <Link to="/studio" aria-label="Admin" className="footer-admin-link">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="14"
