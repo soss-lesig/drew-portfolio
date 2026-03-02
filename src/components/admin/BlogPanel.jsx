@@ -52,7 +52,7 @@ const DRAFT_KEY = "blog-editor-draft";
 const EMPTY_FORM = {
   title: "",
   subtitle: "",
-  date: new Date().toISOString().split("T")[0],
+  date: new Date().toISOString().slice(0, 16),
   tags: "",
   body: "",
   published: false,
@@ -75,7 +75,7 @@ function BlogEditor({ post, onSave, onCancel }) {
       return {
         title: post.title,
         subtitle: post.subtitle || "",
-        date: post.date,
+        date: post.date ? new Date(post.date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
         tags: post.tags ? post.tags.join(", ") : "",
         body: post.body,
         published: post.published,
@@ -226,7 +226,7 @@ function BlogEditor({ post, onSave, onCancel }) {
             <label>
               Date *
               <input
-                type="date"
+                type="datetime-local"
                 value={form.date}
                 onChange={set("date")}
                 required
@@ -413,7 +413,7 @@ export default function BlogPanel() {
                 <li key={post.id} className="blog-post-item">
                   <div className="blog-post-item-meta">
                     <span className="blog-post-item-title">{post.title}</span>
-                    <span className="blog-post-item-date">{post.date}</span>
+                    <span className="blog-post-item-date">{new Date(post.date).toLocaleString("en-GB")}</span>
                   </div>
                   <div className="blog-post-item-actions">
                     <button
