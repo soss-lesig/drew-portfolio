@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 const DOT_CYCLES = 2; // how many times ... loops before the quote appears
 const DOT_DELAY = 300;
@@ -37,7 +37,8 @@ export default function MeekoBubble() {
 
   useEffect(() => {
     async function fetchAffirmation() {
-      const { data, error } = await db
+      const { data, error } = await supabase
+      .schema("drew_portfolio")
       .from("meeko_affirmations")
         .select("text")
         .eq("active", true);
