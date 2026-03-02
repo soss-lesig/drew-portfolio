@@ -47,6 +47,8 @@ async function fetchPosts() {
 
 // ─── Editor ──────────────────────────────────────────────────────────────────
 
+const DRAFT_KEY = "blog-editor-draft";
+
 const EMPTY_FORM = {
   title: "",
   subtitle: "",
@@ -66,20 +68,61 @@ function slugify(title) {
 }
 
 function BlogEditor({ post, onSave, onCancel }) {
-  const [form, setForm] = useState(
-    post
-      ? {
-          title: post.title,
-          subtitle: post.subtitle || "",
-          date: post.date,
-          tags: post.tags ? post.tags.join(", ") : "",
-          body: post.body,
-          published: post.published,
-        }
-      : EMPTY_FORM
-  );
+  const isNew = !post;
+
+  const [form, setForm] = useState(() => {
+    if (!isNew) {
+      return {
+        title: post.title,
+        subtitle: post.subtitle || "",
+        date: post.date,
+        tags: post.tags ? post.tags.join(", ") : "",
+        body: post.body,
+        published: post.published,
+      };
+    }
+    return EMPTY_FORM;
+  });
   const [preview, setPreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [restoredDraft, setRestoredDraft] = useState(false);
+
+  // On mount for new posts, check for a saved draft
+  useEffect(() => {
+    if (!isNew) return;
+    const saved = sessionStorage.getItem(DRAFT_KEY);
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.title || parsed.body) {
+        setRestoredDraft(true);
+      }
+    } catch {
+      sessionStorage.removeItem(DRAFT_KEY);
+    }
+  }, [isNew]);
+
+  const handleRestoreDraft = () => {
+    const saved = sessionStorage.getItem(DRAFT_KEY);
+    if (!saved) return;
+    try {
+      setForm(JSON.parse(saved));
+    } catch {
+      sessionStorage.removeItem(DRAFT_KEY);
+    }
+    setRestoredDraft(false);
+  };
+
+  const handleDiscardDraft = () => {
+    sessionStorage.removeItem(DRAFT_KEY);
+    setRestoredDraft(false);
+  };
+
+  // Save draft to sessionStorage on every form change (new posts only)
+  useEffect(() => {
+    if (!isNew) return;
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+  }, [form, isNew]);
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -91,6 +134,7 @@ function BlogEditor({ post, onSave, onCancel }) {
     e.preventDefault();
     if (!form.title.trim() || !form.body.trim() || !form.date) return;
     setSaving(true);
+    sessionStorage.removeItem(DRAFT_KEY);
 
     const payload = {
       title: form.title.trim(),
@@ -113,6 +157,13 @@ function BlogEditor({ post, onSave, onCancel }) {
 
   return (
     <div className="blog-editor">
+      {restoredDraft && (
+        <div className="blog-editor-draft-banner">
+          <span>You have an unsaved draft. Restore it?</span>
+          <button type="button" className="btn-primary" onClick={handleRestoreDraft}>Restore</button>
+          <button type="button" className="btn-secondary" onClick={handleDiscardDraft}>Discard</button>
+        </div>
+      )}
       <div className="blog-editor-toolbar">
         <button type="button" className="btn-secondary" onClick={onCancel}>
           Back
@@ -131,6 +182,13 @@ function BlogEditor({ post, onSave, onCancel }) {
           <h1>{form.title || "Untitled"}</h1>
           {form.subtitle && (
             <p className="blog-preview-subtitle">{form.subtitle}</p>
+          )}
+          {form.tags && (
+            <div className="blog-preview-tags">
+              {form.tags.split(",").map((t) => t.trim()).filter(Boolean).map((tag) => (
+                <span key={tag} className="blog-preview-tag">{tag}</span>
+              ))}
+            </div>
           )}
           <div
             className="blog-preview-body"
@@ -208,8 +266,8 @@ function BlogEditor({ post, onSave, onCancel }) {
               Publish
             </label>
             <div className="blog-form-actions">
-              <button type="button" className="btn-secondary" onClick={onCancel}>
-                Cancel
+              <button type="button" className="btn-secondary" onClick={() => { sessionStorage.removeItem(DRAFT_KEY); onCancel(); }}>
+              Cancel
               </button>
               <button type="submit" className="btn-primary" disabled={saving}>
                 {saving ? "Saving..." : post ? "Update post" : "Create post"}
