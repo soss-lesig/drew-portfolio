@@ -28,6 +28,12 @@
 
 ### Features
 
+- [ ] **Supabase Storage bucket** - create a `media` bucket (public reads, admin-only writes). Subfolders: `blog/` for post screenshots, `quiz/` for question images (CSS/HTML mockups etc). Single bucket keeps the policy surface area small and is the shared foundation for both blog image uploads and Engineering Gym question images - worth doing once properly rather than solving it twice.
+
+- [ ] **Blog image uploads** - once storage bucket exists: add image upload button to `BlogEditor` toolbar. Uploads to `media/blog/`, inserts the public URL as a markdown image tag at the cursor position in the textarea. Bucket public read policy means the image just works in both preview and the live blog post via existing `marked` parsing. Direct consequence of moving from file-based posts (where images lived in `public/images/`) to CMS - the natural home for images is gone.
+
+- [ ] **Blog posts in storage bucket (future consideration)** - storing markdown bodies in a `TEXT` column works fine at current scale, but moving to Supabase Storage (one `.md` file per post) would give a natural home for post images alongside their content, proper file management, and avoids large text columns. More conventional CMS architecture. Not worth the migration cost now but worth revisiting if the image management pain grows.
+
 - [ ] **Admin role architecture** - migrate RLS write policies from blunt `authenticated` role to explicit admin check. Create `drew_portfolio.users` table (id UUID FK to auth.users, role TEXT default 'user'). Update all write policies to check `auth.uid()` against this table with `role = 'admin'`. Critical before quiz system introduces public user auth, otherwise any authenticated user gets write access. Grant sequence permissions to new role too.
 - [ ] **BlogPanel.jsx** - UI for managing blog posts in the admin panel. Blog posts currently live as markdown files in repo - requires data model design and migration to Supabase before this is buildable
 - [ ] **QuizPanel.jsx** - UI for managing quiz questions in the admin panel. Depends on quiz system being built first

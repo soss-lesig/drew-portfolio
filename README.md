@@ -62,26 +62,37 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Supabase JS client wired into React via environment variables
 - MeekoBubble fetching live affirmations from database
 - Cloudflare Pages environment variables configured for production
-- Groundwork laid for admin panel and quiz system
+- Groundwork laid for admin panel and CMS
 
-**Phase 7: Admin panel (complete)**
+**Phase 7: Admin panel and role architecture (February 2026)**
 
 - Supabase Auth with email/password login
-- Protected `/admin` route with `ProtectedRoute` component
+- Protected `/studio` route with `ProtectedRoute` component
 - Accordion-based admin UI with panel-per-section architecture
-- AffirmationsPanel: fetch, toggle active, add, delete with confirmation
+- AffirmationsPanel: fetch, toggle active, add, delete with toast notifications
 - Reusable `useToast` hook and `Toast` component for database feedback
-- RLS policies extended for authenticated writes (INSERT, UPDATE, DELETE)
-- BIGSERIAL sequence permissions required for inserts in custom schemas
-- Known debt: write policies use `authenticated` role - must migrate to admin role check before public user auth is introduced
+- `drew_portfolio.users` table with role column for admin access control
+- RLS write policies use admin subquery check (`EXISTS (SELECT 1 FROM drew_portfolio.users WHERE id = auth.uid() AND role = 'admin')`) rather than blunt `authenticated` role - safe for public user auth introduction later
+- Edge Function (`manage-blog`) for authenticated blog writes using service role client
 
-**Phase 8: React Router framework mode (planned)**
+**Phase 8: Blog CMS (February 2026)**
 
-- Migration from declarative to framework mode
-- TypeScript adoption using generated route types
-- Native static pre-rendering via `prerender()` in `react-router.config.ts`
-- Blog post markdown loading moved into route loaders, runs at build time
-- Foundation for Supabase integration and server-side data fetching
+- `drew_portfolio.blog_posts` table: slug, title, subtitle, date, tags, body, published
+- 23 posts migrated from markdown files in repo to Supabase via migration script
+- `BlogIndex` and `BlogPost` pages updated to fetch from Supabase via raw fetch (not Supabase JS client - see key decisions)
+- `BlogPanel` in admin: create, edit, delete, publish/unpublish posts with full markdown editor and preview
+- Draft rescue: unsaved new posts saved to `sessionStorage`, restore prompt on re-open
+- Blog data layer now entirely in Supabase - `src/data/posts.js` retained for reference but redundant
+
+**Phase 9: Engineering Gym (planned)**
+
+- Spaced repetition learning system built on top of the blog
+- Quiz questions authored per post slug, surfaced at `/gym`
+- Session runner: warm-up (recall) → working sets (explain) → heavy single (scenario/critique)
+- Confidence rating per answer, progress written to Supabase
+- Public user auth with separate registration flow from admin
+- Supabase Storage for question images (CSS/HTML mockups, screenshots)
+- See TODO.md for full data model and progression rules
 
 **What triggered each migration:**
 
@@ -91,54 +102,69 @@ Each tool was added to solve a real, experienced pain point - not added preempti
 
 **Infrastructure:**
 
-- React + Vite with hot module replacement
-- React Router (declarative mode) for client-side routing
+- React 19 + Vite with hot module replacement
+- React Router v7 (declarative mode) for client-side routing
+- NPM for package management
 - ESLint + Prettier for code quality
-- Deployed to Cloudflare Pages with automatic deployments
+- Deployed to Cloudflare Pages with automatic deployments on push to `main`
 - Custom domain (drewbs.dev)
 
 **Features:**
 
-- Client-side markdown blog system
+- Full blog CMS: posts authored and managed via admin panel, stored in Supabase
 - Syntax highlighting with custom Meeko theme
 - MeekoBubble component with live affirmations via Supabase
 - Design token system with HSL-based CSS custom properties
-- Responsive layout with fluid typography
+- Responsive layout with fluid typography using `clamp()`
 - Scroll reveal animations via IntersectionObserver
+- `prefers-reduced-motion` support throughout
+
+**Admin panel (`/studio`):**
+
+- Login-gated with Supabase Auth
+- AffirmationsPanel: full CRUD with active toggle
+- BlogPanel: full CRUD markdown editor with live preview, tag rendering, and sessionStorage draft rescue
+- QuizPanel: stubbed, ready to build
 
 **Database:**
 
 - Supabase (PostgreSQL) with `drew_portfolio` custom schema
 - Row Level Security on all tables
-- Supabase JS client with publishable key via environment variables
+- Public SELECT for anonymous reads, admin-only writes via role check
+- Edge Function for blog writes (bypasses browser RLS limitations with service role client)
 
 **Content:**
 
-- Blog posts documenting every architectural decision
+- 25+ blog posts documenting every architectural decision
 - drewBrew architecture case study
-- About page with skills and experience
+- About page
 
 ## Tech stack
 
 **Core:**
 
 - React 19
-- JavaScript (ES6+), TypeScript adoption in progress
-- CSS with custom properties and CSS Modules
+- JavaScript ES6+
+- CSS custom properties + CSS Modules for component-scoped styles
 - HTML5
 
 **Build and tooling:**
 
 - Vite
+- NPM
 - React Router v7
-- ESLint
-- Prettier
+- ESLint + Prettier
 
 **Libraries:**
 
 - highlight.js with custom Meeko syntax theme
 - Mermaid for architecture diagrams
+- marked for markdown parsing
 - @supabase/supabase-js
+
+**Backend:**
+
+- Supabase (PostgreSQL, Auth, Edge Functions, Storage - Storage pending)
 
 **Deployment:**
 
@@ -150,36 +176,56 @@ Each tool was added to solve a real, experienced pain point - not added preempti
 ```
 drew-portfolio/
 ├── public/
-│   ├── blog/posts/        # Markdown blog posts
-│   └── images/            # Static images
+│   └── images/                  # Static images (meeks.jpg etc)
 ├── src/
-│   ├── components/        # Shared React components
-│   │   ├── Card/          # Base card + ProjectCard
+│   ├── components/
+│   │   ├── admin/
+│   │   │   ├── AffirmationsPanel.jsx
+│   │   │   ├── BlogPanel.jsx     # Full markdown editor + CMS
+│   │   │   └── QuizPanel.jsx     # Stubbed
+│   │   ├── Card/                 # Card.jsx, ProjectCard.jsx (CSS Modules)
+│   │   ├── CommitBanner.jsx
 │   │   ├── Footer.jsx
 │   │   ├── Header.jsx
 │   │   ├── Layout.jsx
-│   │   └── MeekoBubble.jsx
+│   │   ├── MeekoBubble.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   └── Toast.jsx
 │   ├── data/
-│   │   └── posts.js       # Blog post metadata
+│   │   └── posts.js              # Legacy metadata - redundant post CMS migration
 │   ├── hooks/
-│   │   └── useScrollReveal.js
-│   ├── pages/             # Route-level components
+│   │   ├── useScrollReveal.js
+│   │   └── useToast.js
+│   ├── lib/
+│   │   └── supabase.js           # Supabase client initialisation
+│   ├── pages/
 │   │   ├── About.jsx
-│   │   ├── BlogIndex.jsx
-│   │   ├── BlogPost.jsx
+│   │   ├── Admin.jsx             # Accordion shell
+│   │   ├── BlogIndex.jsx         # Fetches from Supabase
+│   │   ├── BlogPost.jsx          # Fetches from Supabase
 │   │   ├── Contact.jsx
 │   │   ├── DrewBrew.jsx
-│   │   └── Home.jsx
-│   ├── utils/
-│   │   └── helpers.js
-│   ├── App.jsx
+│   │   ├── Home.jsx
+│   │   └── Login.jsx
+│   ├── styles/
+│   │   ├── index.css             # Entry point, imports in dependency order
+│   │   ├── tokens.css            # CSS custom properties
+│   │   ├── reset.css
+│   │   ├── animations.css
+│   │   ├── layout.css
+│   │   ├── components.css
+│   │   └── pages/                # Per-page stylesheets
+│   ├── App.jsx                   # BrowserRouter + Routes
 │   └── main.jsx
-├── styles.css             # Global styles and design tokens
-├── highlight-theme.css    # Meeko syntax highlighting theme
+├── supabase/
+│   └── functions/
+│       └── manage-blog/          # Edge Function for blog writes
+│           └── index.ts
+├── CLAUDE.md                     # AI session context (gitignored)
+├── TODO.md
+├── README.md
 └── vite.config.js
 ```
-
-Note: structure will change significantly during the React Router framework mode migration. The `src/` directory becomes `app/`, pages become route modules, and `App.jsx`/`main.jsx` are replaced by `root.tsx`, `routes.ts`, and `entry.client.tsx`.
 
 ## Key decisions documented
 
@@ -189,50 +235,66 @@ Documented in full on the blog. Short version: hash routing limitations, growing
 
 **Why React Router?**
 
-Proper URL handling without hash-based workarounds. Industry standard. Chosen in declarative mode initially to keep complexity low. Framework mode migration is planned as the next significant change.
+Proper URL handling without hash-based workarounds. Industry standard. Chosen in declarative mode initially to keep complexity low.
 
 **Why Supabase over a custom backend?**
 
-The portfolio's architecture is frontend-only with no custom server. Supabase provides a hosted PostgreSQL database with a JavaScript client that talks directly from React, eliminating the need for a backend layer entirely. RLS policies enforce access control at the database level, making the security model robust without server-side code.
+The portfolio is frontend-only with no custom server. Supabase provides hosted PostgreSQL with a JS client that talks directly from React, eliminating a backend layer entirely. RLS policies enforce access control at the database level.
 
-**Why React Router framework mode next?**
+**Why a raw `fetch` for blog reads instead of the Supabase JS client?**
 
-Investigation into SSG options revealed that third-party plugins don't support React Router v7. Framework mode has native `prerender()` support built in, and brings TypeScript route types and proper loader-based data fetching as additional benefits. Three justified changes for the cost of one migration.
+The `drew_portfolio` custom schema requires an `Accept-Profile` header on every request. The Supabase JS client's `.schema()` method does not reliably set this header in browser context, causing 406 errors. Raw fetch with explicit headers is the pragmatic fix. Documented in the blog.
 
-**Why Cloudflare Pages?**
+**Why an Edge Function for blog writes?**
 
-Already using Cloudflare for DNS. Zero-config static hosting. Generous free tier. Framework mode with `ssr: false` outputs a static `build/client/` directory that Cloudflare Pages serves without any server infrastructure.
+Writes to `drew_portfolio.blog_posts` require the service role client to bypass RLS from a trusted context. The Edge Function verifies the user's auth token, checks the admin user ID, then performs the write with the service role. This keeps the service role key server-side and never exposed to the browser.
+
+**Why sessionStorage for draft rescue rather than localStorage?**
+
+localStorage persists indefinitely and creates stale draft confusion across sessions. sessionStorage clears when the tab closes, so a draft is only recoverable within the same session - exactly the use case (accidental navigation away or refresh). Single-admin setup makes this the right trade-off.
 
 **Why CSS Modules over CSS-in-JS?**
 
-Vite supports it out of the box. Scoped styles without a new dependency. Global design tokens remain in `styles.css`.
+Vite supports it out of the box. Scoped styles without a new dependency. Global design tokens remain in `tokens.css`.
+
+**Why Cloudflare Pages?**
+
+Already using Cloudflare for DNS. Zero-config static hosting. Generous free tier.
 
 ## Running locally
 
-**Prerequisites:** Node.js 18+
+**Prerequisites:** Bun (or Node.js 18+)
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 **Production build:**
 
 ```bash
-npm run build
-npm run preview
+bun run build
+bun run preview
 ```
 
 **Code quality:**
 
 ```bash
-npm run lint
-npm run format
+bun run lint
+bun run format
+```
+
+**Environment variables required (`.env`):**
+
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_SUPABASE_JWT_ANON_KEY=
 ```
 
 ## Deployment
 
-Auto-deploys to Cloudflare Pages on every push to `main`. Build command: `npm run build`, output: `dist`.
+Auto-deploys to Cloudflare Pages on every push to `main`. Build command: `npm run build`, output: `dist`. Environment variables configured in Cloudflare Pages dashboard.
 
 ## AI-assisted development
 
@@ -241,4 +303,4 @@ This project uses an AI-assisted workflow where Claude provides technical valida
 ---
 
 **Built by Andrew Pendlebury**
-Software Engineer | [GitHub](https://github.com/soss-lesig) | [drewbs.dev](https://drewbs.dev) | Currently seeking junior/associate roles
+Software Engineer | [GitHub](https://github.com/soss-lesig) | [drewbs.dev](https://drewbs.dev)
