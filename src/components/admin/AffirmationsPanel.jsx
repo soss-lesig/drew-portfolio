@@ -101,10 +101,20 @@ export default function AffirmationsPanel() {
           {affirmations.map((a) => (
             <li key={a.id}>
               <span>{a.text}</span>
-              <button onClick={() => toggleActive(a.id, a.active)}>
-                {a.active ? "Deactivate" : "Activate"}
-              </button>
-              <button onClick={() => deleteAffirmation(a.id)}>Delete</button>
+              <div className="affirmation-actions">
+                <button
+                  className={a.active ? "toggle-active" : "toggle-inactive"}
+                  onClick={() => toggleActive(a.id, a.active)}
+                >
+                  {a.active ? "Active" : "Inactive"}
+                </button>
+                <button
+                  className="btn-delete"
+                  onClick={() => deleteAffirmation(a.id)}
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>

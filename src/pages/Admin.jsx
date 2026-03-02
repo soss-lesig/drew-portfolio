@@ -23,29 +23,56 @@ export default function Admin() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/studio/login");
+  };
+
   return (
     <div className="admin-accordion">
-      <h1>Admin</h1>
+      <div className="admin-header">
+        <h1>Admin</h1>
+        <button onClick={handleLogout} className="admin-logout">
+          log out
+        </button>
+      </div>
 
-      <div className="accordion-item">
+      <div className={`accordion-item${openPanel === "affirmations" ? " is-open" : ""}`}>
         <button onClick={() => togglePanel("affirmations")}>
-          Affirmations {openPanel === "affirmations" ? "▲" : "▼"}
+          Affirmations
+          <span className="accordion-chevron">{openPanel === "affirmations" ? "▲" : "▼"}</span>
         </button>
-        {openPanel === "affirmations" && <AffirmationsPanel />}
+        <div className="accordion-panel">
+          <div className="accordion-panel-inner">
+            <AffirmationsPanel />
+          </div>
+        </div>
       </div>
 
-      <div className="accordion-item">
+      <div className={`accordion-item${openPanel === "blog" ? " is-open" : ""}`}>
         <button onClick={() => togglePanel("blog")}>
-          Blog {openPanel === "blog" ? "▲" : "▼"}
+          Blog
+          <span className="accordion-chevron">{openPanel === "blog" ? "▲" : "▼"}</span>
         </button>
-        {openPanel === "blog" && <BlogPanel />}
+        <div className="accordion-panel">
+          <div className="accordion-panel-inner">
+            <BlogPanel />
+          </div>
+        </div>
       </div>
 
-      <div className="accordion-item">
+      <div className={`accordion-item${openPanel === "quiz" ? " is-open" : ""}`}>
         <button onClick={() => togglePanel("quiz")}>
-          Quiz {openPanel === "quiz" ? "▲" : "▼"}
+          Quiz
+          <span className="accordion-chevron">{openPanel === "quiz" ? "▲" : "▼"}</span>
         </button>
-        {openPanel === "quiz" && <QuizPanel />}
+        <div className="accordion-panel">
+          <div className="accordion-panel-inner">
+            <QuizPanel />
+          </div>
+        </div>
       </div>
     </div>
   );
