@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { getPostBySlug } from "../data/posts.js";
-import { formatDate, parseFrontmatter } from "../utils/helpers.js";
+import { getPostBySlug } from "../lib/blog.js";
+import { formatDate } from "../utils/helpers.js";
 
 marked.use({
   renderer: {
@@ -20,31 +20,21 @@ marked.use({
 
 export default function BlogPost() {
   const { slug } = useParams();
+  const [post, setPost] = useState(null);
   const [content, setContent] = useState(null);
-  const [frontmatter, setFrontmatter] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const post = getPostBySlug(slug);
 
   useEffect(() => {
     async function fetchPost() {
       try {
-        const response = await fetch(`/blog/posts/${slug}.md`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch post: ${response.status}`);
-        }
-
-        const markdown = await response.text();
-        const { content, frontmatter } = parseFrontmatter(markdown);
-
-        setContent(marked.parse(content));
-        setFrontmatter(frontmatter);
-        setLoading(false);
+        const data = await getPostBySlug(slug);
+        setPost(data);
+        setContent(marked.parse(data.body));
       } catch (err) {
         console.error("Error loading post:", err);
         setError(err);
+      } finally {
         setLoading(false);
       }
     }
@@ -67,23 +57,20 @@ export default function BlogPost() {
         <Link to="/blog">← Back to blog</Link>
       </div>
     );
+
   return (
     <article className="blog-post">
       <header className="post-header">
         <Link to="/blog" className="back-link">
           ← Back to blog
         </Link>
-        <h1>{frontmatter.title || post.title}</h1>
-        {frontmatter.subtitle && (
-          <p className="subtitle">{frontmatter.subtitle}</p>
-        )}
+        <h1>{post.title}</h1>
+        {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
         <div className="post-meta">
-          <time dateTime={frontmatter.date || post.date}>
-            {formatDate(frontmatter.date || post.date)}
-          </time>
-          {frontmatter.tags && (
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          {post.tags && (
             <div className="tags">
-              {frontmatter.tags.map((tag) => (
+              {post.tags.map((tag) => (
                 <span key={tag} className="tag">
                   {tag}
                 </span>

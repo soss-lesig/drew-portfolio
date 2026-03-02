@@ -38,8 +38,8 @@ export default function MeekoBubble() {
   useEffect(() => {
     async function fetchAffirmation() {
       const { data, error } = await supabase
-        .schema("drew_portfolio")
-        .from("meeko_affirmations")
+      .schema("drew_portfolio")
+      .from("meeko_affirmations")
         .select("text")
         .eq("active", true);
 

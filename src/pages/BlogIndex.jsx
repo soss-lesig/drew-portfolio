@@ -1,9 +1,37 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllPosts } from "../data/posts.js";
+import { getAllPosts } from "../lib/blog.js";
 import { formatDate } from "../utils/helpers.js";
 
 export default function BlogIndex() {
-  const posts = getAllPosts();
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const data = await getAllPosts();
+        setPosts(data);
+      } catch (err) {
+        console.error("Error loading posts:", err);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, []);
+
+  if (loading) return <div className="loading">Loading posts...</div>;
+  if (error)
+    return (
+      <div className="error">
+        <h1>Error loading posts</h1>
+        <Link to="/">← Back to home</Link>
+      </div>
+    );
 
   return (
     <div className="blog-index">
