@@ -1,0 +1,42 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-5);
+  padding: var(--space-8) var(--space-5);
+}
+
+.not-found-404 {
+  font-size: var(--fs-display);
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.not-found-heading {
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.not-found-sub {
+  color: var(--muted);
+  font-size: var(--fs-body);
+  max-width: 480px;
+  margin: 0;
+}
+
+.not-found-meeko {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.not-found-meeko-img {
+  width: clamp(140px, 20vw, 220px);
+  height: auto;
+}
