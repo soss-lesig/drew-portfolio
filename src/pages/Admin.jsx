@@ -14,6 +14,7 @@ export default function Admin() {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
+      if (!document.contains(e.target)) return;
       if (!e.target.closest(".admin-accordion")) {
         setOpenPanel(null);
       }
