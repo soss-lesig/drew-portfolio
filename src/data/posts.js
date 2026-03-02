@@ -3,6 +3,13 @@
 
 export const posts = [
   {
+    slug: "locking-the-back-door-admin-role-architecture",
+    title: "Locking the back door: admin role architecture and RLS policies",
+    subtitle: "Migrating from generic authenticated access to an explicit admin role check, and why it matters before public users ever arrive",
+    date: "2026-03-02T16:00:00",
+    tags: ["supabase", "security", "rls", "postgres", "admin", "css"],
+  },
+  {
     slug: "coffee-beans-frosted-glass-css-transform",
     title: "Coffee Beans, Frosted Glass, and a CSS Transform Rabbit Hole",
     subtitle: "Adding a custom illustrated background to the drewBrew page and project card, and what a scroll tilt hook taught me about browser rendering",
