@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node --env-file=.env scripts/fetch-content.js && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .js",
     "format": "prettier --write \"**/*.{js,json,css,md}\"",

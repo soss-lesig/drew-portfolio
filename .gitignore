@@ -26,3 +26,7 @@ dist-ssr/
 
 # Claude context
 CLAUDE.md
+
+# Generated at build time
+content/
+public/content/
