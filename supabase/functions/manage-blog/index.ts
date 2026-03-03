@@ -50,12 +50,62 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const BUCKET = "drewbs-content";
+
     // Parse the request
-    const { action, id, payload } = await req.json();
+    // body is the raw markdown string, separate from metadata payload
+    const { action, id, payload, body } = await req.json();
 
     let result;
 
-    if (action === "update") {
+    if (action === "insert") {
+      // Upload body to Storage first
+      const filePath = `posts/${payload.slug}.md`;
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from(BUCKET)
+        .upload(filePath, body, {
+          contentType: "text/markdown",
+          upsert: true,
+        });
+
+      if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
+
+      // Insert metadata row with body_path pointer
+      const { data, error } = await supabaseAdmin
+        .schema("drew_portfolio")
+        .from("blog_posts")
+        .insert({ ...payload, body_path: filePath })
+        .select()
+        .single();
+
+      if (error) throw error;
+      result = data;
+
+    } else if (action === "update") {
+      // If body content is provided, update the Storage file
+      if (body !== undefined) {
+        // Fetch current slug to derive the file path (slug shouldn't change but be safe)
+        const { data: existing, error: fetchError } = await supabaseAdmin
+          .schema("drew_portfolio")
+          .from("blog_posts")
+          .select("slug")
+          .eq("id", id)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        const filePath = `posts/${existing.slug}.md`;
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from(BUCKET)
+          .upload(filePath, body, {
+            contentType: "text/markdown",
+            upsert: true,
+          });
+
+        if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
+      }
+
+      // Update metadata in DB (body_path doesn't change on update)
       const { data, error } = await supabaseAdmin
         .schema("drew_portfolio")
         .from("blog_posts")
@@ -67,18 +117,26 @@ Deno.serve(async (req) => {
       if (error) throw error;
       result = data;
 
-    } else if (action === "insert") {
-      const { data, error } = await supabaseAdmin
+    } else if (action === "delete") {
+      // Fetch the slug so we can remove the Storage file
+      const { data: existing, error: fetchError } = await supabaseAdmin
         .schema("drew_portfolio")
         .from("blog_posts")
-        .insert(payload)
-        .select()
+        .select("slug")
+        .eq("id", id)
         .single();
 
-      if (error) throw error;
-      result = data;
+      if (fetchError) throw fetchError;
 
-    } else if (action === "delete") {
+      // Delete Storage file first - if this fails we still have the DB row, easier to clean up
+      const filePath = `posts/${existing.slug}.md`;
+      const { error: storageError } = await supabaseAdmin.storage
+        .from(BUCKET)
+        .remove([filePath]);
+
+      if (storageError) throw new Error(`Storage delete failed: ${storageError.message}`);
+
+      // Then delete the DB row
       const { error } = await supabaseAdmin
         .schema("drew_portfolio")
         .from("blog_posts")
