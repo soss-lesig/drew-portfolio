@@ -1,8 +1,13 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAllPosts } from "../data/posts.js";
+import { getPostCount } from "../lib/blog.js";
 
 export default function About() {
-  const postCount = getAllPosts().length;
+  const [postCount, setPostCount] = useState(null);
+
+  useEffect(() => {
+    getPostCount().then(setPostCount).catch(console.error);
+  }, []);
   return (
     <div className="about-page">
       <header className="page-header">
@@ -91,7 +96,7 @@ export default function About() {
           treat every AI-assisted session as a learning opportunity: I write the
           code myself, I understand every decision, and I can explain it without
           the AI in the room. The portfolio documents that process in real time
-          across {postCount} blog posts and counting.
+          across {postCount ?? "…"} blog posts and counting.
         </p>
       </section>
 

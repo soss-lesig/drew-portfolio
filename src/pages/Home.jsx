@@ -1,9 +1,14 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../components/Card";
-import { getAllPosts } from "../data/posts.js";
+import { getPostCount } from "../lib/blog.js";
 
 export default function Home() {
-  const postCount = getAllPosts().length;
+  const [postCount, setPostCount] = useState(null);
+
+  useEffect(() => {
+    getPostCount().then(setPostCount).catch(console.error);
+  }, []);
 
   const projects = [
   {
@@ -14,7 +19,7 @@ export default function Home() {
       "Vanilla foundations migrated to React as genuine pain points justified it",
       "Supabase integration with custom PostgreSQL schema and RLS policies",
       "Client-side markdown blog with custom syntax highlighting theme",
-      `Full Git history and ${postCount}-post blog series documenting every decision`,
+      `Full Git history and ${postCount ?? "…"}-post blog series documenting every decision`,
     ],
     projectLinks: [
       {

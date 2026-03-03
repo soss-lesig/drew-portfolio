@@ -23,6 +23,20 @@ export async function getAllPosts() {
 }
 
 /**
+ * Get the count of all published posts.
+ */
+export async function getPostCount() {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=count&published=eq.true`,
+    { headers }
+  );
+
+  if (!res.ok) throw new Error(`Failed to fetch post count: ${res.status}`);
+  const data = await res.json();
+  return data[0]?.count ?? 0;
+}
+
+/**
  * Get a single published post by slug, including the full body.
  */
 export async function getPostBySlug(slug) {
