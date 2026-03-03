@@ -6,10 +6,10 @@
 
 - [ ] **Development database** - create a second Supabase project as a dev environment. Same schema and seed data. Vite switches between dev/prod via `import.meta.env.MODE`. Add `VITE_SUPABASE_URL_DEV` and `VITE_SUPABASE_ANON_KEY_DEV` to `.env`. Must be set up before the next feature that touches the database.
 
-- [ ] **React Router framework mode migration** - enables native SSG via `prerender()`, replaces declarative mode setup. See `drafts/framework-mode-migration-plan.md` in Obsidian for full plan
-- [ ] **TypeScript adoption** - migrate alongside framework mode, use generated route types throughout
-- [ ] **Static pre-rendering** - implemented via `react-router.config.ts` `prerender()` once framework mode migration is complete. Fixes SEO and crawlability
-- [ ] **Open Graph meta tags** - use React Router's `meta()` export per route once framework mode is in place
+- [ ] **SSG via pre-build script** - static-first rendering without framework migration. `scripts/fetch-content.js` runs before `vite build`, fetches published post metadata from `blog_posts` table and markdown bodies from Supabase Storage, writes to `/content`. `BlogPost.jsx` and `BlogIndex.jsx` read from `/content` at build time rather than fetching Supabase at runtime. Public site serves pre-rendered content with no JS dependency for page content.
+- [ ] **Cloudflare Pages deploy hook** - Supabase Edge Function (`trigger-deploy`) that calls the Cloudflare Pages build hook URL. Redeploy button in admin panel calls this function. Controlled deploys: publish in CMS, hit Redeploy when ready.
+- [ ] **TypeScript adoption** - parked. Worth revisiting when Engineering Gym data model complexity makes type safety genuinely valuable rather than ceremonially correct.
+- [ ] **Open Graph meta tags** - per-route meta tags for blog posts. Implementable once SSG pipeline is in place.
 
 ### UX
 
@@ -28,15 +28,13 @@
 
 ### Features
 
-- [ ] **Supabase Storage bucket** - create a `media` bucket (public reads, admin-only writes). Subfolders: `blog/` for post screenshots, `quiz/` for question images (CSS/HTML mockups etc). Single bucket keeps the policy surface area small and is the shared foundation for both blog image uploads and Engineering Gym question images - worth doing once properly rather than solving it twice.
+- [ ] **Supabase Storage bucket (Phase 1 - next up)** - create `drewbs-content` bucket (public reads, authenticated writes). Single bucket for everything: `posts/` for markdown bodies, `blog/` for post images, `quiz/` for Engineering Gym question images. One infrastructure decision, three use cases.
 
-- [ ] **Blog image uploads** - once storage bucket exists: add image upload button to `BlogEditor` toolbar. Uploads to `media/blog/`, inserts the public URL as a markdown image tag at the cursor position in the textarea. Bucket public read policy means the image just works in both preview and the live blog post via existing `marked` parsing. Direct consequence of moving from file-based posts (where images lived in `public/images/`) to CMS - the natural home for images is gone.
+- [ ] **Migrate post bodies to Storage (Phase 1 - next up)** - add `body_path TEXT` column to `drew_portfolio.blog_posts`. Migration script: read each post's `body` from DB, upload to Storage as `posts/[slug].md`, write path back to `body_path`. Drop `body` column once verified. Update manage-blog Edge Function to write body file to Storage on create/update. Update BlogPanel editor accordingly.
 
-- [ ] **Blog posts in storage bucket (future consideration)** - storing markdown bodies in a `TEXT` column works fine at current scale, but moving to Supabase Storage (one `.md` file per post) would give a natural home for post images alongside their content, proper file management, and avoids large text columns. More conventional CMS architecture. Not worth the migration cost now but worth revisiting if the image management pain grows.
+- [ ] **Blog image uploads (Phase 2)** - once storage bucket exists: add image upload button to `BlogEditor` toolbar. Uploads to `drewbs-content/blog/`, inserts the public URL as a markdown image tag at the cursor position in the textarea.
 
-- [ ] **Admin role architecture** - migrate RLS write policies from blunt `authenticated` role to explicit admin check. Create `drew_portfolio.users` table (id UUID FK to auth.users, role TEXT default 'user'). Update all write policies to check `auth.uid()` against this table with `role = 'admin'`. Critical before quiz system introduces public user auth, otherwise any authenticated user gets write access. Grant sequence permissions to new role too.
-- [ ] **BlogPanel.jsx** - UI for managing blog posts in the admin panel. Blog posts currently live as markdown files in repo - requires data model design and migration to Supabase before this is buildable
-- [ ] **QuizPanel.jsx** - UI for managing quiz questions in the admin panel. Depends on quiz system being built first
+- [ ] **QuizPanel.jsx** - UI for managing quiz questions in the admin panel. Depends on quiz system being built first.
 - [ ] **Interactive quiz system** - `QuizCard` component at bottom of blog posts, only renders if quiz exists for that slug. MeekoBubble reused with `mode` prop (`affirmation` | `quiz`) - mode determines data source, not rendering logic. `affirmation` fetches from `meeko_affirmations`, `quiz` fetches from `quiz_questions` filtered by `post_slug`. Mayu as quiz enforcer character. Table: `drew_portfolio.quiz_questions` (id, post_slug TEXT, question TEXT, answers JSONB, correct_answer INT, active BOOL). `post_slug` is TEXT now but becomes a proper FK to `drew_portfolio.blog_posts(slug)` once blog posts are migrated to Supabase - document this decision in the blog post. Demonstrates relational data understanding.
 - [ ] MeekoBubble dynamic quotes via Supabase (with crossfade on text swap - see comment in MeekoBubble.jsx)
 - [ ] Blog post previews on homepage
@@ -109,3 +107,5 @@
 - [x] Supabase integration - drew_portfolio schema, meeko_affirmations table, RLS policies, MeekoBubble wired to live database
 - [x] Cloudflare Pages environment variables configured for Supabase credentials
 - [x] Admin panel - Login.jsx, ProtectedRoute.jsx, Admin.jsx accordion shell, AffirmationsPanel.jsx (fetch, toggle, add, delete, toast notifications), useToast hook, Toast component, Supabase RLS write policies (INSERT, UPDATE, DELETE), sequence permissions
+- [x] Blog CMS - drew_portfolio.blog_posts table, 25 posts migrated and published, BlogPanel full CRUD editor with preview, manage-blog Edge Function, sessionStorage draft rescue
+- [x] Admin role architecture - drew_portfolio.users table, RLS write policies use admin subquery check, safe for public user auth introduction

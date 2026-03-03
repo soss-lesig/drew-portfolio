@@ -84,7 +84,16 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Draft rescue: unsaved new posts saved to `sessionStorage`, restore prompt on re-open
 - Blog data layer now entirely in Supabase - `src/data/posts.js` retained for reference but redundant
 
-**Phase 9: Engineering Gym (planned)**
+**Phase 9: SSG pipeline (in progress)**
+
+- Static-first rendering via pre-build script (`scripts/fetch-content.js`)
+- Supabase Storage bucket (`drewbs-content`) for post bodies, blog images, and quiz assets
+- Post bodies migrated from `body TEXT` column to Storage (`posts/[slug].md`), with `body_path` pointer in DB
+- Build pipeline: fetch metadata from DB + bodies from Storage → write to `/content` → Vite builds static pages
+- Controlled deploys via admin panel redeploy button calling a Cloudflare Pages build hook
+- `BlogPost.jsx` and `BlogIndex.jsx` read from pre-built `/content` at build time, no runtime Supabase fetches
+
+**Phase 10: Engineering Gym (planned)**
 
 - Spaced repetition learning system built on top of the blog
 - Quiz questions authored per post slug, surfaced at `/gym`
@@ -164,7 +173,7 @@ Each tool was added to solve a real, experienced pain point - not added preempti
 
 **Backend:**
 
-- Supabase (PostgreSQL, Auth, Edge Functions, Storage - Storage pending)
+- Supabase (PostgreSQL, Auth, Edge Functions, Storage)
 
 **Deployment:**
 
@@ -248,6 +257,10 @@ The `drew_portfolio` custom schema requires an `Accept-Profile` header on every 
 **Why an Edge Function for blog writes?**
 
 Writes to `drew_portfolio.blog_posts` require the service role client to bypass RLS from a trusted context. The Edge Function verifies the user's auth token, checks the admin user ID, then performs the write with the service role. This keeps the service role key server-side and never exposed to the browser.
+
+**Why a pre-build script for SSG instead of React Router framework mode?**
+
+Framework mode migration would require a full rewrite of routing and data fetching, TypeScript adoption, and a different mental model - without actually solving the content pipeline problem, which is the same amount of work regardless. A Node script running before `vite build` achieves static-first rendering with no framework change, no rewrite, and a fully debuggable pipeline. Documented in post 26.
 
 **Why sessionStorage for draft rescue rather than localStorage?**
 
