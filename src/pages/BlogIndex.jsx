@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAllPosts } from "../lib/blog.js";
 import { formatDate } from "../utils/helpers.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
+import posts from "../../public/content/posts.json";
 
 const POSTS_PER_PAGE = 10;
 
@@ -62,9 +62,6 @@ function Pagination({ page, totalPages, goToPage }) {
 }
 
 export default function BlogIndex() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
@@ -76,22 +73,6 @@ export default function BlogIndex() {
     setShouldScroll(false);
   }, [page, shouldScroll]);
 
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const data = await getAllPosts();
-        setPosts(data);
-      } catch (err) {
-        console.error("Error loading posts:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchPosts();
-  }, []);
-
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
   const pagePosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
@@ -99,15 +80,6 @@ export default function BlogIndex() {
     setPage(nextPage);
     setShouldScroll(true);
   };
-
-  if (loading) return <div className="loading">Loading posts...</div>;
-  if (error)
-    return (
-      <div className="error">
-        <h1>Error loading posts</h1>
-        <Link to="/">← Back to home</Link>
-      </div>
-    );
 
   return (
     <div className="blog-index">

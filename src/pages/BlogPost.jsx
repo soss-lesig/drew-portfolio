@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { getPostBySlug } from "../lib/blog.js";
 import { formatDate } from "../utils/helpers.js";
+import allPosts from "../../public/content/posts.json";
 
 marked.use({
   renderer: {
@@ -28,9 +28,15 @@ export default function BlogPost() {
   useEffect(() => {
     async function fetchPost() {
       try {
-        const data = await getPostBySlug(slug);
-        setPost(data);
-        setContent(marked.parse(data.body));
+        const meta = allPosts.find((p) => p.slug === slug);
+        if (!meta) throw new Error(`Post not found: ${slug}`);
+
+        const res = await fetch(`/content/posts/${slug}.md`);
+        if (!res.ok) throw new Error(`Failed to fetch post body: ${res.status}`);
+        const body = await res.text();
+
+        setPost(meta);
+        setContent(marked.parse(body));
       } catch (err) {
         console.error("Error loading post:", err);
         setError(err);
