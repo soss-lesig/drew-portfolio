@@ -7,6 +7,7 @@ import QuizPanel from "../components/admin/QuizPanel";
 
 export default function Admin() {
   const [openPanel, setOpenPanel] = useState(null);
+  const [deployStatus, setDeployStatus] = useState(null); // null | 'loading' | 'success' | 'error'
 
   const togglePanel = (panel) => {
     setOpenPanel((prev) => (prev === panel ? null : panel));
@@ -31,13 +32,55 @@ export default function Admin() {
     navigate("/studio/login");
   };
 
+  const handleDeploy = async () => {
+    setDeployStatus("loading");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("No active session");
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/trigger-deploy`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_JWT_ANON_KEY,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) {
+        const errBody = await res.json();
+        console.error("Deploy error response:", errBody);
+        throw new Error(`Deploy failed: ${res.status}`);
+      }
+      setDeployStatus("success");
+      setTimeout(() => setDeployStatus(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setDeployStatus("error");
+      setTimeout(() => setDeployStatus(null), 4000);
+    }
+  };
+
   return (
     <div className="admin-accordion">
       <div className="admin-header">
         <h1>Admin</h1>
-        <button onClick={handleLogout} className="admin-logout">
-          log out
-        </button>
+        <div className="admin-header-actions">
+          <button
+            onClick={handleDeploy}
+            className="admin-deploy"
+            disabled={deployStatus === "loading"}
+          >
+            {deployStatus === "loading" && "deploying..."}
+            {deployStatus === "success" && "deployed ✓"}
+            {deployStatus === "error" && "failed ✗"}
+            {deployStatus === null && "deploy"}
+          </button>
+          <button onClick={handleLogout} className="admin-logout">
+            log out
+          </button>
+        </div>
       </div>
 
       <div className={`accordion-item${openPanel === "affirmations" ? " is-open" : ""}`}>

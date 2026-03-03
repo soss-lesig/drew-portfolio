@@ -24,7 +24,14 @@
   letter-spacing: -0.02em;
 }
 
-.admin-logout {
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-logout,
+.admin-deploy {
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -41,6 +48,16 @@
 .admin-logout:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.admin-deploy:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-deploy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Accordion */
