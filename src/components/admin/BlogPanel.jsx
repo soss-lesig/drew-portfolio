@@ -306,11 +306,15 @@ export default function BlogPanel() {
 
   const handleSave = async (payload, id) => {
     try {
+      // Pull body out of payload - Edge Function expects it as a separate key
+      // since body no longer exists as a DB column
+      const { body, ...metadata } = payload;
+
       if (id) {
-        await callBlogFunction({ action: "update", id, payload });
+        await callBlogFunction({ action: "update", id, payload: metadata, body });
         addToast("Post updated", "success");
       } else {
-        await callBlogFunction({ action: "insert", payload });
+        await callBlogFunction({ action: "insert", payload: metadata, body });
         addToast("Post created", "success");
       }
       setEditing(null);
@@ -347,8 +351,9 @@ export default function BlogPanel() {
 
   const handleEdit = async (post) => {
     try {
+      // Fetch metadata from DB (no body column - that lives in Storage now)
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=*`,
+        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=id,slug,title,subtitle,date,tags,published,body_path`,
         {
           headers: {
             apikey: SUPABASE_ANON_KEY,
@@ -360,7 +365,15 @@ export default function BlogPanel() {
       );
       if (!res.ok) throw new Error(`Failed to load post: ${res.status}`);
       const data = await res.json();
-      setEditing(data);
+
+      // Fetch body markdown from Supabase Storage
+      const bodyRes = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/public/drewbs-content/${data.body_path}`
+      );
+      if (!bodyRes.ok) throw new Error(`Failed to load post body: ${bodyRes.status}`);
+      const body = await bodyRes.text();
+
+      setEditing({ ...data, body });
     } catch (err) {
       console.error(err);
       addToast("Failed to load post", "error");
