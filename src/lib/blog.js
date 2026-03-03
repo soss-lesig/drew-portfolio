@@ -37,19 +37,28 @@ export async function getPostCount() {
 }
 
 /**
- * Get a single published post by slug, including the full body.
+ * Get a single published post by slug, including the full body from Storage.
  */
 export async function getPostBySlug(slug) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags,body&published=eq.true&slug=eq.${slug}`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags,body_path&published=eq.true&slug=eq.${slug}`,
     {
       headers: {
         ...headers,
-        Accept: "application/vnd.pgrst.object+json", // return single object not array
+        Accept: "application/vnd.pgrst.object+json",
       },
     }
   );
 
   if (!res.ok) throw new Error(`Failed to fetch post: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+
+  // Fetch body markdown from Supabase Storage
+  const bodyRes = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/public/drewbs-content/${data.body_path}`
+  );
+  if (!bodyRes.ok) throw new Error(`Failed to fetch post body: ${bodyRes.status}`);
+  const body = await bodyRes.text();
+
+  return { ...data, body };
 }

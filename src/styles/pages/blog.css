@@ -34,9 +34,15 @@
 .posts-list .post-preview {
   padding: var(--space-6) 0;
   border-bottom: 1px solid var(--border);
-  animation: fadeIn 0.6s ease both;
   opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
   /* No background, no border-radius, no box shadow */
+}
+
+.posts-list .post-preview.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .post-preview h2 {
@@ -81,6 +87,79 @@
 /* Tags inline with date, smaller and more subtle than before */
 .post-preview .tags {
   margin: 0;
+}
+
+/* Pagination controls */
+.blog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-7) 0 var(--space-6);
+  gap: var(--space-4);
+}
+
+.blog-pagination-info {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.blog-pagination-controls {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.blog-pagination-controls button {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.blog-pagination-controls button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.blog-pagination-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.blog-pagination-pages {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.blog-pagination-pages button {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.blog-pagination-pages button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.blog-pagination-pages button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
 }
 
 /* =========================================================================
