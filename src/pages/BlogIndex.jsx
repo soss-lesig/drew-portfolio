@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { formatDate } from "../utils/helpers.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import posts from "../../public/content/posts.json";

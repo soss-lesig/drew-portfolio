@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { formatDate } from "../utils/helpers.js";
