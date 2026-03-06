@@ -1,7 +1,21 @@
 import type { Config } from "@react-router/dev/config";
-import { cloudflareDevProxyVitePlugin } from "@react-router/cloudflare";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export default {
   ssr: false,
-  prerender: true,
+  async prerender() {
+    const postsPath = join(process.cwd(), "public", "content", "posts.json");
+    const posts = JSON.parse(readFileSync(postsPath, "utf-8"));
+    const slugPaths = posts.map((p: { slug: string }) => `/blog/${p.slug}`);
+
+    return [
+      "/",
+      "/about",
+      "/contact",
+      "/drewbrew",
+      "/blog",
+      ...slugPaths,
+    ];
+  },
 } satisfies Config;
