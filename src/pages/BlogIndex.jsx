@@ -1,8 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { formatDate } from "../utils/helpers.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
-import posts from "../../public/content/posts.json";
+import postsData from "../../public/content/posts.json";
+
+export function loader() {
+  return { posts: postsData };
+}
 
 const POSTS_PER_PAGE = 10;
 
@@ -62,13 +66,14 @@ function Pagination({ page, totalPages, goToPage }) {
 }
 
 export default function BlogIndex() {
+  const { posts } = useLoaderData();
   const [page, setPage] = useState(1);
   const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
 
   useEffect(() => {
     if (!shouldScroll) return;
-    const top = listRef.current?.getBoundingClientRect().top + window.scrollY ?? 0;
+    const top = (listRef.current?.getBoundingClientRect().top ?? 0) + window.scrollY;
     window.scrollTo({ top, behavior: "smooth" });
     setShouldScroll(false);
   }, [page, shouldScroll]);
