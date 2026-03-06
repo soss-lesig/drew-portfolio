@@ -1,6 +1,8 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export default defineConfig({
   plugins: [reactRouter()],
 
@@ -12,6 +14,6 @@ export default defineConfig({
   },
 
   build: {
-    sourcemap: true,
+    sourcemap: !isProduction,
   },
 });
