@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { marked } from "marked";
+import { useState, useEffect, useRef } from "react";
+import { marked } from "../../lib/markedConfig.js";
 import { supabase as supabaseClient } from "../../lib/supabase";
 import useToast from "../../hooks/useToast";
 import Toast from "../Toast";
+import { parseFrontmatter } from "../../lib/parseFrontmatter";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -67,7 +68,7 @@ function slugify(title) {
     .replace(/-+/g, "-");
 }
 
-function BlogEditor({ post, onSave, onCancel }) {
+function BlogEditor({ post, initialForm, onSave, onCancel }) {
   const isNew = !post;
 
   const [form, setForm] = useState(() => {
@@ -81,6 +82,7 @@ function BlogEditor({ post, onSave, onCancel }) {
         published: post.published,
       };
     }
+    if (initialForm) return { ...EMPTY_FORM, ...initialForm };
     return EMPTY_FORM;
   });
   const [preview, setPreview] = useState(false);
@@ -286,7 +288,37 @@ export default function BlogPanel() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [importedForm, setImportedForm] = useState(null);
+  const importRef = useRef(null);
   const { toasts, addToast } = useToast();
+
+  const handleImport = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Reset the input so the same file can be re-imported if needed
+    e.target.value = "";
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const { title, subtitle, date, tags, body } = parseFrontmatter(ev.target.result);
+        const form = {
+          title,
+          subtitle: subtitle ?? "",
+          date: date
+            ? new Date(date).toISOString().slice(0, 16)
+            : new Date().toISOString().slice(0, 16),
+          tags: tags ? tags.join(", ") : "",
+          body,
+          published: false,
+        };
+        setImportedForm(form);
+        setEditing("new");
+      } catch (err) {
+        addToast(`Import failed: ${err.message}`, "error");
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const loadPosts = async () => {
     try {
@@ -405,8 +437,9 @@ export default function BlogPanel() {
       {editing !== null ? (
         <BlogEditor
           post={editing === "new" ? null : editing}
+          initialForm={editing === "new" ? importedForm : null}
           onSave={handleSave}
-          onCancel={() => setEditing(null)}
+          onCancel={() => { setEditing(null); setImportedForm(null); }}
         />
       ) : (
         <>
@@ -414,6 +447,16 @@ export default function BlogPanel() {
             <button className="btn-primary" onClick={() => setEditing("new")}>
               New post
             </button>
+            <button className="btn-secondary" onClick={() => importRef.current?.click()}>
+              Import .md
+            </button>
+            <input
+              ref={importRef}
+              type="file"
+              accept=".md"
+              style={{ display: "none" }}
+              onChange={handleImport}
+            />
           </div>
 
           {loading ? (

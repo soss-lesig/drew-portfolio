@@ -1,8 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { Link, useLoaderData } from "react-router";
-import { marked } from "marked";
-import hljs from "highlight.js";
+import { marked } from "../lib/markedConfig.js";
 import { formatDate } from "../utils/helpers.js";
 import allPosts from "../../public/content/posts.json";
 
@@ -19,18 +18,6 @@ export async function loader({ params }) {
   return { post: meta, content };
 }
 
-marked.use({
-  renderer: {
-    code(token) {
-      const language = token.lang || "plaintext";
-      const validLang = hljs.getLanguage(language) ? language : "plaintext";
-      const highlighted = hljs.highlight(token.text, {
-        language: validLang,
-      }).value;
-      return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`;
-    },
-  },
-});
 
 export default function BlogPost() {
   const { post, content } = useLoaderData();
