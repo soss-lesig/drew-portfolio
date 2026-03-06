@@ -22,27 +22,67 @@ export default function DrewBrew() {
   useEffect(() => {
     async function initMermaid() {
       const mermaid = (await import("mermaid")).default;
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: "base",
-        themeVariables: {
-          primaryColor: "hsl(340 80% 85%)",
-          primaryTextColor: "hsl(240 6% 10%)",
-          primaryBorderColor: "hsl(340 80% 65%)",
-          background: "hsl(40 13% 92%)",
-          mainBkg: "hsl(40 13% 87%)",
-          secondBkg: "hsl(40 13% 92%)",
-          lineColor: "hsl(340 17% 35%)",
-          edgeLabelBackground: "hsl(40 13% 87%)",
-          tertiaryColor: "hsl(40 13% 82%)",
-          fontSize: "14px",
-        },
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+
+      // Reset rendered diagrams so mermaid.run() re-processes them
+      document.querySelectorAll(".mermaid").forEach((el) => {
+        if (el.getAttribute("data-processed")) {
+          el.removeAttribute("data-processed");
+          // Restore original source text from the svg's aria-label if needed
+          const svg = el.querySelector("svg");
+          if (svg && el.dataset.originalSource) {
+            el.innerHTML = el.dataset.originalSource;
+          }
+        } else {
+          // First run: stash the raw mermaid source so we can restore it on re-render
+          el.dataset.originalSource = el.textContent.trim();
+        }
       });
+
+      if (isDark) {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "base",
+          themeVariables: {
+            primaryColor: "hsl(30 10% 18%)",
+            primaryTextColor: "hsl(35 15% 82%)",
+            primaryBorderColor: "hsl(75 30% 40%)",
+            background: "hsl(30 10% 12%)",
+            mainBkg: "hsl(30 10% 18%)",
+            secondBkg: "hsl(30 10% 14%)",
+            lineColor: "hsl(75 25% 50%)",
+            edgeLabelBackground: "hsl(30 10% 18%)",
+            tertiaryColor: "hsl(30 10% 22%)",
+            fontSize: "14px",
+          },
+        });
+      } else {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "base",
+          themeVariables: {
+            primaryColor: "hsl(340 80% 85%)",
+            primaryTextColor: "hsl(240 6% 10%)",
+            primaryBorderColor: "hsl(340 80% 65%)",
+            background: "hsl(40 13% 92%)",
+            mainBkg: "hsl(40 13% 87%)",
+            secondBkg: "hsl(40 13% 92%)",
+            lineColor: "hsl(340 17% 35%)",
+            edgeLabelBackground: "hsl(40 13% 87%)",
+            tertiaryColor: "hsl(40 13% 82%)",
+            fontSize: "14px",
+          },
+        });
+      }
+
       await mermaid.run({ querySelector: ".mermaid" });
     }
 
     hljs.highlightAll();
     initMermaid();
+
+    window.addEventListener("theme-change", initMermaid);
+    return () => window.removeEventListener("theme-change", initMermaid);
   }, []);
 
   return (
