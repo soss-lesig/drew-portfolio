@@ -283,6 +283,11 @@
   border-radius: 4px;
 }
 
+[data-theme="dark"] .post-content code:not(pre code) {
+  background: hsl(var(--accent-h) var(--accent-s) 16%);
+  color: hsl(var(--accent-h) var(--accent-s) 72%);
+}
+
 .post-content hr {
   border: none;
   border-top: 1px solid var(--border);

@@ -124,3 +124,113 @@ code.hljs {
 .hljs-strong {
   font-weight: bold;
 }
+
+
+/*
+  Theme: Mayu (dark mode)
+  Author: drewbs
+  Built around Mayu's palette — olive green eyes, warm dark surfaces
+*/
+
+[data-theme="dark"] .hljs {
+  background: hsl(30 10% 12%);
+  color: hsl(35 15% 82%);
+}
+
+/* Comments - muted, barely-there olive */
+[data-theme="dark"] .hljs-comment,
+[data-theme="dark"] .hljs-quote {
+  color: hsl(75 15% 45%);
+  font-style: italic;
+}
+
+/* Keywords - Mayu olive green */
+[data-theme="dark"] .hljs-keyword,
+[data-theme="dark"] .hljs-selector-tag,
+[data-theme="dark"] .hljs-operator {
+  color: hsl(75 40% 60%);
+  font-weight: 600;
+}
+
+/* Strings - warm amber, readable on dark */
+[data-theme="dark"] .hljs-string,
+[data-theme="dark"] .hljs-symbol,
+[data-theme="dark"] .hljs-bullet,
+[data-theme="dark"] .hljs-addition {
+  color: hsl(38 65% 62%);
+}
+
+/* Functions & titles - brighter olive */
+[data-theme="dark"] .hljs-title,
+[data-theme="dark"] .hljs-title.function_,
+[data-theme="dark"] .hljs-title.class_,
+[data-theme="dark"] .hljs-title.class_.inherited__ {
+  color: hsl(75 45% 65%);
+}
+
+/* Numbers, booleans, constants - soft terracotta */
+[data-theme="dark"] .hljs-number,
+[data-theme="dark"] .hljs-literal,
+[data-theme="dark"] .hljs-type,
+[data-theme="dark"] .hljs-params,
+[data-theme="dark"] .hljs-link {
+  color: hsl(20 60% 62%);
+}
+
+/* Variables & template vars - dusty sage */
+[data-theme="dark"] .hljs-variable,
+[data-theme="dark"] .hljs-template-variable,
+[data-theme="dark"] .hljs-attr,
+[data-theme="dark"] .hljs-attribute {
+  color: hsl(95 25% 60%);
+}
+
+/* Built-ins - muted teal */
+[data-theme="dark"] .hljs-built_in,
+[data-theme="dark"] .hljs-selector-attr,
+[data-theme="dark"] .hljs-selector-pseudo {
+  color: hsl(185 35% 55%);
+}
+
+/* Tags - olive, slightly warmer */
+[data-theme="dark"] .hljs-tag,
+[data-theme="dark"] .hljs-name,
+[data-theme="dark"] .hljs-selector-id,
+[data-theme="dark"] .hljs-selector-class {
+  color: hsl(75 35% 58%);
+}
+
+/* Meta, doctag */
+[data-theme="dark"] .hljs-meta,
+[data-theme="dark"] .hljs-doctag {
+  color: hsl(75 15% 48%);
+}
+
+/* Deletions */
+[data-theme="dark"] .hljs-deletion {
+  color: hsl(0 55% 65%);
+  background: hsl(0 40% 18%);
+}
+
+/* Additions */
+[data-theme="dark"] .hljs-addition {
+  color: hsl(120 35% 60%);
+  background: hsl(120 25% 16%);
+}
+
+/* Punctuation */
+[data-theme="dark"] .hljs-punctuation {
+  color: hsl(35 10% 55%);
+}
+
+/* Properties */
+[data-theme="dark"] .hljs-property,
+[data-theme="dark"] .hljs-subst {
+  color: hsl(35 15% 70%);
+}
+
+/* Section headings */
+[data-theme="dark"] .hljs-section {
+  color: hsl(75 40% 60%);
+  font-weight: bold;
+}
