@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import MeekoBubble from "../components/MeekoBubble";
 
 export default function NotFound() {

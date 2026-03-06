@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Card from "./Card";
 import styles from "./ProjectCard.module.css";
 import useScrollReveal from "../../hooks/useScrollReveal.js";

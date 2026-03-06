@@ -1,9 +1,23 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { Link, useLoaderData } from "react-router";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { formatDate } from "../utils/helpers.js";
 import allPosts from "../../public/content/posts.json";
+
+export async function loader({ params }) {
+  const { slug } = params;
+
+  const meta = allPosts.find((p) => p.slug === slug);
+  if (!meta) throw new Response("Post not found", { status: 404 });
+
+  const filePath = join(process.cwd(), "public", "content", "posts", `${slug}.md`);
+  const raw = readFileSync(filePath, "utf-8");
+  const content = marked.parse(raw);
+
+  return { post: meta, content };
+}
 
 marked.use({
   renderer: {
@@ -19,50 +33,7 @@ marked.use({
 });
 
 export default function BlogPost() {
-  const { slug } = useParams();
-  const [post, setPost] = useState(null);
-  const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchPost() {
-      try {
-        const meta = allPosts.find((p) => p.slug === slug);
-        if (!meta) throw new Error(`Post not found: ${slug}`);
-
-        const res = await fetch(`/content/posts/${slug}.md`);
-        if (!res.ok) throw new Error(`Failed to fetch post body: ${res.status}`);
-        const body = await res.text();
-
-        setPost(meta);
-        setContent(marked.parse(body));
-      } catch (err) {
-        console.error("Error loading post:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchPost();
-  }, [slug]);
-
-  if (loading) return <div className="loading">Loading post...</div>;
-  if (error)
-    return (
-      <div className="error">
-        <h1>Error loading post</h1>
-        <Link to="/blog">← Back to blog</Link>
-      </div>
-    );
-  if (!post)
-    return (
-      <div className="error">
-        <h1>Post not found</h1>
-        <Link to="/blog">← Back to blog</Link>
-      </div>
-    );
+  const { post, content } = useLoaderData();
 
   return (
     <article className="blog-post">

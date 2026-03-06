@@ -5,10 +5,10 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/fetch-content.js && vite build",
-    "build:local": "node --env-file=.env scripts/fetch-content.js && vite build",
-    "preview": "vite preview",
+    "dev": "react-router dev",
+    "build": "node scripts/fetch-content.js && react-router build",
+    "build:local": "node --env-file=.env scripts/fetch-content.js && react-router build",
+    "preview": "vite preview --outDir build/client",
     "lint": "eslint . --ext .js",
     "format": "prettier --write \"**/*.{js,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,json,css,md}\""
@@ -36,11 +36,16 @@
   },
   "dependencies": {
     "@fontsource-variable/jost": "^5.2.8",
+    "@react-router/cloudflare": "^7.13.1",
+    "@react-router/dev": "^7.13.1",
+    "@react-router/node": "^7.13.1",
     "@supabase/supabase-js": "^2.98.0",
     "marked": "^17.0.2",
     "mermaid": "^11.12.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.0"
+    "react-router": "^7.13.1",
+    "react-router-dom": "^7.13.0",
+    "isbot": "^5"
   }
 }
