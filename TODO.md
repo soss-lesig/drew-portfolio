@@ -5,7 +5,7 @@
 ### Technical
 
 - [ ] **Development database** - create a second Supabase project as a dev environment. Same schema and seed data. Vite switches between dev/prod via `import.meta.env.MODE`. Add `VITE_SUPABASE_URL_DEV` and `VITE_SUPABASE_ANON_KEY_DEV` to `.env`. Must be set up before the next feature that touches the database schema.
-- [ ] **npm audit** - 11 vulnerabilities (9 moderate, 2 high) flagged in Cloudflare build logs. Run `npm audit` locally to identify whether they're in dev tooling or anything that ships to production. Address before Phase 6 auth work.
+- [x] **npm audit** - DONE 2026-03-07, all 11 vulnerabilities resolved via `npm audit fix`.
 - [ ] **Open Graph meta tags** - per-route meta tags for blog posts. Now implementable via RR7 `<Meta />` in route loaders.
 
 ### UX
@@ -52,8 +52,21 @@
 
 ### Testing
 
+- [ ] **Unit + E2E test suite** - Vitest for unit/component tests, Playwright for E2E (covers edge function flows, admin panel, publish toggle etc). Manual DB testing is getting tedious.
 - [ ] Unit tests for key components
 - [ ] E2E tests for critical user flows
+
+### Security
+
+- [x] **Fix existing npm audit vulnerabilities** - DONE 2026-03-07, `npm audit fix` resolved all 11 vulnerabilities (9 moderate, 2 high). 0 vulnerabilities remaining.
+- [ ] **Add `eslint-plugin-security`** - ESLint plugin that catches common JS security antipatterns (unsafe regex, eval usage, unvalidated input etc). Install: `npm install --save-dev eslint-plugin-security`, add to eslint config. Zero friction, plugs into existing tooling.
+- [ ] **Add `npm audit` to build script** - add `npm audit --audit-level=high` as a pre-build step so Cloudflare fails the build on high severity vulnerabilities. Hard gate, catches regressions automatically.
+- [ ] **Add `audit` npm script** - `"audit": "npm audit --audit-level=moderate"` for easy local running.
+- [ ] **Full local filesystem security audit (Opus)** - GitHub audit only covered publicly visible files. A full read of the local repo by Claude Opus via filesystem MCP would catch anything missed: env var usage patterns, auth flows, RLS policies, edge function logic, any sensitive strings in config files, scripts, or anywhere else. Do this sooner rather than later, before the Engineering Gym work begins. Use Opus not Sonnet for this -- it needs the extra reasoning depth for security analysis.
+
+### Security / Pre-Engineering Gym
+
+- [ ] **Harden `manage-blog` edge function before adding non-admin users** - currently relies on single admin ID check which is fine for solo use. Before Engineering Gym introduces user roles: (1) replace admin ID check with role lookup against `drew_portfolio.users`, (2) validate and whitelist payload fields before DB operations -- don't spread raw payload, (3) sanitise error responses -- catch blocks expose internal detail, (4) consider splitting into separate functions for admin vs user-facing operations. The function structure is public on GitHub so the attack surface grows meaningfully once there are more users.
 
 ### Analytics and SEO
 
