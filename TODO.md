@@ -53,6 +53,8 @@
 ### Testing
 
 - [ ] **Unit + E2E test suite** - Vitest for unit/component tests, Playwright for E2E (covers edge function flows, admin panel, publish toggle etc). Manual DB testing is getting tedious.
+- [ ] **Git hooks via Husky** - pre-push hook that runs tests locally before a push is allowed. Blocks bad pushes before they leave the machine. Husky manages hooks as npm scripts so they're version controlled (unlike raw `.git/hooks`). First and fastest line of defence -- set this up before GitHub Actions.
+- [ ] **GitHub Actions CI pipeline** - run Vitest + Playwright smoke tests on every push to main before Cloudflare picks it up. Free for public repos. A basic smoke test (homepage loads, blog renders, mermaid diagram renders) is ~20 lines of Playwright. Second line of defence after Husky.
 - [ ] Unit tests for key components
 - [ ] E2E tests for critical user flows
 
