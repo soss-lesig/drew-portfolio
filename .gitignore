@@ -27,6 +27,7 @@ build/
 
 # Claude context
 CLAUDE.md
+context/
 
 # Generated at build time
 content/
