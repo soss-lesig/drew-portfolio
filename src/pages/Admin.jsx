@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import AffirmationsPanel from "../components/admin/AffirmationsPanel";
@@ -12,18 +12,6 @@ export default function Admin() {
   const togglePanel = (panel) => {
     setOpenPanel((prev) => (prev === panel ? null : panel));
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!document.contains(e.target)) return;
-      if (!e.target.closest(".admin-accordion")) {
-        setOpenPanel(null);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
 
   const navigate = useNavigate();
 
