@@ -9,12 +9,13 @@ const TOGGLE_KEY = "drewbs-theme-toggled";
 export default function Header() {
   const { theme, toggle } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [hasPulsed, setHasPulsed] = useState(
-    () => typeof localStorage !== "undefined" && !!localStorage.getItem(TOGGLE_KEY)
-  );
+  const [hasPulsed, setHasPulsed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    if (localStorage.getItem(TOGGLE_KEY)) {
+      setHasPulsed(true);
+    }
   }, []);
 
   function handleToggle() {
