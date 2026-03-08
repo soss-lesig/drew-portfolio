@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault Hotspot Editor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: hsl(30 8% 8%);
+    color: hsl(35 20% 88%);
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+  }
+
+  header {
+    padding: 10px 16px;
+    border-bottom: 1px solid hsl(35 20% 88% / 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: hsl(75 40% 55%);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .instructions {
+    font-size: 0.7rem;
+    color: hsl(35 10% 42%);
+  }
+  .instructions b { color: hsl(35 20% 68%); }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .controls label {
+    font-size: 0.7rem;
+    color: hsl(35 10% 50%);
+    white-space: nowrap;
+  }
+
+  select {
+    background: hsl(30 10% 14%);
+    border: 1px solid hsl(35 20% 88% / 0.15);
+    color: hsl(35 20% 88%);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  select:focus { outline: 1px solid hsl(75 40% 55%); }
+
+  .type-toggle {
+    display: flex;
+    border: 1px solid hsl(35 20% 88% / 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .type-toggle button {
+    background: transparent;
+    border: none;
+    color: hsl(35 10% 50%);
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .type-toggle button.active {
+    background: hsl(35 20% 88% / 0.08);
+    color: hsl(35 20% 85%);
+  }
+
+  .type-toggle button:first-child { border-right: 1px solid hsl(35 20% 88% / 0.15); }
+
+  .canvas-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: hsl(30 8% 6%);
+    padding: 12px;
+  }
+
+  /*
+    Simulate the live page crop exactly:
+    - 16:9 aspect ratio container
+    - image: object-fit cover, object-position center 30%
+    Coordinates drawn here will match the live page 1:1.
+  */
+  .viewport-sim {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  @media (max-aspect-ratio: 16/9) {
+    .viewport-sim {
+      width: auto;
+      height: 100%;
+    }
+  }
+
+  #vault-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%; /* must match vault.css .vault-bg */
+    pointer-events: none;
+    display: block;
+  }
+
+  #hotspot-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  #hotspot-svg.mode-draw { cursor: crosshair; }
+  #hotspot-svg.mode-edit { cursor: default; }
+
+  /*
+    IMPORTANT: font-size, stroke-width on SVG text/poly/circle are set
+    as SVG *attributes* in render(), NOT via CSS px values.
+    In a viewBox="0 0 100 100" coordinate space, "10px" = 10 SVG units
+    = 10% of the image height. All sizing must use SVG user units.
+  */
+  .hotspot-poly { cursor: pointer; transition: fill-opacity 0.15s; }
+  .corner-handle { fill: white; cursor: grab; }
+  .corner-handle:active { cursor: grabbing; }
+  .poly-label { font-weight: 700; pointer-events: none; paint-order: stroke fill; stroke-linejoin: round; }
+
+  #draw-preview {
+    fill: hsl(75 40% 55% / 0.12);
+    stroke: hsl(75 40% 55%);
+    stroke-width: 0.3;
+    stroke-dasharray: 1.2 0.8;
+    pointer-events: none;
+    display: none;
+  }
+
+  footer {
+    border-top: 1px solid hsl(35 20% 88% / 0.1);
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .output-section { flex: 1; min-width: 240px; }
+
+  .output-label {
+    font-size: 0.66rem;
+    color: hsl(35 10% 42%);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+  }
+
+  pre {
+    background: hsl(30 10% 11%);
+    border: 1px solid hsl(35 20% 88% / 0.08);
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 0.65rem;
+    line-height: 1.55;
+    overflow: auto;
+    color: hsl(75 40% 65%);
+    max-height: 120px;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 150px;
+  }
+
+  .legend-section-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: hsl(35 10% 38%);
+    padding: 2px 0;
+  }
+
+  .legend { display: flex; flex-direction: column; gap: 3px; }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: border-color 0.12s;
+  }
+  .legend-item:hover { border-color: hsl(35 20% 88% / 0.12); }
+  .legend-item.active { border-color: hsl(35 20% 88% / 0.28); background: hsl(35 20% 88% / 0.04); }
+
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-name { flex: 1; }
+  .legend-status { font-size: 0.58rem; color: hsl(35 10% 38%); }
+  .legend-status.done { color: hsl(145 55% 45%); }
+
+  .actions { display: flex; flex-direction: column; gap: 5px; }
+
+  button.action {
+    background: hsl(30 10% 14%);
+    border: 1px solid hsl(35 20% 88% / 0.14);
+    color: hsl(35 20% 85%);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: border-color 0.12s, color 0.12s;
+    white-space: nowrap;
+  }
+  button.action:hover { border-color: hsl(75 40% 55%); color: hsl(75 40% 65%); }
+  button.action.primary { background: hsl(75 35% 22%); border-color: hsl(75 40% 38%); color: hsl(75 40% 78%); }
+  button.action.primary:hover { background: hsl(75 35% 28%); }
+  button.action.danger { border-color: hsl(0 55% 38%); color: hsl(0 55% 62%); }
+  button.action.danger:hover { background: hsl(0 55% 12%); }
+  .copied { color: hsl(145 55% 52%) !important; border-color: hsl(145 55% 38%) !important; }
+
+  .mode-indicator { font-size: 0.65rem; color: hsl(35 10% 38%); text-align: center; }
+  .mode-indicator b { color: hsl(75 40% 55%); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Vault Hotspot Editor</h1>
+  <span class="instructions">
+    Image shown with <b>exact live-page crop</b> (object-fit: cover, center 30%).
+    <b>Draw:</b> drag to place. <b>Edit:</b> drag corners to skew.
+  </span>
+  <div class="controls">
+    <div class="type-toggle">
+      <button id="type-shelf" class="active">📚 Shelf</button>
+      <button id="type-cat">🐱 Cat</button>
+    </div>
+    <label for="item-select">Drawing:</label>
+    <select id="item-select">
+      <optgroup label="Shelves">
+        <option value="ironiq">IronIQ</option>
+        <option value="engineering-gym">Engineering Gym</option>
+        <option value="homeserver">HomeServer</option>
+        <option value="drewbrew">drewBrew</option>
+        <option value="drew-portfolio">drew-portfolio</option>
+      </optgroup>
+      <optgroup label="Cats">
+        <option value="meeko">Meeko</option>
+        <option value="mayu">Mayu</option>
+      </optgroup>
+    </select>
+  </div>
+</header>
+
+<div class="canvas-area">
+  <div class="viewport-sim" id="viewport-sim">
+    <img
+      id="vault-img"
+      src="../public/images/vault-background.png"
+      alt="Vault background"
+      draggable="false"
+    />
+    <!-- viewBox 0 0 100 100 + preserveAspectRatio none means coordinates are percentages -->
+    <svg id="hotspot-svg" class="mode-draw" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <rect id="draw-preview" />
+    </svg>
+  </div>
+</div>
+
+<footer>
+  <div class="output-section">
+    <div class="output-label">Config output — paste PROJECTS + CATS into Vault.jsx</div>
+    <pre id="output">// Draw hotspots to generate config...</pre>
+  </div>
+  <div class="sidebar">
+    <div class="legend-section-label">Shelves</div>
+    <div class="legend" id="legend-shelves"></div>
+    <div class="legend-section-label" style="margin-top:4px">Cats</div>
+    <div class="legend" id="legend-cats"></div>
+    <div class="mode-indicator" id="mode-indicator"><b>Draw</b> mode</div>
+    <div class="actions">
+      <button class="action primary" id="copy-btn">Copy config</button>
+      <button class="action" id="toggle-mode-btn">Switch to Edit mode</button>
+      <button class="action danger" id="delete-selected-btn" style="display:none">Delete selected</button>
+      <button class="action" id="clear-btn">Clear all</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+const SHELF_ITEMS = {
+  'ironiq':          { label: 'IronIQ',         colour: '#4db8e8', type: 'shelf' },
+  'engineering-gym': { label: 'Eng Gym',         colour: '#99cc44', type: 'shelf' },
+  'homeserver':      { label: 'HomeServer',      colour: '#e8882a', type: 'shelf' },
+  'drewbrew':        { label: 'drewBrew',        colour: '#e84d7a', type: 'shelf' },
+  'drew-portfolio':  { label: 'drew-portfolio',  colour: '#aa66ee', type: 'shelf' },
+}
+
+const CAT_ITEMS = {
+  'meeko': { label: 'Meeko', colour: '#bb88ff', type: 'cat', affirmationTheme: 'light' },
+  'mayu':  { label: 'Mayu',  colour: '#ff99cc', type: 'cat', affirmationTheme: 'dark'  },
+}
+
+const ALL_ITEMS = { ...SHELF_ITEMS, ...CAT_ITEMS }
+
+const SUBTITLES = {
+  'ironiq':          'Offline-first workout tracking. The most technically ambitious project in the vault.',
+  'engineering-gym': 'Quiz-based learning system. Doubles as a teaching tool for A-Level CS.',
+  'homeserver':      'Self-hosted VPS infrastructure. The backbone that unblocks everything else.',
+  'drewbrew':        'Coffee tracking app. An architecture case study in earning complexity.',
+  'drew-portfolio':  'This site. The meta-narrative: building a portfolio that documents itself being built.',
+}
+
+// SVG label sizes -- in SVG user units (1 unit = 1% of container)
+const LABEL_FONT_SIZE  = 1.8   // ~1.8% of container height
+const LABEL_STROKE_W   = 0.5
+const POLY_STROKE_W    = 0.25
+const HANDLE_RADIUS    = 0.9
+const HANDLE_STROKE_W  = 0.2
+
+const hotspots = {}
+let mode = 'draw'
+let selectedId = null
+let activeType = 'shelf'
+let isDrawing = false
+let drawStart = { xPct: 0, yPct: 0 }
+let isDraggingHandle = false
+let dragId = null
+let dragCornerIdx = null
+
+const svg       = document.getElementById('hotspot-svg')
+const drawPrev  = document.getElementById('draw-preview')
+const itemSel   = document.getElementById('item-select')
+const output    = document.getElementById('output')
+const modeInd   = document.getElementById('mode-indicator')
+const toggleBtn = document.getElementById('toggle-mode-btn')
+const deleteBtn = document.getElementById('delete-selected-btn')
+
+// ---- Type toggle ----
+
+document.getElementById('type-shelf').addEventListener('click', () => setActiveType('shelf'))
+document.getElementById('type-cat').addEventListener('click', () => setActiveType('cat'))
+
+function setActiveType(t) {
+  activeType = t
+  document.getElementById('type-shelf').classList.toggle('active', t === 'shelf')
+  document.getElementById('type-cat').classList.toggle('active', t === 'cat')
+  const first = Object.keys(t === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)[0]
+  itemSel.value = first
+  updateLegend()
+}
+
+// ---- Legend ----
+
+function buildLegend() {
+  const shelvesEl = document.getElementById('legend-shelves')
+  const catsEl    = document.getElementById('legend-cats')
+
+  function makeItem(id, item, type) {
+    const el = document.createElement('div')
+    el.className = 'legend-item'
+    el.dataset.id = id
+    el.innerHTML = `
+      <div class="legend-swatch" style="background:${item.colour}"></div>
+      <span class="legend-name">${item.label}</span>
+      <span class="legend-status" id="status-${id}">—</span>`
+    el.addEventListener('click', () => { setActiveType(type); itemSel.value = id; updateLegend() })
+    return el
+  }
+
+  Object.entries(SHELF_ITEMS).forEach(([id, item]) => shelvesEl.appendChild(makeItem(id, item, 'shelf')))
+  Object.entries(CAT_ITEMS).forEach(([id, item]) => catsEl.appendChild(makeItem(id, item, 'cat')))
+}
+
+function updateLegend() {
+  Object.keys(ALL_ITEMS).forEach(id => {
+    const el = document.querySelector(`.legend-item[data-id="${id}"]`)
+    const st = document.getElementById(`status-${id}`)
+    if (!el || !st) return
+    el.classList.toggle('active', itemSel.value === id)
+    st.textContent = hotspots[id] ? '✓' : '—'
+    st.className = 'legend-status' + (hotspots[id] ? ' done' : '')
+  })
+}
+
+itemSel.addEventListener('change', updateLegend)
+
+// ---- Coordinates ----
+// SVG is viewBox="0 0 100 100" preserveAspectRatio="none"
+// So x/y in [0,100] map to percentage of container width/height.
+
+function getContainerPct(e) {
+  const rect = document.getElementById('viewport-sim').getBoundingClientRect()
+  return {
+    xPct: Math.max(0, Math.min((e.clientX - rect.left) / rect.width  * 100, 100)),
+    yPct: Math.max(0, Math.min((e.clientY - rect.top)  / rect.height * 100, 100)),
+  }
+}
+
+function pointsAttr(points) {
+  return points.map(([x, y]) => `${x},${y}`).join(' ')
+}
+
+// ---- Render ----
+
+function render() {
+  svg.querySelectorAll('.hs-group').forEach(el => el.remove())
+
+  Object.entries(hotspots).forEach(([id, { points }]) => {
+    const item = ALL_ITEMS[id]
+    const selected = selectedId === id
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    g.classList.add('hs-group')
+    g.dataset.id = id
+
+    // Polygon
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon')
+    poly.classList.add('hotspot-poly')
+    poly.setAttribute('points', pointsAttr(points))
+    poly.setAttribute('fill', item.colour)
+    poly.setAttribute('fill-opacity', selected ? '0.28' : '0.15')
+    poly.setAttribute('stroke', item.colour)
+    poly.setAttribute('stroke-width', POLY_STROKE_W)
+    if (selected) poly.setAttribute('stroke-dasharray', '1.5 0.8')
+    poly.addEventListener('click', e => {
+      if (mode !== 'edit') return
+      e.stopPropagation()
+      selectedId = selectedId === id ? null : id
+      deleteBtn.style.display = selectedId ? '' : 'none'
+      render()
+    })
+    g.appendChild(poly)
+
+    // Label at centroid
+    const cx = +(points.reduce((s, p) => s + p[0], 0) / 4).toFixed(2)
+    const cy = +(points.reduce((s, p) => s + p[1], 0) / 4).toFixed(2)
+    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    lbl.classList.add('poly-label')
+    lbl.setAttribute('x', cx)
+    lbl.setAttribute('y', cy)
+    lbl.setAttribute('text-anchor', 'middle')
+    lbl.setAttribute('dominant-baseline', 'middle')
+    lbl.setAttribute('fill', 'white')
+    lbl.setAttribute('stroke', item.colour)
+    lbl.setAttribute('font-size', LABEL_FONT_SIZE)  // SVG user units, NOT px
+    lbl.setAttribute('stroke-width', LABEL_STROKE_W)
+    lbl.textContent = item.label
+    g.appendChild(lbl)
+
+    // Corner handles (edit mode only)
+    if (mode === 'edit') {
+      points.forEach(([x, y], i) => {
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        c.classList.add('corner-handle')
+        c.setAttribute('cx', x)
+        c.setAttribute('cy', y)
+        c.setAttribute('r', HANDLE_RADIUS)          // SVG user units
+        c.setAttribute('stroke', item.colour)
+        c.setAttribute('stroke-width', HANDLE_STROKE_W)
+        c.addEventListener('mousedown', e => {
+          e.stopPropagation(); e.preventDefault()
+          isDraggingHandle = true; dragId = id; dragCornerIdx = i
+        })
+        g.appendChild(c)
+      })
+    }
+
+    svg.appendChild(g)
+  })
+}
+
+// ---- Drawing ----
+
+svg.addEventListener('mousedown', e => {
+  if (mode !== 'draw' || e.button !== 0 || e.target.closest('.hs-group')) return
+  isDrawing = true
+  drawStart = getContainerPct(e)
+  drawPrev.style.display = ''
+  drawPrev.setAttribute('x', drawStart.xPct)
+  drawPrev.setAttribute('y', drawStart.yPct)
+  drawPrev.setAttribute('width', 0)
+  drawPrev.setAttribute('height', 0)
+  e.preventDefault()
+})
+
+window.addEventListener('mousemove', e => {
+  if (isDrawing) {
+    const pos = getContainerPct(e)
+    drawPrev.setAttribute('x', Math.min(drawStart.xPct, pos.xPct))
+    drawPrev.setAttribute('y', Math.min(drawStart.yPct, pos.yPct))
+    drawPrev.setAttribute('width',  Math.abs(pos.xPct - drawStart.xPct))
+    drawPrev.setAttribute('height', Math.abs(pos.yPct - drawStart.yPct))
+  }
+  if (isDraggingHandle && dragId && dragCornerIdx !== null) {
+    const pos = getContainerPct(e)
+    hotspots[dragId].points[dragCornerIdx] = [+pos.xPct.toFixed(2), +pos.yPct.toFixed(2)]
+    render(); updateOutput()
+  }
+})
+
+window.addEventListener('mouseup', e => {
+  if (isDrawing) {
+    isDrawing = false
+    drawPrev.style.display = 'none'
+    const pos = getContainerPct(e)
+    const x1 = +Math.min(drawStart.xPct, pos.xPct).toFixed(2)
+    const y1 = +Math.min(drawStart.yPct, pos.yPct).toFixed(2)
+    const x2 = +Math.max(drawStart.xPct, pos.xPct).toFixed(2)
+    const y2 = +Math.max(drawStart.yPct, pos.yPct).toFixed(2)
+    if (Math.abs(x2 - x1) < 0.5 || Math.abs(y2 - y1) < 0.5) return
+    const id = itemSel.value
+    hotspots[id] = { type: ALL_ITEMS[id].type, points: [[x1,y1],[x2,y1],[x2,y2],[x1,y2]] }
+    render(); updateOutput(); updateLegend()
+    const pool = Object.keys(ALL_ITEMS[id].type === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)
+    const next = pool.find(k => !hotspots[k])
+    if (next) { itemSel.value = next; updateLegend() }
+  }
+  if (isDraggingHandle) { isDraggingHandle = false; dragId = null; dragCornerIdx = null }
+})
+
+// ---- Mode toggle ----
+
+toggleBtn.addEventListener('click', () => {
+  mode = mode === 'draw' ? 'edit' : 'draw'
+  svg.className = `mode-${mode}`
+  toggleBtn.textContent = mode === 'draw' ? 'Switch to Edit mode' : 'Switch to Draw mode'
+  modeInd.innerHTML = mode === 'draw' ? '<b>Draw</b> mode' : '<b>Edit</b> mode — drag corners to skew'
+  if (mode === 'draw') { selectedId = null; deleteBtn.style.display = 'none' }
+  render()
+})
+
+// ---- Delete / Clear ----
+
+deleteBtn.addEventListener('click', () => {
+  if (!selectedId) return
+  delete hotspots[selectedId]; selectedId = null; deleteBtn.style.display = 'none'
+  render(); updateOutput(); updateLegend()
+})
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  Object.keys(hotspots).forEach(k => delete hotspots[k])
+  selectedId = null; deleteBtn.style.display = 'none'
+  render(); updateOutput(); updateLegend()
+  itemSel.value = 'ironiq'; setActiveType('shelf')
+})
+
+// ---- Output ----
+
+function fmt(n) { return +n.toFixed(2) }
+
+function updateOutput() {
+  const shelves = Object.entries(hotspots).filter(([,v]) => v.type === 'shelf')
+  const cats    = Object.entries(hotspots).filter(([,v]) => v.type === 'cat')
+  if (!shelves.length && !cats.length) { output.textContent = '// Draw hotspots to generate config...'; return }
+
+  const lines = []
+
+  if (shelves.length) {
+    lines.push('// ---- paste into PROJECTS array ----')
+    shelves.forEach(([id, { points }]) => {
+      const cx = fmt(points.reduce((s,p) => s+p[0], 0) / 4)
+      const cy = fmt(points.reduce((s,p) => s+p[1], 0) / 4)
+      const pts = points.map(([x,y]) => `[${fmt(x)}, ${fmt(y)}]`).join(', ')
+      lines.push(`  { slug: '${id}', title: '${SHELF_ITEMS[id].label}', subtitle: '${SUBTITLES[id]}', shelf: 'Architecture vault', hotspot: { points: [${pts}] }, cardAnchor: { left: '${cx}%', top: '${cy}%' } },`)
+    })
+  }
+
+  if (cats.length) {
+    lines.push('')
+    lines.push('// ---- paste into CATS array ----')
+    cats.forEach(([id, { points }]) => {
+      const cx = fmt(points.reduce((s,p) => s+p[0], 0) / 4)
+      const cy = fmt(points.reduce((s,p) => s+p[1], 0) / 4)
+      const pts = points.map(([x,y]) => `[${fmt(x)}, ${fmt(y)}]`).join(', ')
+      lines.push(`  { id: '${id}', label: '${CAT_ITEMS[id].label}', affirmationTheme: '${CAT_ITEMS[id].affirmationTheme}', points: [${pts}], bubbleAnchor: { left: '${fmt(cx-11)}%', top: '${fmt(cy-12)}%' } },`)
+    })
+  }
+
+  output.textContent = lines.join('\n')
+}
+
+// ---- Copy ----
+
+document.getElementById('copy-btn').addEventListener('click', async function () {
+  const text = output.textContent
+  if (!text.includes('paste')) return
+  try {
+    await navigator.clipboard.writeText(text)
+    this.textContent = 'Copied!'; this.classList.add('copied')
+    setTimeout(() => { this.textContent = 'Copy config'; this.classList.remove('copied') }, 2000)
+  } catch { this.textContent = 'Select + copy manually' }
+})
+
+buildLegend()
+updateLegend()
+</script>
+</body>
+</html>

@@ -31,6 +31,9 @@ type Pages = {
       "slug": string;
     };
   };
+  "/vault": {
+    params: {};
+  };
   "/studio/login": {
     params: {};
   };
@@ -47,11 +50,11 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/about" | "/contact" | "/drewbrew" | "/blog" | "/blog/:slug" | "/studio/login" | "/studio" | "/*";
+    page: "/" | "/about" | "/contact" | "/drewbrew" | "/blog" | "/blog/:slug" | "/vault" | "/studio/login" | "/studio" | "/*";
   };
   "../src/components/Layout.jsx": {
     id: "../src/components/Layout";
-    page: "/" | "/about" | "/contact" | "/drewbrew" | "/blog" | "/blog/:slug" | "/studio/login" | "/studio";
+    page: "/" | "/about" | "/contact" | "/drewbrew" | "/blog" | "/blog/:slug" | "/vault" | "/studio/login" | "/studio";
   };
   "../src/pages/Home.jsx": {
     id: "../src/pages/Home";
@@ -77,6 +80,10 @@ type RouteFiles = {
     id: "../src/pages/BlogPost";
     page: "/blog/:slug";
   };
+  "../src/pages/Vault.jsx": {
+    id: "../src/pages/Vault";
+    page: "/vault";
+  };
   "../src/pages/Login.jsx": {
     id: "../src/pages/Login";
     page: "/studio/login";
@@ -100,6 +107,7 @@ type RouteModules = {
   "../src/pages/DrewBrew": unknown;
   "../src/pages/BlogIndex": unknown;
   "../src/pages/BlogPost": unknown;
+  "../src/pages/Vault": unknown;
   "../src/pages/Login": unknown;
   "../src/pages/Admin": unknown;
   "../src/pages/NotFound": unknown;
