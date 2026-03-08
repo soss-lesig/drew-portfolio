@@ -8,6 +8,7 @@ export default [
     route("drewbrew", "../src/pages/DrewBrew.jsx"),
     route("blog", "../src/pages/BlogIndex.jsx"),
     route("blog/:slug", "../src/pages/BlogPost.jsx"),
+    route("vault", "../src/pages/Vault.jsx"),
     route("studio/login", "../src/pages/Login.jsx"),
     route("studio", "../src/pages/Admin.jsx"),
   ]),

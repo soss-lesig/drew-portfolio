@@ -18,6 +18,7 @@
 
 - [ ] Add contact links (GitHub, LinkedIn) to About page
 - [ ] Add visual proof elements to project cards
+- [ ] **Additional project cards** - IronIQ, Engineering Gym, QuitRX all warrant dedicated cards. Each has significant architecture choices and MayusVault documentation. Cards link directly to their sections in the Architecture Vault. Hold until the Architecture Vault is live.
 - [ ] Strengthen homepage hero with clearer value proposition
 - [ ] Remove GitHub most recent commit link from footer on mobile
 
