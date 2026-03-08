@@ -3,15 +3,6 @@ import { supabase } from "../../lib/supabase";
 import useToast from "../../hooks/useToast";
 import Toast from "../Toast";
 
-// TODO: remove placeholder once mayu_affirmations table is created in Supabase
-const MAYU_AFFIRMATIONS_PLACEHOLDER = [
-  { id: "p1", text: "the void is comfortable once you stop fighting it", active: true },
-  { id: "p2", text: "precision over enthusiasm. always.", active: true },
-  { id: "p3", text: "rest is not failure. it is load management.", active: true },
-  { id: "p4", text: "a well-placed semicolon changes everything", active: true },
-  { id: "p5", text: "you shipped it. that's already more than most.", active: true },
-];
-
 export default function AffirmationsPanel() {
   // Meeko state
   const [meekoAffirmations, setMeekoAffirmations] = useState([]);
@@ -46,10 +37,23 @@ export default function AffirmationsPanel() {
   }, []);
 
   // --- Mayu fetching ---
-  // TODO: swap to Supabase fetch once mayu_affirmations table is created
   useEffect(() => {
-    setMayuAffirmations(MAYU_AFFIRMATIONS_PLACEHOLDER);
-    setMayuLoading(false);
+    const fetchMayuAffirmations = async () => {
+      const { data, error } = await supabase
+        .schema("drew_portfolio")
+        .from("mayu_affirmations")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setMayuAffirmations(data);
+      }
+      setMayuLoading(false);
+    };
+
+    fetchMayuAffirmations();
   }, []);
 
   // --- Meeko handlers ---
@@ -115,34 +119,67 @@ export default function AffirmationsPanel() {
     }
   };
 
-  // --- Mayu handlers (placeholder - no real DB ops yet) ---
-  // TODO: wire these up to Supabase once mayu_affirmations table is created
-  const toggleMayu = (id, currentActive) => {
-    setMayuAffirmations((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, active: !currentActive } : a))
-    );
-    addToast(
-      currentActive ? "Affirmation deactivated" : "Affirmation activated",
-      "success"
-    );
+  // --- Mayu handlers ---
+  const toggleMayu = async (id, currentActive) => {
+    const { error } = await supabase
+      .schema("drew_portfolio")
+      .from("mayu_affirmations")
+      .update({ active: !currentActive })
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      addToast("Failed to update affirmation", "error");
+    } else {
+      setMayuAffirmations((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, active: !currentActive } : a))
+      );
+      addToast(
+        currentActive ? "Affirmation deactivated" : "Affirmation activated",
+        "success"
+      );
+    }
   };
 
-  const addMayu = (e) => {
+  const addMayu = async (e) => {
     e.preventDefault();
     if (!mayuNewText.trim()) return;
-    const newEntry = { id: `p${Date.now()}`, text: mayuNewText.trim(), active: true };
-    setMayuAffirmations((prev) => [...prev, newEntry]);
-    setMayuNewText("");
-    addToast("Affirmation added (placeholder only)", "success");
+
+    const { data, error } = await supabase
+      .schema("drew_portfolio")
+      .from("mayu_affirmations")
+      .insert({ text: mayuNewText.trim() })
+      .select();
+
+    if (error) {
+      console.error(error);
+      addToast("Failed to add affirmation", "error");
+    } else {
+      setMayuAffirmations((prev) => [...prev, data[0]]);
+      setMayuNewText("");
+      addToast("Affirmation added", "success");
+    }
   };
 
-  const deleteMayu = (id) => {
+  const deleteMayu = async (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this affirmation? This cannot be undone."
     );
     if (!confirmed) return;
-    setMayuAffirmations((prev) => prev.filter((a) => a.id !== id));
-    addToast("Affirmation deleted (placeholder only)", "success");
+
+    const { error } = await supabase
+      .schema("drew_portfolio")
+      .from("mayu_affirmations")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      addToast("Failed to delete affirmation", "error");
+    } else {
+      setMayuAffirmations((prev) => prev.filter((a) => a.id !== id));
+      addToast("Affirmation deleted", "success");
+    }
   };
 
   const renderList = (items, onToggle, onDelete) => (
@@ -188,7 +225,7 @@ export default function AffirmationsPanel() {
       </div>
 
       <div className="affirmations-section">
-        <h4>Mayu (dark mode) <span className="placeholder-badge">placeholder data</span></h4>
+        <h4>Mayu (dark mode)</h4>
         {mayuLoading ? <p>Loading...</p> : renderList(mayuAffirmations, toggleMayu, deleteMayu)}
         <form onSubmit={addMayu}>
           <input
