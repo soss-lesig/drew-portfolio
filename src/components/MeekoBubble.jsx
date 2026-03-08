@@ -95,6 +95,7 @@ export default function MeekoBubble() {
   return (
     <div className="meeko-bubble-wrapper">
       <div className="speech-bubble">
+        {quote && <p className="speech-bubble-ghost" aria-hidden="true">"{quote}"</p>}
         {showQuote ? <p>"{displayed}"</p> : <p>{displayed}</p>}
       </div>
     </div>

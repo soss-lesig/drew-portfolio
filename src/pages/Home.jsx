@@ -6,7 +6,12 @@ import { useTheme } from "../hooks/useTheme";
 
 export default function Home() {
   const [postCount, setPostCount] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     getPostCount().then(setPostCount).catch(console.error);
@@ -80,13 +85,13 @@ export default function Home() {
               src="/images/meeks.jpg"
               alt="Meeko"
               className="hero-mascot hero-mascot--meeko"
-              style={{ opacity: theme === "dark" ? 0 : 1 }}
+              style={{ opacity: !mounted ? 0 : theme === "dark" ? 0 : 1 }}
             />
             <img
               src="/images/mayu.jpg"
               alt="Mayu"
               className="hero-mascot hero-mascot--mayu"
-              style={{ opacity: theme === "dark" ? 1 : 0 }}
+              style={{ opacity: !mounted ? 0 : theme === "dark" ? 1 : 0 }}
             />
           </div>
         </div>

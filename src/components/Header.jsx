@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router";
 import MeekoBubble from "./MeekoBubble";
 import CommitBanner from "./CommitBanner";
@@ -8,9 +8,14 @@ const TOGGLE_KEY = "drewbs-theme-toggled";
 
 export default function Header() {
   const { theme, toggle } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [hasPulsed, setHasPulsed] = useState(
     () => typeof localStorage !== "undefined" && !!localStorage.getItem(TOGGLE_KEY)
   );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function handleToggle() {
     if (!hasPulsed) {
@@ -32,13 +37,13 @@ export default function Header() {
                     src="/images/meeks.jpg"
                     alt="Meeko"
                     className="portrait-img portrait-img--meeko"
-                    style={{ opacity: theme === "dark" ? 0 : 1 }}
+                    style={{ opacity: !mounted ? 0 : theme === "dark" ? 0 : 1 }}
                   />
                   <img
                     src="/images/mayu.jpg"
                     alt="Mayu"
                     className="portrait-img portrait-img--mayu"
-                    style={{ opacity: theme === "dark" ? 1 : 0 }}
+                    style={{ opacity: !mounted ? 0 : theme === "dark" ? 1 : 0 }}
                   />
                 </div>
               </button>
