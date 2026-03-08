@@ -8,9 +8,14 @@ const CHAR_DELAY = 35;
 
 export default function MeekoBubble() {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [quote, setQuote] = useState("");
   const [displayed, setDisplayed] = useState("");
   const [showQuote, setShowQuote] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let dotIndex = 0;
@@ -70,8 +75,8 @@ export default function MeekoBubble() {
       setQuote(random.text);
     }
 
-    fetchAffirmation();
-  }, [theme]);
+    if (mounted) fetchAffirmation();
+  }, [theme, mounted]);
 
   useEffect(() => {
     if (!showQuote || !quote) return;
