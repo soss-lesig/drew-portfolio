@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
 import { useTheme } from "../hooks/useTheme";
 
 const DOT_CYCLES = 2; // how many times ... loops before the quote appears
 const DOT_DELAY = 300;
 const CHAR_DELAY = 35;
 
-// Placeholder until mayu_affirmations table is created in Supabase
-const MAYU_AFFIRMATIONS_PLACEHOLDER = [
-  { text: "the void is comfortable once you stop fighting it" },
-  { text: "precision over enthusiasm. always." },
-  { text: "rest is not failure. it is load management." },
-  { text: "a well-placed semicolon changes everything" },
-  { text: "you shipped it. that's already more than most." },
-];
 
 export default function MeekoBubble() {
   const { theme } = useTheme();
@@ -48,24 +39,30 @@ export default function MeekoBubble() {
 
   useEffect(() => {
     async function fetchAffirmation() {
-      if (theme === "dark") {
-        // TODO: swap to Supabase fetch once mayu_affirmations table is created
-        const random = MAYU_AFFIRMATIONS_PLACEHOLDER[
-          Math.floor(Math.random() * MAYU_AFFIRMATIONS_PLACEHOLDER.length)
-        ];
-        setQuote(random.text);
+      const table = theme === "dark" ? "mayu_affirmations" : "meeko_affirmations";
+
+      let data, error;
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/${table}?select=text&active=is.true`,
+          {
+            headers: {
+              "Accept-Profile": "drew_portfolio",
+              "apikey": import.meta.env.VITE_SUPABASE_JWT_ANON_KEY,
+              "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_JWT_ANON_KEY}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error(`${res.status}`);
+        data = await res.json();
+      } catch (err) {
+        console.error("Failed to fetch affirmation:", err);
+        setQuote("meeko tried to say something. the database said no. :(");
         return;
       }
 
-      const { data, error } = await supabase
-        .schema("drew_portfolio")
-        .from("meeko_affirmations")
-        .select("text")
-        .eq("active", true);
-
-      if (error) {
-        console.error("Failed to fetch affirmation:", error);
-        setQuote("meeko tried to say something. the database said no. :(");
+      if (!data?.length) {
+        setQuote("...");
         return;
       }
 
