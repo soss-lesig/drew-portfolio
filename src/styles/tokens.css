@@ -42,3 +42,37 @@
   --fs-hero: clamp(1.6rem, 1.2rem + 2vw, 2.6rem);
   --fs-display: clamp(3rem, 2rem + 5vw, 6.5rem);
 }
+
+/* =========================================================================
+   Mayu Dark Theme
+   Applied when <html data-theme="dark">. Overrides the same token names
+   so every component switches automatically with zero extra CSS.
+   ========================================================================= */
+
+[data-theme="dark"] {
+  --bg: hsl(30 8% 10%);
+  --surface: hsl(30 10% 14%);
+  --text: hsl(35 20% 88%);
+  --muted: hsl(35 10% 50%);
+  --border: hsl(35 20% 88% / 0.08);
+  --accent-h: 75;
+  --accent-s: 40%;
+  --accent-l: 48%;
+  /* accent resolves to Mayu's olive green automatically */
+}
+
+/* =========================================================================
+   Theme Transition
+   Smooth colour shift on all elements when data-theme toggles.
+   Only transitions colour properties - not layout, not transforms.
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+}

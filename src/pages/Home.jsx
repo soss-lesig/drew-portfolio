@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { ProjectCard } from "../components/Card";
 import { getPostCount } from "../lib/blog.js";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Home() {
   const [postCount, setPostCount] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     getPostCount().then(setPostCount).catch(console.error);
@@ -73,7 +75,20 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="/images/meeks-transparent.png" alt="Meeko the site mascot" />
+          <div className="hero-mascot-crossfade">
+            <img
+              src="/images/meeks.jpg"
+              alt="Meeko"
+              className="hero-mascot hero-mascot--meeko"
+              style={{ opacity: theme === "dark" ? 0 : 1 }}
+            />
+            <img
+              src="/images/mayu.jpg"
+              alt="Mayu"
+              className="hero-mascot hero-mascot--mayu"
+              style={{ opacity: theme === "dark" ? 1 : 0 }}
+            />
+          </div>
         </div>
       </section>
 

@@ -61,12 +61,25 @@ section:first-of-type {
   gap: var(--space-1);
 }
 
+.portrait-crossfade {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
 .portrait-img {
   width: 96px;
   height: 96px;
   border-radius: 50%;
   border: 2px solid var(--border);
   object-fit: cover;
+  transition: opacity 0.45s ease;
+}
+
+.portrait-img--mayu {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .portrait-label {
@@ -84,6 +97,29 @@ section:first-of-type {
   align-items: center;
   background-color: var(--bg);
   padding: var(--space-1);
+}
+
+.portrait-wrapper.is-pulsing {
+  animation: portrait-pulse 3s ease-in-out infinite;
+}
+
+.portrait-wrapper.is-pulsing:hover {
+  animation-play-state: paused;
+}
+
+@keyframes portrait-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-wrapper {
+    animation: none;
+  }
 }
 
 .site-nav {

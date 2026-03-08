@@ -37,6 +37,10 @@
   margin-bottom: var(--space-4);
 }
 
+[data-theme="dark"] .drewbrew-page .page-header .back-link {
+  background: hsl(30 8% 10% / 0.85);
+}
+
 .drewbrew-page .page-header h1 {
   display: inline-block;
   background: hsl(0 0% 100% / 0.8);
@@ -44,6 +48,10 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius);
   margin-bottom: var(--space-5);
+}
+
+[data-theme="dark"] .drewbrew-page .page-header h1 {
+  background: hsl(30 8% 10% / 0.85);
 }
 
 .drewbrew-page .page-header h1 em {
@@ -56,6 +64,10 @@
   backdrop-filter: blur(4px);
   border-left-color: var(--accent);
   max-width: 640px;
+}
+
+[data-theme="dark"] .drewbrew-page .page-header .project-note {
+  background: hsl(30 8% 10% / 0.8);
 }
 
 .drewbrew-page .page-header h1 {
@@ -132,6 +144,12 @@
   color: hsl(var(--accent-h) var(--accent-s) 35%);
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+[data-theme="dark"] .drewbrew-section p code,
+[data-theme="dark"] .drewbrew-section li code {
+  background: hsl(var(--accent-h) var(--accent-s) 16%);
+  color: hsl(var(--accent-h) var(--accent-s) 72%);
 }
 
 .drewbrew-section pre {

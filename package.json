@@ -26,6 +26,8 @@
   "homepage": "https://github.com/soss-lesig/drew-portfolio#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -40,12 +42,12 @@
     "@react-router/dev": "^7.13.1",
     "@react-router/node": "^7.13.1",
     "@supabase/supabase-js": "^2.98.0",
+    "isbot": "^5",
     "marked": "^17.0.2",
     "mermaid": "^11.12.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "^7.13.1",
-    "react-router-dom": "^7.13.0",
-    "isbot": "^5"
+    "react-router-dom": "^7.13.0"
   }
 }

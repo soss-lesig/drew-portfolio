@@ -51,7 +51,7 @@
 }
 
 .projectContentFrosted {
-  background: hsl(0 0% 100% / 0.82);
+  background: hsl(from var(--surface) h s l / 0.82);
   backdrop-filter: blur(6px);
   border-radius: var(--radius);
   padding: var(--space-5);

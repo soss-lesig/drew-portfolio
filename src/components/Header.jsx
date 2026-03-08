@@ -1,23 +1,51 @@
+import { useState } from "react";
 import { Link, NavLink } from "react-router";
 import MeekoBubble from "./MeekoBubble";
 import CommitBanner from "./CommitBanner";
+import { useTheme } from "../hooks/useTheme";
+
+const TOGGLE_KEY = "drewbs-theme-toggled";
 
 export default function Header() {
+  const { theme, toggle } = useTheme();
+  const [hasPulsed, setHasPulsed] = useState(
+    () => typeof localStorage !== "undefined" && !!localStorage.getItem(TOGGLE_KEY)
+  );
+
+  function handleToggle() {
+    if (!hasPulsed) {
+      localStorage.setItem(TOGGLE_KEY, "1");
+      setHasPulsed(true);
+    }
+    toggle();
+  }
+
   return (
     <header className="site-header">
       <div className="header-inner">
         <div className="header-portrait-group">
           <div className="header-portrait">
-            <Link to="/">
-              <div className="portrait-wrapper">
-                <img
-                  src="/images/meeks.jpg"
-                  alt="Meeko"
-                  className="portrait-img"
-                />
+            <div className={`portrait-wrapper${hasPulsed ? "" : " is-pulsing"}`}>
+              <button className="theme-toggle" onClick={handleToggle} aria-label="Toggle theme">
+                <div className="portrait-crossfade">
+                  <img
+                    src="/images/meeks.jpg"
+                    alt="Meeko"
+                    className="portrait-img portrait-img--meeko"
+                    style={{ opacity: theme === "dark" ? 0 : 1 }}
+                  />
+                  <img
+                    src="/images/mayu.jpg"
+                    alt="Mayu"
+                    className="portrait-img portrait-img--mayu"
+                    style={{ opacity: theme === "dark" ? 1 : 0 }}
+                  />
+                </div>
+              </button>
+              <Link to="/">
                 <span className="portrait-label">drewbs.dev</span>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </div>
           <MeekoBubble />
         </div>

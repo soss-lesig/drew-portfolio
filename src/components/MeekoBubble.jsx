@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { useTheme } from "../hooks/useTheme";
 
 const DOT_CYCLES = 2; // how many times ... loops before the quote appears
 const DOT_DELAY = 300;
 const CHAR_DELAY = 35;
 
+
 export default function MeekoBubble() {
+  const { theme } = useTheme();
   const [quote, setQuote] = useState("");
   const [displayed, setDisplayed] = useState("");
   const [showQuote, setShowQuote] = useState(false);
@@ -37,15 +39,30 @@ export default function MeekoBubble() {
 
   useEffect(() => {
     async function fetchAffirmation() {
-      const { data, error } = await supabase
-      .schema("drew_portfolio")
-      .from("meeko_affirmations")
-        .select("text")
-        .eq("active", true);
+      const table = theme === "dark" ? "mayu_affirmations" : "meeko_affirmations";
 
-      if (error) {
-        console.error("Failed to fetch affirmation:", error);
+      let data, error;
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/${table}?select=text&active=is.true`,
+          {
+            headers: {
+              "Accept-Profile": "drew_portfolio",
+              "apikey": import.meta.env.VITE_SUPABASE_JWT_ANON_KEY,
+              "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_JWT_ANON_KEY}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error(`${res.status}`);
+        data = await res.json();
+      } catch (err) {
+        console.error("Failed to fetch affirmation:", err);
         setQuote("meeko tried to say something. the database said no. :(");
+        return;
+      }
+
+      if (!data?.length) {
+        setQuote("...");
         return;
       }
 
@@ -54,11 +71,12 @@ export default function MeekoBubble() {
     }
 
     fetchAffirmation();
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     if (!showQuote || !quote) return;
     let i = 0;
+    setDisplayed("");
 
     const interval = setInterval(() => {
       i++;
@@ -67,7 +85,7 @@ export default function MeekoBubble() {
     }, CHAR_DELAY);
 
     return () => clearInterval(interval);
-  }, [showQuote]);
+  }, [showQuote, quote]);
 
   return (
     <div className="meeko-bubble-wrapper">

@@ -96,14 +96,28 @@
   align-self: end;
 }
 
-.hero-image img {
+.hero-mascot-crossfade {
+  position: relative;
   width: clamp(180px, 24vw, 360px);
-  height: auto;
-  display: block;
-  object-fit: contain;
-  /* background removed at source - no blend mode needed */
-  /* slight lift so Meeko feels like she's peeking in */
+  height: clamp(180px, 24vw, 360px);
   transform: translateY(8px);
+}
+
+.hero-mascot {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 20%;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  transition: opacity 0.45s ease;
+}
+
+.hero-mascot--mayu {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* No intro-text section anymore - absorbed into hero */
