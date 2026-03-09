@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { useTheme } from '../hooks/useTheme'
 import { useAffirmation } from '../hooks/useAffirmation'
+import { useVaultTransition } from '../hooks/useVaultTransition.jsx'
 
 const PROJECTS = [
   {
@@ -145,7 +147,7 @@ function CatHotspot({ cat, onAffirmation }) {
       <polygon
         className={`vault-hotspot-poly vault-hotspot-poly--cat${hovered ? ' is-hovered' : ''}`}
         points={toSVGPoints(cat.points)}
-        fill="none"
+        fill="transparent"
         stroke="hsl(270 65% 72%)"
         strokeWidth="1.5"
         filter={hovered ? 'url(#cat-hover)' : 'url(#cat-idle)'}
@@ -175,7 +177,7 @@ function ProjectHotspot({ project, isActive, onClick }) {
       <polygon
         className={`vault-hotspot-poly vault-hotspot-poly--shelf${lit ? ' is-hovered' : ''}`}
         points={toSVGPoints(project.hotspot.points)}
-        fill="none"
+        fill="transparent"
         stroke="hsl(35 90% 62%)"
         strokeWidth="1.5"
         filter={lit ? 'url(#shelf-hover)' : 'url(#shelf-idle)'}
@@ -190,6 +192,8 @@ function ProjectHotspot({ project, isActive, onClick }) {
 
 export default function Vault() {
   const { theme } = useTheme()
+  const navigate = useNavigate()
+  const { phase, startExit, reset } = useVaultTransition()
 
   const [activeSlug, setActiveSlug] = useState(null)
   const [expanded, setExpanded] = useState(false)
@@ -201,9 +205,14 @@ export default function Vault() {
   const mayu  = useAffirmation('dark')
 
   useEffect(() => {
+    // If we arrived via direct URL (no transition), data-page won't be set yet.
+    // completeEnter sets it early when arriving via the cinematic transition,
+    // so this is a no-op in that case but essential for direct/back navigation.
     document.body.setAttribute('data-page', 'vault')
+    // Reset any stale transition phase (e.g. browser back mid-transition)
+    if (phase === 'entering' || phase === 'exiting') reset()
     return () => document.body.removeAttribute('data-page')
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -241,7 +250,7 @@ export default function Vault() {
   const affirmationText = catAffirmation ? catAffirmation.hook.displayed : null
 
   return (
-    <div className="vault-scene">
+    <div className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
       <img
         src="/images/vault-background.png"
         alt="Mayu's Architecture Vault - an ancient candlelit library"
@@ -320,7 +329,10 @@ export default function Vault() {
       )}
 
       <div className={`vault-intro${activeSlug ? ' vault-intro--hidden' : ''}`}>
-        <h1 className="vault-intro__title">Mayu's Architecture Vault</h1>
+        <h1 className="vault-intro__title">
+          Mayu's Architecture Vault
+          <span className="vault-alpha-badge">ALPHA</span>
+        </h1>
         <p className="vault-intro__subtitle">
           Architectural decisions, system design, and honest post-mortems across every project.
         </p>
