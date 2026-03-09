@@ -101,7 +101,22 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - `ssr: false` with `prerender: true` produces a fully static output for Cloudflare Pages
 - TypeScript introduced via `tsconfig.json` (required for RR7 type generation machinery)
 
-**Phase 11: Engineering Gym (planned)**
+**Phase 11: Mayu's Architecture Vault (March 2026)**
+
+- Full-viewport interactive library scene at `/vault`
+- SVG hotspot layer with `viewBox="0 0 100 100" preserveAspectRatio="none"` -- coordinates map to percentages of the container, stable at any viewport
+- Five bookshelf polygons (amber glow) + two cat polygons (violet glow) using `feGaussianBlur` multi-pass filters
+- Pure glow approach: `fill="transparent"` + hairline stroke as blur source -- no visible overlays, fully clickable interiors
+- CSS `stroke-opacity` keyframe pulse, staggered delays per hotspot, hover snaps bright instantly
+- Cat affirmation system: Meeko (light table) + Mayu (dark table), typewriter display, 5s auto-dismiss
+- Cinematic entry/exit transition system: state machine (`idle → entering → revealing → idle`), full-screen overlay, cross-dissolve title sequence
+- Header vault hover preview: vault bg fades into header on nav hover, amber colour tinting throughout
+- `useVaultTransition` context shared between Header (intercepts) and VaultTransitionOverlay (runs sequence)
+- `data-page="vault"` set before navigation (not after paint) to eliminate header/footer flash on transition
+- Dev tool: `scripts/hotspot-editor.html` -- SVG polygon editor rendered with exact live-page image crop
+- ALPHA state: interaction layer complete, content pipeline (vault_entries table, sync) pending
+
+**Phase 12: Engineering Gym (planned)**
 
 - Spaced repetition learning system built on top of the blog
 - Quiz questions authored per post slug, surfaced at `/gym`
@@ -123,9 +138,10 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 **Features:**
 
 - Full blog CMS with Obsidian .md import, stored in Supabase
-- All 31 blog posts prerendered to static HTML at build time
+- All blog posts prerendered to static HTML at build time
 - Syntax highlighting with custom Meeko theme (jsx, tsx, ts, typescript all supported)
 - MeekoBubble component with live affirmations via Supabase
+- Mayu's Architecture Vault (`/vault`) -- interactive library scene with SVG hotspots, glow animations, cat affirmations, and cinematic entry/exit transitions
 - Design token system with HSL-based CSS custom properties
 - Responsive layout with fluid typography using `clamp()`
 - Scroll reveal animations via IntersectionObserver
@@ -204,10 +220,14 @@ drew-portfolio/
 │   │   ├── Card/                # Card.jsx, ProjectCard.jsx (CSS Modules)
 │   │   ├── MeekoBubble.jsx
 │   │   ├── ProtectedRoute.jsx
-│   │   └── Toast.jsx
+│   │   ├── Toast.jsx
+│   │   └── VaultTransitionOverlay.jsx  # Cinematic entry/exit overlay
 │   ├── hooks/
 │   │   ├── useScrollReveal.js
-│   │   └── useToast.js
+│   │   ├── useToast.js
+│   │   ├── useAffirmation.js      # Shared by MeekoBubble + vault cats
+│   │   ├── useTheme.js
+│   │   └── useVaultTransition.jsx # Vault entry/exit state machine context
 │   ├── lib/
 │   │   ├── supabase.js          # Supabase client initialisation
 │   │   ├── blog.js              # Blog data layer (admin reads)

@@ -10,9 +10,16 @@
 
 ### UX
 
+- [ ] **Vault: residual orange header/footer flash on transition** -- believed to be vault hover preview pseudo-element related (not `data-page` timing, already fixed). Small, scoped. Fix next session.
+- [ ] **Vault: Engineering Gym project card clips outside viewport** -- `cardAnchor` position puts the card partially off-screen at standard viewport sizes. Needs viewport clamping on card position (e.g. `Math.min(cardAnchor.right, 100vw - cardWidth)`) or a CSS `clamp()` on the inline style. Fix next session.
 - [ ] **Back to top button** - floating, appears after scrolling ~1 viewport height, positioned bottom right. Needs a `useScrollPosition` hook + fixed positioned button in Layout.
 - [ ] **Sticky header on scroll** - hide on scroll down, show on scroll up.
 - [ ] **Latest blog post link in header** - similar to the GitHub commit banner, shows the most recent post title and links to it.
+
+### Publishing
+
+- [ ] Publish Post 34 via admin panel (drafted, unpublished)
+- [ ] Publish Post 36 via admin panel (drafted this session: "Cinematic Transitions and the Six-Bug Gauntlet")
 
 ### Content
 
