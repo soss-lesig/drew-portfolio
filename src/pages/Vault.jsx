@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import { useTheme } from '../hooks/useTheme'
 import { useAffirmation } from '../hooks/useAffirmation'
@@ -10,40 +10,48 @@ const PROJECTS = [
     title: 'IronIQ',
     subtitle: 'Offline-first workout tracking. The most technically ambitious project in the vault.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[23.25, 36.04], [28.55, 37.88], [28.82, 43.14], [23.39, 42.28]] },
-    cardAnchor: { left: '26%', top: '39.84%' },
+    hotspot: { points: [[28.38, 32.74], [38.44, 37.54], [39.19, 49.27], [29.13, 46.7], [28.25, 40]] },
+    cardAnchor: { left: '32.68%', top: '41.25%' },
   },
   {
     slug: 'engineering-gym',
     title: 'Engineering Gym',
     subtitle: 'Quiz-based learning system. Doubles as a teaching tool for A-Level CS.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[85.58, 42.77], [93.29, 39.1], [93.15, 47.66], [85.24, 49.38]] },
-    cardAnchor: { left: '89.31%', top: '44.73%' },
+    hotspot: { points: [[99.65, 50.61], [86.52, 51.84], [86.01, 62.01], [99.78, 61.79]] },
+    cardAnchor: { left: '92.99%', top: '56.56%' },
   },
   {
     slug: 'homeserver',
     title: 'HomeServer',
     subtitle: 'Self-hosted VPS infrastructure. The backbone that unblocks everything else.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[63.57, 23.57], [71.89, 19.29], [71.55, 22.96], [63.57, 27.48]] },
-    cardAnchor: { left: '67.64%', top: '23.32%' },
+    hotspot: { points: [[29.26, 15.64], [37.49, 22.91], [37.81, 33.07], [28.57, 27.6], [28.44, 21.56]] },
+    cardAnchor: { left: '32.31%', top: '24.16%' },
   },
   {
     slug: 'drewbrew',
     title: 'drewBrew',
     subtitle: 'Coffee tracking app. An architecture case study in earning complexity.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[70.38, 55.49], [79.74, 54.51], [79.74, 59.04], [70.45, 60.26]] },
-    cardAnchor: { left: '75.08%', top: '57.32%' },
+    hotspot: { points: [[27.94, 68.72], [0.66, 68.6], [1.92, 75.87], [18.95, 77.43], [28.13, 75.42], [27.56, 72.4]] },
+    cardAnchor: { left: '17.53%', top: '73.07%' },
   },
   {
     slug: 'drew-portfolio',
     title: 'drew-portfolio',
     subtitle: 'This site. The meta-narrative: building a portfolio that documents itself being built.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[15.2, 50.84], [17.74, 50.84], [18.23, 56.1], [14.44, 56.35]] },
-    cardAnchor: { left: '16.4%', top: '53.53%' },
+    hotspot: { points: [[99.59, 36.09], [86.26, 39.89], [86.33, 48.94], [99.59, 46.93]] },
+    cardAnchor: { left: '92.94%', top: '42.96%' },
+  },
+  {
+    slug: 'quitrx',
+    title: 'QuitRx',
+    subtitle: 'Cross-platform stop-smoking tracker. Local-first health data, honest stats, and a one-time Pro unlock -- no subscriptions, no data leaving your device.',
+    shelf: 'Architecture vault',
+    hotspot: { points: [[98.9, 17.32], [87.27, 21.9], [79.54, 28.04], [79.41, 34.3], [89.22, 29.61], [99.27, 26.15]] },
+    cardAnchor: { left: '88.94%', top: '26.22%' },
   },
 ]
 
@@ -52,17 +60,35 @@ const CATS = [
     id: 'meeko',
     label: 'Meeko',
     affirmationTheme: 'light',
-    points: [[30.2, 53.17], [39.97, 53.54], [39.97, 61.36], [30.27, 59.77]],
-    bubbleAnchor: { left: '24.1%', top: '44.96%' },
+    points: [[78.28, 49.27], [74.01, 54.64], [72.81, 67.04], [76.46, 90.28], [85.7, 91.62], [90.92, 88.27], [88.9, 72.18], [84, 64.69], [81.8, 52.18]],
+    bubbleAnchor: { right: '30%', top: '52%' },
   },
   {
     id: 'mayu',
     label: 'Mayu',
     affirmationTheme: 'dark',
-    points: [[69.21, 89.74], [85.1, 87.78], [93.08, 99.53], [64.8, 99.53]],
-    bubbleAnchor: { left: '67.05%', top: '82.14%' },
+    points: [[14.43, 27.26], [9.21, 29.61], [7.14, 51.28], [14.24, 57.32], [19.64, 53.18], [25.61, 53.97], [27.81, 60.56], [31.71, 75.87], [34.29, 60.89], [29.64, 51.17], [26.18, 42.91], [19.77, 41.01], [18.32, 30.06]],
+    bubbleAnchor: { left: '2%', top: '10%' },
   },
 ]
+
+// ---------------------------------------------------------------------------
+// Determine card anchor style + modifier class.
+// ---------------------------------------------------------------------------
+function resolveCardAnchor(anchor) {
+  const leftVal = anchor.left ? parseFloat(anchor.left) : null
+  if (leftVal !== null && leftVal > 65) {
+    const rightPct = (100 - leftVal).toFixed(2)
+    return {
+      style: { right: `${rightPct}%`, top: anchor.top },
+      className: 'vault-card vault-card--right-anchored',
+    }
+  }
+  return {
+    style: anchor,
+    className: 'vault-card',
+  }
+}
 
 function toSVGPoints(points) {
   return points.map(([x, y]) => `${x},${y}`).join(' ')
@@ -70,31 +96,26 @@ function toSVGPoints(points) {
 
 // ---------------------------------------------------------------------------
 // Shared filter defs
-//
-// Key insight: fill="none", stroke is the glow source.
-// A hairline stroke is invisible on its own, but feGaussianBlur spreads its
-// colour outward into a soft halo. No filled rectangle, pure glow.
-// Multiple blur passes with feMerge layer tight + wide spread.
 // ---------------------------------------------------------------------------
 
 function VaultFilterDefs() {
   return (
     <defs>
-      {/* Shelf idle -- amber, gentle spread */}
-      <filter id="shelf-idle" x="-120%" y="-120%" width="340%" height="340%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b2" />
+      {/* Shelf idle -- amber, tight two-layer spread */}
+      <filter id="shelf-idle" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1"   result="b1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b2" />
         <feMerge>
           <feMergeNode in="b2" />
           <feMergeNode in="b1" />
         </feMerge>
       </filter>
 
-      {/* Shelf hover -- brighter, wider */}
-      <filter id="shelf-hover" x="-150%" y="-150%" width="400%" height="400%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="4"   result="b2" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="9"   result="b3" />
+      {/* Shelf hover -- brighter, three layers, still contained */}
+      <filter id="shelf-hover" x="-120%" y="-120%" width="340%" height="340%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b2" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="7"   result="b3" />
         <feMerge>
           <feMergeNode in="b3" />
           <feMergeNode in="b2" />
@@ -102,23 +123,11 @@ function VaultFilterDefs() {
         </feMerge>
       </filter>
 
-      {/* Cat idle -- violet, gentle */}
-      <filter id="cat-idle" x="-120%" y="-120%" width="340%" height="340%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b2" />
+      {/* Cat -- single filter, always idle, no hover variant needed */}
+      <filter id="cat-idle" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1"   result="b1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b2" />
         <feMerge>
-          <feMergeNode in="b2" />
-          <feMergeNode in="b1" />
-        </feMerge>
-      </filter>
-
-      {/* Cat hover -- brighter violet */}
-      <filter id="cat-hover" x="-150%" y="-150%" width="400%" height="400%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="4"   result="b2" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="8"   result="b3" />
-        <feMerge>
-          <feMergeNode in="b3" />
           <feMergeNode in="b2" />
           <feMergeNode in="b1" />
         </feMerge>
@@ -128,49 +137,61 @@ function VaultFilterDefs() {
 }
 
 // ---------------------------------------------------------------------------
-// CatHotspot
+// CatHotspot -- no tooltip, no hover glow change; cats are easter eggs.
+// Clicking is still fully functional -- only the visual feedback is removed.
 // ---------------------------------------------------------------------------
 
 function CatHotspot({ cat, onAffirmation, disabled }) {
-  const [hovered, setHovered] = useState(false)
-
   return (
     <g
-      className={`vault-cat-hotspot${hovered ? ' is-hovered' : ''}`}
+      className="vault-cat-hotspot"
       onClick={() => { if (!disabled) onAffirmation(cat) }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       style={{ cursor: disabled ? 'default' : 'pointer' }}
       aria-label={`Wake ${cat.label} for an affirmation`}
       role="button"
       aria-disabled={disabled}
     >
       <polygon
-        className={`vault-hotspot-poly vault-hotspot-poly--cat${hovered && !disabled ? ' is-hovered' : ''}`}
+        className="vault-hotspot-poly vault-hotspot-poly--cat"
         points={toSVGPoints(cat.points)}
         fill="transparent"
         stroke="hsl(270 65% 72%)"
         strokeWidth="1.5"
-        filter={hovered && !disabled ? 'url(#cat-hover)' : 'url(#cat-idle)'}
+        filter="url(#cat-idle)"
       />
     </g>
   )
 }
 
 // ---------------------------------------------------------------------------
-// ProjectHotspot
+// ProjectHotspot -- tooltip on hover, tracks mouse position
 // ---------------------------------------------------------------------------
 
-function ProjectHotspot({ project, isActive, onClick }) {
+function ProjectHotspot({ project, isActive, onClick, onTooltip }) {
   const [hovered, setHovered] = useState(false)
   const lit = hovered || isActive
+
+  function handleMouseEnter(e) {
+    setHovered(true)
+    onTooltip({ visible: true, label: project.title, x: e.clientX, y: e.clientY })
+  }
+
+  function handleMouseMove(e) {
+    onTooltip({ visible: true, label: project.title, x: e.clientX, y: e.clientY })
+  }
+
+  function handleMouseLeave() {
+    setHovered(false)
+    onTooltip({ visible: false, label: '', x: 0, y: 0 })
+  }
 
   return (
     <g
       className={`vault-project-hotspot${lit ? ' is-hovered' : ''}`}
       onClick={() => onClick(project.slug)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{ cursor: 'pointer' }}
       aria-label={`Open ${project.title} architecture vault`}
       role="button"
@@ -198,7 +219,6 @@ export default function Vault() {
 
   const [activeSlug, setActiveSlug] = useState(null)
   const [expanded, setExpanded] = useState(false)
-  // Per-cat bubble visibility -- independent so both can show simultaneously
   const [meekoBubbleActive, setMeekoBubbleActive] = useState(false)
   const [mayuBubbleActive, setMayuBubbleActive]   = useState(false)
   const [meekoDots, setMeekoDots] = useState('')
@@ -206,17 +226,17 @@ export default function Vault() {
   const meekoDotsRef = useRef(null)
   const mayuDotsRef  = useRef(null)
 
+  // Tooltip state -- single object to avoid multiple re-renders
+  const [tooltip, setTooltip] = useState({ visible: false, label: '', x: 0, y: 0 })
+  const handleTooltip = useCallback((next) => setTooltip(next), [])
+
   const activeProject = PROJECTS.find(p => p.slug === activeSlug) ?? null
 
   const meeko = useAffirmation('light')
   const mayu  = useAffirmation('dark')
 
   useEffect(() => {
-    // If we arrived via direct URL (no transition), data-page won't be set yet.
-    // completeEnter sets it early when arriving via the cinematic transition,
-    // so this is a no-op in that case but essential for direct/back navigation.
     document.body.setAttribute('data-page', 'vault')
-    // Reset any stale transition phase (e.g. browser back mid-transition)
     if (phase === 'entering' || phase === 'exiting') reset()
     return () => document.body.removeAttribute('data-page')
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -237,7 +257,6 @@ export default function Vault() {
     }
   }, [])
 
-  // Per-cat dismiss timers
   useEffect(() => {
     if (!meekoBubbleActive) return
     const t = setTimeout(() => setMeekoBubbleActive(false), 5000)
@@ -250,7 +269,6 @@ export default function Vault() {
     return () => clearTimeout(t)
   }, [mayuBubbleActive])
 
-  // Per-cat dot animations -- stop as soon as the hook has displayed text
   useEffect(() => {
     if (meekoDotsRef.current) { clearInterval(meekoDotsRef.current); meekoDotsRef.current = null }
     if (!meekoBubbleActive || meeko.displayed) { setMeekoDots(''); return }
@@ -283,9 +301,15 @@ export default function Vault() {
     hook.fetchAffirmation()
   }
 
-  function handleHotspotClick(slug) { setActiveSlug(slug); setExpanded(false) }
+  function handleHotspotClick(slug) {
+    setTooltip({ visible: false, label: '', x: 0, y: 0 })
+    setActiveSlug(slug)
+    setExpanded(false)
+  }
   function handleDismiss() { setActiveSlug(null); setExpanded(false) }
   function handleExpand() { setExpanded(true) }
+
+  const cardAnchorResolved = activeProject ? resolveCardAnchor(activeProject.cardAnchor) : null
 
   return (
     <div className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
@@ -310,12 +334,12 @@ export default function Vault() {
             project={project}
             isActive={activeSlug === project.slug}
             onClick={handleHotspotClick}
+            onTooltip={handleTooltip}
           />
         ))}
 
         {CATS.map(cat => {
           const ismayu = cat.affirmationTheme === 'dark'
-          const hook   = ismayu ? mayu : meeko
           const busy   = ismayu ? (mayu.rendering || mayuBubbleActive) : (meeko.rendering || meekoBubbleActive)
           return (
             <CatHotspot
@@ -327,6 +351,15 @@ export default function Vault() {
           )
         })}
       </svg>
+
+      {/* Hover tooltip -- follows cursor, projects only */}
+      <div
+        className={`vault-tooltip${tooltip.visible ? ' vault-tooltip--visible' : ''}`}
+        style={{ left: tooltip.x, top: tooltip.y }}
+        aria-hidden="true"
+      >
+        {tooltip.label}
+      </div>
 
       <div
         className={`vault-dim${activeSlug ? ' vault-dim--active' : ''}`}
@@ -340,7 +373,7 @@ export default function Vault() {
             ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
             : <p>"{meeko.displayed}"</p>
           }
-          <span className="vault-cat-bubble__name">— Meeko</span>
+          <span className="vault-cat-bubble__name">-- Meeko</span>
         </div>
       )}
 
@@ -350,12 +383,16 @@ export default function Vault() {
             ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
             : <p>"{mayu.displayed}"</p>
           }
-          <span className="vault-cat-bubble__name">— Mayu</span>
+          <span className="vault-cat-bubble__name">-- Mayu</span>
         </div>
       )}
 
-      {activeProject && !expanded && (
-        <div className="vault-card" style={activeProject.cardAnchor} onClick={e => e.stopPropagation()}>
+      {activeProject && !expanded && cardAnchorResolved && (
+        <div
+          className={cardAnchorResolved.className}
+          style={cardAnchorResolved.style}
+          onClick={e => e.stopPropagation()}
+        >
           <button className="vault-card__dismiss" onClick={handleDismiss} aria-label="Close">✕</button>
           <p className="vault-card__eyebrow">{activeProject.shelf}</p>
           <h2 className="vault-card__title">{activeProject.title}</h2>
