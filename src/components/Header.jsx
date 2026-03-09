@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router'
 import MeekoBubble from './MeekoBubble'
 import CommitBanner from './CommitBanner'
 import { useTheme } from '../hooks/useTheme'
+import { useVaultTransition } from '../hooks/useVaultTransition.jsx'
 
 const TOGGLE_KEY = 'drewbs-theme-toggled'
 
 export default function Header() {
   const { theme, toggle } = useTheme()
   const location = useLocation()
+  const navigate = useNavigate()
   const isVault = location.pathname === '/vault'
 
   const [mounted, setMounted] = useState(false)
   const [hasPulsed, setHasPulsed] = useState(false)
+  const [vaultHover, setVaultHover] = useState(false)
+
+  const { phase, startEnter, startExit } = useVaultTransition()
+  const transitionActive = phase === 'entering' || phase === 'exiting'
+  const isEntering = phase === 'entering'
 
   useEffect(() => {
     setMounted(true)
@@ -27,8 +34,29 @@ export default function Header() {
     toggle()
   }
 
+  // Entry: intercept vault link click from non-vault pages
+  function handleVaultClick(e) {
+    if (isVault || transitionActive) return
+    e.preventDefault()
+    startEnter(navigate)
+  }
+
+  // Exit: intercept all nav link clicks from vault page
+  function handleExitClick(destination) {
+    return function(e) {
+      if (!isVault || transitionActive) return
+      e.preventDefault()
+      startExit(destination, navigate)
+    }
+  }
+
   return (
-    <header className={`site-header${isVault ? ' site-header--vault' : ''}`}>
+    <header className={[
+      'site-header',
+      isVault ? 'site-header--vault' : '',
+      vaultHover && !isVault ? 'site-header--vault-preview' : '',
+      isEntering && !isVault ? 'site-header--transitioning-enter' : '',
+    ].filter(Boolean).join(' ')}>
       <div className="header-inner">
         {/* Portrait + speech bubble -- hidden on vault, cats take over */}
         {!isVault && (
@@ -67,12 +95,19 @@ export default function Header() {
         <nav className={`site-nav${isVault ? ' site-nav--vault' : ''}`}>
           <CommitBanner />
           <span className="nav-divider">|</span>
-          <NavLink to="/" end>home.</NavLink>
-          <NavLink to="/blog">blog.</NavLink>
-          <NavLink to="/about">about.</NavLink>
-          <NavLink to="/drewbrew">drewbrew.</NavLink>
-          <NavLink to="/vault">vault.</NavLink>
-          <NavLink to="/contact">contact.</NavLink>
+          <NavLink to="/" end onClick={handleExitClick('/')}>home.</NavLink>
+          <NavLink to="/blog" onClick={handleExitClick('/blog')}>blog.</NavLink>
+          <NavLink to="/about" onClick={handleExitClick('/about')}>about.</NavLink>
+          <NavLink to="/drewbrew" onClick={handleExitClick('/drewbrew')}>drewbrew.</NavLink>
+          <NavLink
+            to="/vault"
+            onClick={handleVaultClick}
+            onMouseEnter={() => setVaultHover(true)}
+            onMouseLeave={() => setVaultHover(false)}
+          >
+            vault.
+          </NavLink>
+          <NavLink to="/contact" onClick={handleExitClick('/contact')}>contact.</NavLink>
         </nav>
       </div>
     </header>

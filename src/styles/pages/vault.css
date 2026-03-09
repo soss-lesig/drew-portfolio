@@ -469,6 +469,348 @@ body[data-page="vault"] .footer-copyright     { display: none; }
 }
 
 /* -------------------------------------------------------------------------
+   ALPHA badge
+   ------------------------------------------------------------------------- */
+
+.vault-alpha-badge {
+  display: inline-block;
+  margin-left: 0.5em;
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(35 90% 55%);
+  border: 1px solid hsl(35 90% 55% / 0.45);
+  border-radius: 4px;
+  padding: 0.15em 0.45em;
+  vertical-align: middle;
+  position: relative;
+  top: -0.15em;
+  opacity: 0.8;
+}
+
+/* -------------------------------------------------------------------------
+   Header vault hover preview
+
+   When hovering the vault nav link from any non-vault page, the header
+   background transitions to show the vault background image, cropped to
+   the same proportions as the vault scene. A gradient fades the bottom
+   edge so it blends into the page content below.
+
+   Uses transition (not animation) so the fade works symmetrically on
+   both hover-in and hover-out.
+   ------------------------------------------------------------------------- */
+
+.site-header {
+  /* Ensure pseudo-elements can be positioned over the header */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Vault background image -- always in the DOM, fades in/out via opacity */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/vault-background.png');
+  background-size: cover;
+  background-position: center 30%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Gradient vignette over the bg -- fades in with it */
+.site-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    hsl(30 8% 4% / 0.25) 0%,
+    hsl(30 8% 4% / 0.55) 55%,
+    hsl(30 8% 4% / 0.82) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Show both pseudo-elements on hover preview */
+.site-header--vault-preview::before,
+.site-header--vault-preview::after {
+  opacity: 1;
+}
+
+/* Ensure all header content sits above the background pseudo-elements */
+.site-header .header-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tint nav links to vault palette */
+.site-header--vault-preview .site-nav a,
+.site-header--vault-preview .site-nav a:visited {
+  color: hsl(35 15% 75%);
+}
+
+.site-header--vault-preview .site-nav a:hover {
+  color: hsl(35 90% 65%);
+}
+
+/* Override the underline accent colour */
+.site-header--vault-preview .site-nav a::after {
+  background: hsl(35 90% 65%);
+}
+
+.site-header--vault-preview .nav-divider {
+  color: hsl(35 20% 35%);
+}
+
+.site-header--vault-preview .commit-banner {
+  color: hsl(35 10% 45%);
+}
+
+.site-header--vault-preview .commit-hash {
+  color: hsl(35 70% 50%);
+}
+
+/* Portrait wrapper, label and MeekoBubble tint */
+.site-header--vault-preview .portrait-wrapper {
+  border-color: hsl(35 20% 50% / 0.35);
+  background-color: hsl(30 8% 10%);
+}
+
+.site-header--vault-preview .portrait-label {
+  color: hsl(35 70% 55%);
+}
+
+/* Override CSS tokens locally on the wrapper so ::before/::after tail
+   pseudo-elements pick up the new values via var(--border) and var(--bg) */
+.site-header--vault-preview .meeko-bubble-wrapper {
+  --border: hsl(35 30% 40% / 0.4);
+  --bg: hsl(30 8% 12%);
+  --text: hsl(35 15% 70%);
+  --muted: hsl(35 10% 50%);
+}
+
+/* Explicit colour on the bubble itself -- needed because light mode
+   var(--text) is near-black and the token override alone isn't enough
+   when colour is inherited rather than declared */
+.site-header--vault-preview .speech-bubble,
+.site-header--vault-preview .speech-bubble p {
+  color: hsl(35 15% 70%);
+}
+
+/* -------------------------------------------------------------------------
+   Vault transition overlay
+
+   Full-screen cinematic curtain for vault entry and exit.
+   Mounts above everything (z-index: 1000).
+   ------------------------------------------------------------------------- */
+
+.vault-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The vault background image fills the overlay */
+.vault-transition-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/vault-background.png');
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+}
+
+/* Dark vignette over the bg */
+.vault-transition-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: hsl(30 8% 4% / 0.75);
+}
+
+/* ---- ENTER phase ---- */
+
+.vault-transition-overlay--entering .vault-transition-bg {
+  animation: vtBgFadeIn 0.7s ease forwards;
+}
+
+@keyframes vtBgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- REVEALING phase -- navigated, overlay fades out to reveal new page ---- *
+ *
+ * Used after both entry (vault arriving) and exit (site page arriving).
+ * The whole overlay fades, not just the bg, so the new page is revealed
+ * cleanly regardless of whether it's dark (vault) or light (site).
+ */
+
+.vault-transition-overlay--revealing {
+  animation: vtOverlayFadeOut 0.5s ease 0.05s forwards;
+}
+
+@keyframes vtOverlayFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ---- EXIT phase -- curtain descends over the vault ---- */
+
+.vault-transition-overlay--exiting .vault-transition-bg {
+  animation: vtBgFadeIn 0.6s ease forwards;
+}
+
+/* ---- TITLE & SUBTITLE -- enter phase only ---- *
+ *
+ * Two-stage cross-dissolve (JS state machine in VaultTransitionOverlay.jsx):
+ *
+ *   Stage 1 'centre':     title fades in at screen centre, holds
+ *   Stage 2 'bottomleft': centre fades out, bottom-left block fades in
+ *                         with title + subtitle together
+ *
+ * No position interpolation -- clean opacity-only transitions.
+ */
+
+/* Shared title styles */
+.vault-transition-title {
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  color: hsl(35 20% 92%);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.vault-transition-alpha {
+  display: inline-block;
+  margin-left: 0.5em;
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(35 90% 55%);
+  border: 1px solid hsl(35 90% 55% / 0.45);
+  border-radius: 4px;
+  padding: 0.15em 0.45em;
+  vertical-align: middle;
+  position: relative;
+  top: -0.15em;
+}
+
+/* Stage 1: centred container */
+.vault-transition-centre {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  animation: vtFadeIn 0.6s ease 0.35s forwards;
+  transition: opacity 0.4s ease;
+}
+
+/* Fade out when stage switches */
+.vault-transition-centre--out {
+  opacity: 0;
+  animation: none; /* cancel the fade-in if it's still running */
+}
+
+/* Stage 2: bottom-left block, mirrors .vault-intro layout */
+.vault-transition-bottomleft {
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-8) var(--space-6) calc(var(--space-6) + 48px);
+  background: linear-gradient(
+    to top,
+    hsl(30 8% 6% / 0.85) 0%,
+    hsl(30 8% 6% / 0.4) 60%,
+    transparent 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.vault-transition-bottomleft--in {
+  opacity: 1;
+}
+
+/* Match .vault-intro__title margin: 0 0 var(--space-2) */
+.vault-transition-bottomleft .vault-transition-title {
+  margin-bottom: var(--space-2);
+}
+
+.vault-transition-subtitle {
+  font-size: var(--fs-body);
+  color: hsl(35 10% 55%);
+  margin: 0;
+  max-width: 480px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.45s ease 0.25s, transform 0.45s ease 0.25s;
+}
+
+.vault-transition-bottomleft--in .vault-transition-subtitle {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes vtFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- Nav slide -- driven by data-phase on the header during transition ---- */
+/* The header-inner nudges rightward as the portrait group fades out */
+
+.site-header--transitioning-enter .header-portrait-group {
+  animation: vtPortraitFadeOut 0.4s ease 0.9s forwards;
+}
+
+@keyframes vtPortraitFadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-20px); }
+}
+
+.site-header--transitioning-enter .site-nav {
+  animation: vtNavSlideRight 0.45s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+}
+
+/* Nav slides to the right by pushing the portrait group out.
+   justify-content on .header-inner is already space-between on non-vault
+   pages, so we animate the nav itself slightly rightward to
+   reinforce the layout collapsing toward the vault header position. */
+@keyframes vtNavSlideRight {
+  from { transform: translateX(0); }
+  to   { transform: translateX(8px); opacity: 0.7; }
+}
+
+/* Exit: disable pointer events on vault while curtain descends.
+   Opacity fade is handled by the overlay -- no double fade here. */
+.vault-scene--exiting {
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------
    Reduced motion
    ------------------------------------------------------------------------- */
 
@@ -482,4 +824,12 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   .vault-panel    { animation-duration: 0.01ms !important; }
   .vault-hint     { animation-duration: 0.01ms !important; opacity: 1; }
   .vault-cat-bubble { animation-duration: 0.01ms !important; }
+  .vault-transition-overlay { animation-duration: 0.01ms !important; }
+  .vault-transition-overlay--revealing { animation-duration: 0.01ms !important; opacity: 0; }
+  .vault-transition-centre   { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; opacity: 1; }
+  .vault-transition-centre--out { opacity: 0; }
+  .vault-transition-bottomleft { transition-duration: 0.01ms !important; opacity: 0; }
+  .vault-transition-bottomleft--in { opacity: 1; }
+  .vault-transition-subtitle { transition-duration: 0.01ms !important; opacity: 1; transform: none; }
+  .vault-transition-bg      { animation-duration: 0.01ms !important; }
 }
