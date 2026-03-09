@@ -5,39 +5,35 @@ const CHAR_DELAY = 35
 /**
  * useAffirmation
  * Fetches a random affirmation from Supabase for the given theme.
- * Returns { quote, displayed, loading, fetchAffirmation }
- * Call fetchAffirmation() to trigger a new fetch on demand.
+ * Returns { quote, displayed, rendering, fetchAffirmation }
+ *
+ * `rendering` is true for the full lifecycle -- fetch + typewriter.
+ * Only goes false once the last character is written (or on error/empty).
+ * Use this to guard against clicks mid-typewriter.
+ *
+ * `displayed` is the typewriter output -- empty string until the fetch
+ * resolves and the typewriter starts ticking.
  *
  * Cancellation: each call gets a closure-scoped `cancelled` flag.
- * If fetchAffirmation is called again before the previous call resolves,
- * the previous call's flag is set to true and its typewriter interval is
- * cleared -- preventing stale state updates and racing typewriters.
+ * Calling fetchAffirmation again cancels the previous call immediately.
  */
 export function useAffirmation(theme) {
   const [quote, setQuote] = useState('')
   const [displayed, setDisplayed] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [rendering, setRendering] = useState(false)
 
-  // Holds the active typewriter interval so we can cancel it on the next call
   const typewriterRef = useRef(null)
-  // Holds a cancel function for the in-flight async call
   const cancelRef = useRef(null)
 
   const fetchAffirmation = useCallback(async () => {
     // Cancel any previous in-flight call
     if (cancelRef.current) cancelRef.current()
+    if (typewriterRef.current) { clearInterval(typewriterRef.current); typewriterRef.current = null }
 
-    // Clear any running typewriter
-    if (typewriterRef.current) {
-      clearInterval(typewriterRef.current)
-      typewriterRef.current = null
-    }
-
-    // This call's cancellation flag
     let cancelled = false
     cancelRef.current = () => { cancelled = true }
 
-    setLoading(true)
+    setRendering(true)
     setDisplayed('')
     setQuote('')
 
@@ -61,7 +57,7 @@ export function useAffirmation(theme) {
       if (cancelled) return
       console.error('Failed to fetch affirmation:', err)
       setQuote('the database said no. :(')
-      setLoading(false)
+      setRendering(false)
       return
     }
 
@@ -69,15 +65,14 @@ export function useAffirmation(theme) {
 
     if (!data?.length) {
       setQuote('...')
-      setLoading(false)
+      setRendering(false)
       return
     }
 
     const text = data[Math.floor(Math.random() * data.length)].text
     setQuote(text)
-    setLoading(false)
 
-    // Typewriter
+    // Typewriter -- rendering stays true until the last character
     let i = 0
     typewriterRef.current = setInterval(() => {
       if (cancelled) {
@@ -90,9 +85,10 @@ export function useAffirmation(theme) {
       if (i >= text.length) {
         clearInterval(typewriterRef.current)
         typewriterRef.current = null
+        setRendering(false)
       }
     }, CHAR_DELAY)
   }, [theme])
 
-  return { quote, displayed, loading, fetchAffirmation }
+  return { quote, displayed, rendering, fetchAffirmation }
 }

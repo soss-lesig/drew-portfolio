@@ -38,6 +38,7 @@ export default function Header() {
   function handleVaultClick(e) {
     if (isVault || transitionActive) return
     e.preventDefault()
+    setVaultHover(false)
     startEnter(navigate)
   }
 

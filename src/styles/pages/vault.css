@@ -6,11 +6,13 @@
    Layout escape
    ------------------------------------------------------------------------- */
 
-body[data-page="vault"] {
+body[data-page="vault"],
+body:has(.vault-scene) {
   overflow: hidden;
 }
 
-body[data-page="vault"] main {
+body[data-page="vault"] main,
+body:has(.vault-scene) main {
   width: 100%;
   max-width: 100%;
   padding: 0;
@@ -18,12 +20,14 @@ body[data-page="vault"] main {
   height: 0;
 }
 
-body[data-page="vault"] #app {
+body[data-page="vault"] #app,
+body:has(.vault-scene) #app {
   width: 100%;
   max-width: 100%;
 }
 
-body[data-page="vault"] .site-header {
+body[data-page="vault"] .site-header,
+body:has(.vault-scene) .site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   background: transparent;
@@ -31,7 +35,8 @@ body[data-page="vault"] .site-header {
   z-index: 200;
 }
 
-body[data-page="vault"] .site-header::after {
+body[data-page="vault"] .site-header::after,
+body:has(.vault-scene) .site-header::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -40,31 +45,42 @@ body[data-page="vault"] .site-header::after {
   z-index: -1;
 }
 
-body[data-page="vault"] .header-inner {
+body[data-page="vault"] .header-inner,
+body:has(.vault-scene) .header-inner {
   justify-content: flex-end;
 }
 
 body[data-page="vault"] .site-nav a,
-body[data-page="vault"] .site-nav a:visited { color: hsl(35 20% 72%); }
+body[data-page="vault"] .site-nav a:visited,
+body:has(.vault-scene) .site-nav a,
+body:has(.vault-scene) .site-nav a:visited { color: hsl(35 20% 72%); }
 
 body[data-page="vault"] .site-nav a:hover,
-body[data-page="vault"] .site-nav a.active  { color: hsl(35 90% 65%); }
+body[data-page="vault"] .site-nav a.active,
+body:has(.vault-scene) .site-nav a:hover,
+body:has(.vault-scene) .site-nav a.active  { color: hsl(35 90% 65%); }
 
-body[data-page="vault"] .site-nav a::after  { background: hsl(35 90% 65%); }
-body[data-page="vault"] .nav-divider         { color: hsl(35 20% 35%); }
-body[data-page="vault"] .commit-banner       { color: hsl(35 10% 45%); }
-body[data-page="vault"] .commit-hash         { color: hsl(35 70% 50%); }
+body[data-page="vault"] .site-nav a::after,
+body:has(.vault-scene) .site-nav a::after  { background: hsl(35 90% 65%); }
+body[data-page="vault"] .nav-divider,
+body:has(.vault-scene) .nav-divider         { color: hsl(35 20% 35%); }
+body[data-page="vault"] .commit-banner,
+body:has(.vault-scene) .commit-banner       { color: hsl(35 10% 45%); }
+body[data-page="vault"] .commit-hash,
+body:has(.vault-scene) .commit-hash         { color: hsl(35 70% 50%); }
 
-body[data-page="vault"] footer {
+body[data-page="vault"] footer,
+body:has(.vault-scene) footer {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   background: transparent;
   border-top: none;
-  z-index: 200;
+  z-index: 1;
   padding: var(--space-3) var(--space-4);
 }
 
-body[data-page="vault"] footer::before {
+body[data-page="vault"] footer::before,
+body:has(.vault-scene) footer::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -74,10 +90,14 @@ body[data-page="vault"] footer::before {
 }
 
 body[data-page="vault"] .footer-links a,
-body[data-page="vault"] footer p { color: hsl(35 10% 40%); }
+body[data-page="vault"] footer p,
+body:has(.vault-scene) .footer-links a,
+body:has(.vault-scene) footer p { color: hsl(35 10% 40%); }
 
-body[data-page="vault"] .footer-links a:hover { color: hsl(35 90% 65%); }
-body[data-page="vault"] .footer-copyright     { display: none; }
+body[data-page="vault"] .footer-links a:hover,
+body:has(.vault-scene) .footer-links a:hover { color: hsl(35 90% 65%); }
+body[data-page="vault"] .footer-copyright,
+body:has(.vault-scene) .footer-copyright     { display: none; }
 
 /* -------------------------------------------------------------------------
    Scene
@@ -97,7 +117,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 15%;
+  object-position: center 40%;
   z-index: 0;
   transform: scale(1.03);
 }
@@ -207,6 +227,15 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   font-size: 0.82rem;
   font-style: italic;
   color: hsl(270 30% 82%);
+  line-height: 1.55;
+}
+
+.vault-cat-bubble__dots {
+  margin: 0 0 var(--space-1);
+  font-size: 0.82rem;
+  font-style: italic;
+  color: hsl(270 30% 62%);
+  letter-spacing: 0.2em;
   line-height: 1.55;
 }
 
@@ -514,7 +543,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   inset: 0;
   background-image: url('/images/vault-background.png');
   background-size: cover;
-  background-position: center 15%;
+  background-position: center 40%;
   opacity: 0;
   transition: opacity 0.35s ease;
   z-index: 0;
@@ -627,7 +656,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   inset: 0;
   background-image: url('/images/vault-background.png');
   background-size: cover;
-  background-position: center 15%;
+  background-position: center 40%;
   z-index: 0;
 }
 

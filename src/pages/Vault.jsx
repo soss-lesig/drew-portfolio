@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { useTheme } from '../hooks/useTheme'
 import { useAffirmation } from '../hooks/useAffirmation'
@@ -143,14 +143,15 @@ function CatHotspot({ cat, onAffirmation, disabled }) {
       style={{ cursor: disabled ? 'default' : 'pointer' }}
       aria-label={`Wake ${cat.label} for an affirmation`}
       role="button"
+      aria-disabled={disabled}
     >
       <polygon
-        className={`vault-hotspot-poly vault-hotspot-poly--cat${hovered ? ' is-hovered' : ''}`}
+        className={`vault-hotspot-poly vault-hotspot-poly--cat${hovered && !disabled ? ' is-hovered' : ''}`}
         points={toSVGPoints(cat.points)}
         fill="transparent"
         stroke="hsl(270 65% 72%)"
         strokeWidth="1.5"
-        filter={hovered ? 'url(#cat-hover)' : 'url(#cat-idle)'}
+        filter={hovered && !disabled ? 'url(#cat-hover)' : 'url(#cat-idle)'}
       />
     </g>
   )
@@ -197,15 +198,18 @@ export default function Vault() {
 
   const [activeSlug, setActiveSlug] = useState(null)
   const [expanded, setExpanded] = useState(false)
-  const [catAffirmation, setCatAffirmation] = useState(null)
+  // Per-cat bubble visibility -- independent so both can show simultaneously
+  const [meekoBubbleActive, setMeekoBubbleActive] = useState(false)
+  const [mayuBubbleActive, setMayuBubbleActive]   = useState(false)
+  const [meekoDots, setMeekoDots] = useState('')
+  const [mayuDots, setMayuDots]   = useState('')
+  const meekoDotsRef = useRef(null)
+  const mayuDotsRef  = useRef(null)
 
   const activeProject = PROJECTS.find(p => p.slug === activeSlug) ?? null
 
   const meeko = useAffirmation('light')
   const mayu  = useAffirmation('dark')
-
-  // True while either cat hook is fetching -- blocks overlapping clicks
-  const catLoading = meeko.loading || mayu.loading
 
   useEffect(() => {
     // If we arrived via direct URL (no transition), data-page won't be set yet.
@@ -233,28 +237,55 @@ export default function Vault() {
     }
   }, [])
 
+  // Per-cat dismiss timers
   useEffect(() => {
-    if (!catAffirmation) return
-    const t = setTimeout(() => setCatAffirmation(null), 5000)
+    if (!meekoBubbleActive) return
+    const t = setTimeout(() => setMeekoBubbleActive(false), 5000)
     return () => clearTimeout(t)
-  }, [catAffirmation])
+  }, [meekoBubbleActive])
 
-  async function handleCatClick(cat) {
-    // Drop clicks while a fetch is in-flight -- the hook's cancellation handles
-    // rapid clicks from MeekoBubble, but in the vault we want a cleaner UX
-    // where the hotspot simply doesn't respond until the quote is ready.
-    if (catLoading) return
-    const hook = cat.affirmationTheme === 'dark' ? mayu : meeko
-    setCatAffirmation(null)
-    await hook.fetchAffirmation()
-    setCatAffirmation({ cat, hook })
+  useEffect(() => {
+    if (!mayuBubbleActive) return
+    const t = setTimeout(() => setMayuBubbleActive(false), 5000)
+    return () => clearTimeout(t)
+  }, [mayuBubbleActive])
+
+  // Per-cat dot animations -- stop as soon as the hook has displayed text
+  useEffect(() => {
+    if (meekoDotsRef.current) { clearInterval(meekoDotsRef.current); meekoDotsRef.current = null }
+    if (!meekoBubbleActive || meeko.displayed) { setMeekoDots(''); return }
+    let count = 1; setMeekoDots('.')
+    meekoDotsRef.current = setInterval(() => {
+      count = count >= 3 ? 1 : count + 1
+      setMeekoDots('.'.repeat(count))
+    }, 300)
+    return () => { clearInterval(meekoDotsRef.current); meekoDotsRef.current = null }
+  }, [meekoBubbleActive, meeko.displayed])
+
+  useEffect(() => {
+    if (mayuDotsRef.current) { clearInterval(mayuDotsRef.current); mayuDotsRef.current = null }
+    if (!mayuBubbleActive || mayu.displayed) { setMayuDots(''); return }
+    let count = 1; setMayuDots('.')
+    mayuDotsRef.current = setInterval(() => {
+      count = count >= 3 ? 1 : count + 1
+      setMayuDots('.'.repeat(count))
+    }, 300)
+    return () => { clearInterval(mayuDotsRef.current); mayuDotsRef.current = null }
+  }, [mayuBubbleActive, mayu.displayed])
+
+  function handleCatClick(cat) {
+    const ismayu = cat.affirmationTheme === 'dark'
+    const hook   = ismayu ? mayu : meeko
+    const busy   = ismayu ? (mayu.rendering || mayuBubbleActive) : (meeko.rendering || meekoBubbleActive)
+    if (busy) return
+    if (ismayu) setMayuBubbleActive(true)
+    else setMeekoBubbleActive(true)
+    hook.fetchAffirmation()
   }
 
   function handleHotspotClick(slug) { setActiveSlug(slug); setExpanded(false) }
   function handleDismiss() { setActiveSlug(null); setExpanded(false) }
   function handleExpand() { setExpanded(true) }
-
-  const affirmationText = catAffirmation ? catAffirmation.hook.displayed : null
 
   return (
     <div className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
@@ -282,14 +313,19 @@ export default function Vault() {
           />
         ))}
 
-        {CATS.map(cat => (
-          <CatHotspot
-            key={cat.id}
-            cat={cat}
-            onAffirmation={handleCatClick}
-            disabled={catLoading}
-          />
-        ))}
+        {CATS.map(cat => {
+          const ismayu = cat.affirmationTheme === 'dark'
+          const hook   = ismayu ? mayu : meeko
+          const busy   = ismayu ? (mayu.rendering || mayuBubbleActive) : (meeko.rendering || meekoBubbleActive)
+          return (
+            <CatHotspot
+              key={cat.id}
+              cat={cat}
+              onAffirmation={handleCatClick}
+              disabled={busy}
+            />
+          )
+        })}
       </svg>
 
       <div
@@ -298,12 +334,23 @@ export default function Vault() {
         aria-hidden="true"
       />
 
-      {catAffirmation && affirmationText && (
-        <div className="vault-cat-bubble" style={catAffirmation.cat.bubbleAnchor} aria-live="polite">
-          <p>"{affirmationText}"</p>
-          <span className="vault-cat-bubble__name">
-            {catAffirmation.cat.label === 'Meeko' ? '— Meeko' : '— Mayu'}
-          </span>
+      {meekoBubbleActive && (
+        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'meeko').bubbleAnchor} aria-live="polite">
+          {meekoDots
+            ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
+            : <p>"{meeko.displayed}"</p>
+          }
+          <span className="vault-cat-bubble__name">— Meeko</span>
+        </div>
+      )}
+
+      {mayuBubbleActive && (
+        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'mayu').bubbleAnchor} aria-live="polite">
+          {mayuDots
+            ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
+            : <p>"{mayu.displayed}"</p>
+          }
+          <span className="vault-cat-bubble__name">— Mayu</span>
         </div>
       )}
 
