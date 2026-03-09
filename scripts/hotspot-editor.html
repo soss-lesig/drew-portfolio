@@ -104,12 +104,6 @@
     padding: 8px;
   }
 
-  /*
-    Simulate the live page crop exactly:
-    - 16:9 aspect ratio container
-    - image: object-fit cover, object-position center 15%
-    Coordinates drawn here will match the live page 1:1.
-  */
   .viewport-sim {
     position: relative;
     width: 100%;
@@ -133,7 +127,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 40%; /* must match vault.css .vault-bg */
+    object-position: center 60%;
     pointer-events: none;
     display: block;
   }
@@ -149,25 +143,18 @@
   #hotspot-svg.mode-draw { cursor: crosshair; }
   #hotspot-svg.mode-edit { cursor: default; }
 
-  /*
-    IMPORTANT: font-size, stroke-width on SVG text/poly/circle are set
-    as SVG *attributes* in render(), NOT via CSS px values.
-    In a viewBox="0 0 100 100" coordinate space, "10px" = 10 SVG units
-    = 10% of the image height. All sizing must use SVG user units.
-  */
   .hotspot-poly { cursor: pointer; transition: fill-opacity 0.15s; }
   .corner-handle { fill: white; cursor: grab; }
   .corner-handle:active { cursor: grabbing; }
   .poly-label { font-weight: 700; pointer-events: none; paint-order: stroke fill; stroke-linejoin: round; }
 
-  #draw-preview {
-    fill: hsl(75 40% 55% / 0.12);
-    stroke: hsl(75 40% 55%);
-    stroke-width: 0.3;
-    stroke-dasharray: 1.2 0.8;
+  /* In-progress polygon preview line */
+  .draw-edge {
     pointer-events: none;
-    /* display toggled via style.display in JS, not display:none here */
-    visibility: hidden;
+    stroke-dasharray: 1.2 0.8;
+  }
+  .draw-vertex {
+    pointer-events: none;
   }
 
   footer {
@@ -179,6 +166,7 @@
     flex-wrap: wrap;
     flex-shrink: 0;
     max-height: 130px;
+    overflow: hidden;
   }
 
   .output-section { flex: 1; min-width: 200px; min-width: 0; }
@@ -258,14 +246,15 @@
   button.action.primary:hover { background: hsl(75 35% 28%); }
   button.action.danger { border-color: hsl(0 55% 38%); color: hsl(0 55% 62%); }
   button.action.danger:hover { background: hsl(0 55% 12%); }
+  button.action.accent { border-color: hsl(35 80% 45%); color: hsl(35 80% 65%); }
+  button.action.accent:hover { background: hsl(35 60% 14%); }
   .copied { color: hsl(145 55% 52%) !important; border-color: hsl(145 55% 38%) !important; }
 
   .mode-indicator { font-size: 0.6rem; color: hsl(35 10% 38%); text-align: center; }
   .mode-indicator b { color: hsl(75 40% 55%); }
 
-  /* two-col footer layout: output left, sidebar right */
   .footer-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .footer-right { display: flex; gap: 10px; flex-shrink: 0; }
+  .footer-right { display: flex; gap: 10px; flex-shrink: 0; overflow-y: auto; max-height: 112px; }
 </style>
 </head>
 <body>
@@ -273,8 +262,8 @@
 <header>
   <h1>Vault Hotspot Editor</h1>
   <span class="instructions">
-    Crop: <b>center 40%</b> (matches live).
-    <b>Draw:</b> drag to place. <b>Edit:</b> drag corners to skew.
+    <b>Draw:</b> click to add vertices, <b>double-click</b> or <b>Enter</b> to close polygon.
+    <b>Edit:</b> drag corners to skew. <b>Right-click</b> vertex to delete it.
   </span>
   <div class="controls">
     <div class="type-toggle">
@@ -289,6 +278,7 @@
         <option value="homeserver">HomeServer</option>
         <option value="drewbrew">drewBrew</option>
         <option value="drew-portfolio">drew-portfolio</option>
+        <option value="quitrx">QuitRx</option>
       </optgroup>
       <optgroup label="Cats">
         <option value="meeko">Meeko</option>
@@ -306,9 +296,7 @@
       alt="Vault background"
       draggable="false"
     />
-    <!-- viewBox 0 0 100 100 + preserveAspectRatio none means coordinates are percentages -->
     <svg id="hotspot-svg" class="mode-draw" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <rect id="draw-preview" x="0" y="0" width="0" height="0" />
     </svg>
   </div>
 </div>
@@ -317,7 +305,7 @@
   <div class="footer-left">
     <div class="output-section">
       <div class="output-label">Config output — paste PROJECTS + CATS into Vault.jsx</div>
-      <pre id="output">// Draw hotspots to generate config...</pre>
+      <pre id="output">// Click on the image to start placing vertices...</pre>
     </div>
   </div>
   <div class="footer-right">
@@ -328,10 +316,11 @@
       <div class="legend" id="legend-cats"></div>
     </div>
     <div class="sidebar">
-      <div class="mode-indicator" id="mode-indicator"><b>Draw</b> mode</div>
+      <div class="mode-indicator" id="mode-indicator"><b>Draw</b> mode — click to place vertices</div>
       <div class="actions">
         <button class="action primary" id="copy-btn">Copy config</button>
         <button class="action" id="toggle-mode-btn">Switch to Edit mode</button>
+        <button class="action accent" id="close-poly-btn" style="display:none">Close polygon (Enter)</button>
         <button class="action danger" id="delete-selected-btn" style="display:none">Delete selected</button>
         <button class="action" id="clear-btn">Clear all</button>
       </div>
@@ -346,6 +335,7 @@ const SHELF_ITEMS = {
   'homeserver':      { label: 'HomeServer',      colour: '#e8882a', type: 'shelf' },
   'drewbrew':        { label: 'drewBrew',        colour: '#e84d7a', type: 'shelf' },
   'drew-portfolio':  { label: 'drew-portfolio',  colour: '#aa66ee', type: 'shelf' },
+  'quitrx':          { label: 'QuitRx',          colour: '#44ccaa', type: 'shelf' },
 }
 
 const CAT_ITEMS = {
@@ -361,51 +351,62 @@ const SUBTITLES = {
   'homeserver':      'Self-hosted VPS infrastructure. The backbone that unblocks everything else.',
   'drewbrew':        'Coffee tracking app. An architecture case study in earning complexity.',
   'drew-portfolio':  'This site. The meta-narrative: building a portfolio that documents itself being built.',
+  'quitrx':          'Cross-platform stop-smoking tracker. Local-first health data, honest stats, and a one-time Pro unlock -- no subscriptions, no data leaving your device.',
 }
 
-// SVG label sizes -- in SVG user units (1 unit = 1% of container)
 const LABEL_FONT_SIZE  = 1.8
 const LABEL_STROKE_W   = 0.5
 const POLY_STROKE_W    = 0.25
 const HANDLE_RADIUS    = 0.9
 const HANDLE_STROKE_W  = 0.2
+const VERTEX_SNAP_DIST = 2.5   // SVG units -- snapping to close polygon
 
-const hotspots = {}
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+const hotspots = {}            // id -> { type, points: [[x,y]...] }
 let mode = 'draw'
 let selectedId = null
 let activeType = 'shelf'
-let isDrawing = false
-let drawStart = { xPct: 0, yPct: 0 }
-// Cache the viewport rect at mousedown so drag doesn't get stale measurements
-let cachedViewportRect = null
+
+// In-progress polygon drawing
+let inProgress = null          // { id, points: [[x,y]...] } | null
+let mousePos = null            // current mouse position in SVG units
+
+// Handle dragging (edit mode)
 let isDraggingHandle = false
 let dragId = null
 let dragCornerIdx = null
+let cachedViewportRect = null
 
-const svg       = document.getElementById('hotspot-svg')
-const drawPrev  = document.getElementById('draw-preview')
-const itemSel   = document.getElementById('item-select')
-const output    = document.getElementById('output')
-const modeInd   = document.getElementById('mode-indicator')
-const toggleBtn = document.getElementById('toggle-mode-btn')
-const deleteBtn = document.getElementById('delete-selected-btn')
+const svg        = document.getElementById('hotspot-svg')
+const itemSel    = document.getElementById('item-select')
+const output     = document.getElementById('output')
+const modeInd    = document.getElementById('mode-indicator')
+const toggleBtn  = document.getElementById('toggle-mode-btn')
+const deleteBtn  = document.getElementById('delete-selected-btn')
+const closeBtn   = document.getElementById('close-poly-btn')
 const viewportEl = document.getElementById('viewport-sim')
 
-// ---- Type toggle ----
+// ---------------------------------------------------------------------------
+// Type toggle
+// ---------------------------------------------------------------------------
 
 document.getElementById('type-shelf').addEventListener('click', () => setActiveType('shelf'))
-document.getElementById('type-cat').addEventListener('click', () => setActiveType('cat'))
+document.getElementById('type-cat').addEventListener('click',   () => setActiveType('cat'))
 
 function setActiveType(t) {
   activeType = t
   document.getElementById('type-shelf').classList.toggle('active', t === 'shelf')
-  document.getElementById('type-cat').classList.toggle('active', t === 'cat')
+  document.getElementById('type-cat').classList.toggle('active',   t === 'cat')
   const first = Object.keys(t === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)[0]
   itemSel.value = first
   updateLegend()
 }
 
-// ---- Legend ----
+// ---------------------------------------------------------------------------
+// Legend
+// ---------------------------------------------------------------------------
 
 function buildLegend() {
   const shelvesEl = document.getElementById('legend-shelves')
@@ -424,7 +425,7 @@ function buildLegend() {
   }
 
   Object.entries(SHELF_ITEMS).forEach(([id, item]) => shelvesEl.appendChild(makeItem(id, item, 'shelf')))
-  Object.entries(CAT_ITEMS).forEach(([id, item]) => catsEl.appendChild(makeItem(id, item, 'cat')))
+  Object.entries(CAT_ITEMS).forEach(([id, item])   => catsEl.appendChild(makeItem(id, item, 'cat')))
 }
 
 function updateLegend() {
@@ -440,39 +441,54 @@ function updateLegend() {
 
 itemSel.addEventListener('change', updateLegend)
 
-// ---- Coordinates ----
-// SVG is viewBox="0 0 100 100" preserveAspectRatio="none"
-// So x/y in [0,100] map to percentage of container width/height.
-// Always uses the provided rect (cached at mousedown) to avoid
-// stale measurements from layout reflows during drag.
+// ---------------------------------------------------------------------------
+// Coordinate helpers
+// ---------------------------------------------------------------------------
 
 function getPct(e, rect) {
   const r = rect || viewportEl.getBoundingClientRect()
   return {
-    xPct: Math.max(0, Math.min((e.clientX - r.left) / r.width  * 100, 100)),
-    yPct: Math.max(0, Math.min((e.clientY - r.top)  / r.height * 100, 100)),
+    xPct: Math.max(0, Math.min((e.clientX - r.left)  / r.width  * 100, 100)),
+    yPct: Math.max(0, Math.min((e.clientY - r.top)   / r.height * 100, 100)),
   }
+}
+
+function dist(a, b) {
+  return Math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+}
+
+function centroid(points) {
+  const n = points.length
+  return [
+    +(points.reduce((s,p) => s+p[0], 0) / n).toFixed(2),
+    +(points.reduce((s,p) => s+p[1], 0) / n).toFixed(2),
+  ]
 }
 
 function pointsAttr(points) {
   return points.map(([x, y]) => `${x},${y}`).join(' ')
 }
 
-// ---- Render ----
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+
+function svgEl(tag) { return document.createElementNS('http://www.w3.org/2000/svg', tag) }
 
 function render() {
-  svg.querySelectorAll('.hs-group').forEach(el => el.remove())
+  svg.querySelectorAll('.hs-group, .draw-group').forEach(el => el.remove())
 
+  // -- Committed hotspots --
   Object.entries(hotspots).forEach(([id, { points }]) => {
-    const item = ALL_ITEMS[id]
+    const item     = ALL_ITEMS[id]
     const selected = selectedId === id
+    const n        = points.length
 
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const g = svgEl('g')
     g.classList.add('hs-group')
     g.dataset.id = id
 
-    // Polygon
-    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon')
+    const poly = svgEl('polygon')
     poly.classList.add('hotspot-poly')
     poly.setAttribute('points', pointsAttr(points))
     poly.setAttribute('fill', item.colour)
@@ -489,10 +505,8 @@ function render() {
     })
     g.appendChild(poly)
 
-    // Label at centroid
-    const cx = +(points.reduce((s, p) => s + p[0], 0) / 4).toFixed(2)
-    const cy = +(points.reduce((s, p) => s + p[1], 0) / 4).toFixed(2)
-    const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    const [cx, cy] = centroid(points)
+    const lbl = svgEl('text')
     lbl.classList.add('poly-label')
     lbl.setAttribute('x', cx)
     lbl.setAttribute('y', cy)
@@ -505,10 +519,9 @@ function render() {
     lbl.textContent = item.label
     g.appendChild(lbl)
 
-    // Corner handles (edit mode only)
     if (mode === 'edit') {
       points.forEach(([x, y], i) => {
-        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        const c = svgEl('circle')
         c.classList.add('corner-handle')
         c.setAttribute('cx', x)
         c.setAttribute('cy', y)
@@ -520,83 +533,208 @@ function render() {
           cachedViewportRect = viewportEl.getBoundingClientRect()
           isDraggingHandle = true; dragId = id; dragCornerIdx = i
         })
+        // Right-click a handle to delete that vertex (minimum 3 remain)
+        c.addEventListener('contextmenu', e => {
+          e.preventDefault(); e.stopPropagation()
+          if (hotspots[id].points.length > 3) {
+            hotspots[id].points.splice(i, 1)
+            render(); updateOutput()
+          }
+        })
         g.appendChild(c)
       })
     }
 
     svg.appendChild(g)
   })
+
+  // -- In-progress polygon --
+  if (inProgress && inProgress.points.length > 0) {
+    const item   = ALL_ITEMS[inProgress.id]
+    const points = inProgress.points
+    const dg     = svgEl('g')
+    dg.classList.add('draw-group')
+
+    // Edges between placed vertices
+    for (let i = 1; i < points.length; i++) {
+      const line = svgEl('line')
+      line.classList.add('draw-edge')
+      line.setAttribute('x1', points[i-1][0])
+      line.setAttribute('y1', points[i-1][1])
+      line.setAttribute('x2', points[i][0])
+      line.setAttribute('y2', points[i][1])
+      line.setAttribute('stroke', item.colour)
+      line.setAttribute('stroke-width', POLY_STROKE_W)
+      dg.appendChild(line)
+    }
+
+    // Rubber-band line from last vertex to current mouse
+    if (mousePos && points.length > 0) {
+      const rb = svgEl('line')
+      rb.classList.add('draw-edge')
+      rb.setAttribute('x1', points[points.length-1][0])
+      rb.setAttribute('y1', points[points.length-1][1])
+      rb.setAttribute('x2', mousePos[0])
+      rb.setAttribute('y2', mousePos[1])
+      rb.setAttribute('stroke', item.colour)
+      rb.setAttribute('stroke-width', POLY_STROKE_W)
+      rb.setAttribute('stroke-dasharray', '1 0.8')
+      rb.setAttribute('opacity', '0.5')
+      dg.appendChild(rb)
+    }
+
+    // Placed vertex dots
+    points.forEach(([x, y], i) => {
+      const c = svgEl('circle')
+      c.classList.add('draw-vertex')
+      c.setAttribute('cx', x)
+      c.setAttribute('cy', y)
+      c.setAttribute('r', HANDLE_RADIUS)
+      c.setAttribute('fill', i === 0 ? item.colour : 'white')
+      c.setAttribute('stroke', item.colour)
+      c.setAttribute('stroke-width', HANDLE_STROKE_W)
+      c.setAttribute('opacity', i === 0 ? '0.9' : '0.7')
+      dg.appendChild(c)
+    })
+
+    svg.appendChild(dg)
+  }
 }
 
-// ---- Drawing ----
+// ---------------------------------------------------------------------------
+// Close in-progress polygon
+// ---------------------------------------------------------------------------
 
-svg.addEventListener('mousedown', e => {
-  if (mode !== 'draw' || e.button !== 0 || e.target.closest('.hs-group')) return
-  // Cache viewport rect now -- avoids stale measurements during drag
-  cachedViewportRect = viewportEl.getBoundingClientRect()
-  isDrawing = true
-  drawStart = getPct(e, cachedViewportRect)
-  drawPrev.setAttribute('x', drawStart.xPct)
-  drawPrev.setAttribute('y', drawStart.yPct)
-  drawPrev.setAttribute('width', 0)
-  drawPrev.setAttribute('height', 0)
-  drawPrev.style.visibility = 'visible'
+function closePoly() {
+  if (!inProgress || inProgress.points.length < 3) return
+  const id = inProgress.id
+  hotspots[id] = { type: ALL_ITEMS[id].type, points: inProgress.points }
+  inProgress = null
+  mousePos = null
+  closeBtn.style.display = 'none'
+  render(); updateOutput(); updateLegend()
+  // Advance to next unmapped item
+  const pool = Object.keys(ALL_ITEMS[id].type === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)
+  const next = pool.find(k => !hotspots[k])
+  if (next) { itemSel.value = next; updateLegend() }
+}
+
+// ---------------------------------------------------------------------------
+// SVG click -- place vertex or close polygon
+// ---------------------------------------------------------------------------
+
+svg.addEventListener('click', e => {
+  if (mode !== 'draw') return
+  if (e.target.closest('.hs-group')) return
   e.preventDefault()
+
+  const rect = viewportEl.getBoundingClientRect()
+  const { xPct, yPct } = getPct(e, rect)
+  const pt = [+xPct.toFixed(2), +yPct.toFixed(2)]
+
+  if (!inProgress) {
+    // Start new polygon
+    inProgress = { id: itemSel.value, points: [pt] }
+    closeBtn.style.display = ''
+    updateModeIndicator()
+  } else {
+    // Snap-close: if clicking near first vertex and we have >=3 pts, close
+    if (inProgress.points.length >= 3 && dist(pt, inProgress.points[0]) < VERTEX_SNAP_DIST) {
+      closePoly()
+      return
+    }
+    inProgress.points.push(pt)
+  }
+
+  render()
 })
+
+// Double-click closes polygon
+svg.addEventListener('dblclick', e => {
+  if (mode !== 'draw' || !inProgress) return
+  e.preventDefault()
+  // Remove the extra vertex that the second click of the dblclick added
+  if (inProgress.points.length > 3) inProgress.points.pop()
+  closePoly()
+})
+
+// Mouse move for rubber-band preview
+svg.addEventListener('mousemove', e => {
+  if (mode !== 'draw' || !inProgress) return
+  const rect = viewportEl.getBoundingClientRect()
+  const { xPct, yPct } = getPct(e, rect)
+  mousePos = [+xPct.toFixed(2), +yPct.toFixed(2)]
+  render()
+})
+
+svg.addEventListener('mouseleave', () => {
+  if (mode !== 'draw' || !inProgress) return
+  mousePos = null
+  render()
+})
+
+// Enter closes polygon
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && inProgress) { e.preventDefault(); closePoly() }
+  if (e.key === 'Escape' && inProgress) {
+    e.preventDefault()
+    inProgress = null; mousePos = null
+    closeBtn.style.display = 'none'
+    render(); updateModeIndicator()
+  }
+})
+
+closeBtn.addEventListener('click', closePoly)
+
+// ---------------------------------------------------------------------------
+// Handle dragging (edit mode)
+// ---------------------------------------------------------------------------
 
 window.addEventListener('mousemove', e => {
-  if (isDrawing) {
-    const pos = getPct(e, cachedViewportRect)
-    drawPrev.setAttribute('x', Math.min(drawStart.xPct, pos.xPct))
-    drawPrev.setAttribute('y', Math.min(drawStart.yPct, pos.yPct))
-    drawPrev.setAttribute('width',  Math.abs(pos.xPct - drawStart.xPct))
-    drawPrev.setAttribute('height', Math.abs(pos.yPct - drawStart.yPct))
-  }
-  if (isDraggingHandle && dragId && dragCornerIdx !== null) {
-    const pos = getPct(e, cachedViewportRect)
-    hotspots[dragId].points[dragCornerIdx] = [+pos.xPct.toFixed(2), +pos.yPct.toFixed(2)]
-    render(); updateOutput()
-  }
+  if (!isDraggingHandle || !dragId || dragCornerIdx === null) return
+  const { xPct, yPct } = getPct(e, cachedViewportRect)
+  hotspots[dragId].points[dragCornerIdx] = [+xPct.toFixed(2), +yPct.toFixed(2)]
+  render(); updateOutput()
 })
 
-window.addEventListener('mouseup', e => {
-  if (isDrawing) {
-    isDrawing = false
-    drawPrev.style.visibility = 'hidden'
-    drawPrev.setAttribute('width', 0)
-    drawPrev.setAttribute('height', 0)
-    const pos = getPct(e, cachedViewportRect)
-    cachedViewportRect = null
-    const x1 = +Math.min(drawStart.xPct, pos.xPct).toFixed(2)
-    const y1 = +Math.min(drawStart.yPct, pos.yPct).toFixed(2)
-    const x2 = +Math.max(drawStart.xPct, pos.xPct).toFixed(2)
-    const y2 = +Math.max(drawStart.yPct, pos.yPct).toFixed(2)
-    if (Math.abs(x2 - x1) < 0.5 || Math.abs(y2 - y1) < 0.5) return
-    const id = itemSel.value
-    hotspots[id] = { type: ALL_ITEMS[id].type, points: [[x1,y1],[x2,y1],[x2,y2],[x1,y2]] }
-    render(); updateOutput(); updateLegend()
-    const pool = Object.keys(ALL_ITEMS[id].type === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)
-    const next = pool.find(k => !hotspots[k])
-    if (next) { itemSel.value = next; updateLegend() }
-  }
+window.addEventListener('mouseup', () => {
   if (isDraggingHandle) {
     isDraggingHandle = false; dragId = null; dragCornerIdx = null
     cachedViewportRect = null
   }
 })
 
-// ---- Mode toggle ----
+// ---------------------------------------------------------------------------
+// Mode toggle
+// ---------------------------------------------------------------------------
+
+function updateModeIndicator() {
+  if (mode === 'draw') {
+    if (inProgress) {
+      const n = inProgress.points.length
+      modeInd.innerHTML = `<b>Draw</b> — ${n} vert${n===1?'ex':'ices'} placed. Dbl-click or Enter to close.`
+    } else {
+      modeInd.innerHTML = '<b>Draw</b> mode — click to place vertices'
+    }
+  } else {
+    modeInd.innerHTML = '<b>Edit</b> mode — drag corners &middot; right-click to delete vertex'
+  }
+}
 
 toggleBtn.addEventListener('click', () => {
+  // Cancel any in-progress drawing
+  if (inProgress) { inProgress = null; mousePos = null; closeBtn.style.display = 'none' }
   mode = mode === 'draw' ? 'edit' : 'draw'
   svg.className = `mode-${mode}`
   toggleBtn.textContent = mode === 'draw' ? 'Switch to Edit mode' : 'Switch to Draw mode'
-  modeInd.innerHTML = mode === 'draw' ? '<b>Draw</b> mode' : '<b>Edit</b> mode — drag corners to skew'
   if (mode === 'draw') { selectedId = null; deleteBtn.style.display = 'none' }
+  updateModeIndicator()
   render()
 })
 
-// ---- Delete / Clear ----
+// ---------------------------------------------------------------------------
+// Delete / Clear
+// ---------------------------------------------------------------------------
 
 deleteBtn.addEventListener('click', () => {
   if (!selectedId) return
@@ -606,27 +744,30 @@ deleteBtn.addEventListener('click', () => {
 
 document.getElementById('clear-btn').addEventListener('click', () => {
   Object.keys(hotspots).forEach(k => delete hotspots[k])
-  selectedId = null; deleteBtn.style.display = 'none'
+  inProgress = null; mousePos = null; selectedId = null
+  deleteBtn.style.display = 'none'; closeBtn.style.display = 'none'
   render(); updateOutput(); updateLegend()
   itemSel.value = 'ironiq'; setActiveType('shelf')
+  updateModeIndicator()
 })
 
-// ---- Output ----
+// ---------------------------------------------------------------------------
+// Output
+// ---------------------------------------------------------------------------
 
 function fmt(n) { return +n.toFixed(2) }
 
 function updateOutput() {
   const shelves = Object.entries(hotspots).filter(([,v]) => v.type === 'shelf')
   const cats    = Object.entries(hotspots).filter(([,v]) => v.type === 'cat')
-  if (!shelves.length && !cats.length) { output.textContent = '// Draw hotspots to generate config...'; return }
+  if (!shelves.length && !cats.length) { output.textContent = '// Click on the image to start placing vertices...'; return }
 
   const lines = []
 
   if (shelves.length) {
     lines.push('// ---- paste into PROJECTS array ----')
     shelves.forEach(([id, { points }]) => {
-      const cx = fmt(points.reduce((s,p) => s+p[0], 0) / 4)
-      const cy = fmt(points.reduce((s,p) => s+p[1], 0) / 4)
+      const [cx, cy] = centroid(points)
       const pts = points.map(([x,y]) => `[${fmt(x)}, ${fmt(y)}]`).join(', ')
       lines.push(`  { slug: '${id}', title: '${SHELF_ITEMS[id].label}', subtitle: '${SUBTITLES[id]}', shelf: 'Architecture vault', hotspot: { points: [${pts}] }, cardAnchor: { left: '${cx}%', top: '${cy}%' } },`)
     })
@@ -636,8 +777,7 @@ function updateOutput() {
     lines.push('')
     lines.push('// ---- paste into CATS array ----')
     cats.forEach(([id, { points }]) => {
-      const cx = fmt(points.reduce((s,p) => s+p[0], 0) / 4)
-      const cy = fmt(points.reduce((s,p) => s+p[1], 0) / 4)
+      const [cx, cy] = centroid(points)
       const pts = points.map(([x,y]) => `[${fmt(x)}, ${fmt(y)}]`).join(', ')
       lines.push(`  { id: '${id}', label: '${CAT_ITEMS[id].label}', affirmationTheme: '${CAT_ITEMS[id].affirmationTheme}', points: [${pts}], bubbleAnchor: { left: '${fmt(cx-11)}%', top: '${fmt(cy-12)}%' } },`)
     })
@@ -646,7 +786,9 @@ function updateOutput() {
   output.textContent = lines.join('\n')
 }
 
-// ---- Copy ----
+// ---------------------------------------------------------------------------
+// Copy
+// ---------------------------------------------------------------------------
 
 document.getElementById('copy-btn').addEventListener('click', async function () {
   const text = output.textContent
@@ -660,6 +802,7 @@ document.getElementById('copy-btn').addEventListener('click', async function () 
 
 buildLegend()
 updateLegend()
+updateModeIndicator()
 </script>
 </body>
 </html>
