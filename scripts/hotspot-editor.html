@@ -11,6 +11,7 @@
     background: hsl(30 8% 8%);
     color: hsl(35 20% 88%);
     font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 11px;
     height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -18,17 +19,17 @@
   }
 
   header {
-    padding: 10px 16px;
+    padding: 6px 12px;
     border-bottom: 1px solid hsl(35 20% 88% / 0.1);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
     flex-shrink: 0;
   }
 
   header h1 {
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: hsl(75 40% 55%);
     letter-spacing: 0.08em;
@@ -37,7 +38,7 @@
   }
 
   .instructions {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: hsl(35 10% 42%);
   }
   .instructions b { color: hsl(35 20% 68%); }
@@ -45,13 +46,13 @@
   .controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     margin-left: auto;
     flex-wrap: wrap;
   }
 
   .controls label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: hsl(35 10% 50%);
     white-space: nowrap;
   }
@@ -60,10 +61,10 @@
     background: hsl(30 10% 14%);
     border: 1px solid hsl(35 20% 88% / 0.15);
     color: hsl(35 20% 88%);
-    padding: 4px 8px;
-    border-radius: 5px;
+    padding: 3px 6px;
+    border-radius: 4px;
     font-family: inherit;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     cursor: pointer;
   }
   select:focus { outline: 1px solid hsl(75 40% 55%); }
@@ -71,7 +72,7 @@
   .type-toggle {
     display: flex;
     border: 1px solid hsl(35 20% 88% / 0.15);
-    border-radius: 5px;
+    border-radius: 4px;
     overflow: hidden;
   }
 
@@ -79,9 +80,9 @@
     background: transparent;
     border: none;
     color: hsl(35 10% 50%);
-    padding: 4px 10px;
+    padding: 3px 8px;
     font-family: inherit;
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
     white-space: nowrap;
@@ -100,13 +101,13 @@
     justify-content: center;
     overflow: hidden;
     background: hsl(30 8% 6%);
-    padding: 12px;
+    padding: 8px;
   }
 
   /*
     Simulate the live page crop exactly:
     - 16:9 aspect ratio container
-    - image: object-fit cover, object-position center 30%
+    - image: object-fit cover, object-position center 15%
     Coordinates drawn here will match the live page 1:1.
   */
   .viewport-sim {
@@ -132,7 +133,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 30%; /* must match vault.css .vault-bg */
+    object-position: center 15%; /* must match vault.css .vault-bg */
     pointer-events: none;
     display: block;
   }
@@ -165,87 +166,89 @@
     stroke-width: 0.3;
     stroke-dasharray: 1.2 0.8;
     pointer-events: none;
-    display: none;
+    /* display toggled via style.display in JS, not display:none here */
+    visibility: hidden;
   }
 
   footer {
     border-top: 1px solid hsl(35 20% 88% / 0.1);
-    padding: 12px 16px;
+    padding: 8px 12px;
     display: flex;
     align-items: flex-start;
-    gap: 14px;
+    gap: 10px;
     flex-wrap: wrap;
     flex-shrink: 0;
+    max-height: 130px;
   }
 
-  .output-section { flex: 1; min-width: 240px; }
+  .output-section { flex: 1; min-width: 200px; min-width: 0; }
 
   .output-label {
-    font-size: 0.66rem;
+    font-size: 0.58rem;
     color: hsl(35 10% 42%);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
 
   pre {
     background: hsl(30 10% 11%);
     border: 1px solid hsl(35 20% 88% / 0.08);
-    border-radius: 5px;
-    padding: 8px 10px;
-    font-size: 0.65rem;
-    line-height: 1.55;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.6rem;
+    line-height: 1.5;
     overflow: auto;
     color: hsl(75 40% 65%);
-    max-height: 120px;
+    max-height: 86px;
   }
 
   .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 150px;
+    gap: 5px;
+    min-width: 140px;
   }
 
   .legend-section-label {
-    font-size: 0.6rem;
+    font-size: 0.56rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: hsl(35 10% 38%);
-    padding: 2px 0;
+    padding: 1px 0;
   }
 
-  .legend { display: flex; flex-direction: column; gap: 3px; }
+  .legend { display: flex; flex-direction: column; gap: 2px; }
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.68rem;
+    gap: 5px;
+    font-size: 0.62rem;
     cursor: pointer;
-    padding: 2px 5px;
-    border-radius: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
     border: 1px solid transparent;
     transition: border-color 0.12s;
   }
   .legend-item:hover { border-color: hsl(35 20% 88% / 0.12); }
   .legend-item.active { border-color: hsl(35 20% 88% / 0.28); background: hsl(35 20% 88% / 0.04); }
 
-  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
   .legend-name { flex: 1; }
-  .legend-status { font-size: 0.58rem; color: hsl(35 10% 38%); }
+  .legend-status { font-size: 0.55rem; color: hsl(35 10% 38%); }
   .legend-status.done { color: hsl(145 55% 45%); }
 
-  .actions { display: flex; flex-direction: column; gap: 5px; }
+  .actions { display: flex; flex-direction: column; gap: 4px; }
 
   button.action {
     background: hsl(30 10% 14%);
     border: 1px solid hsl(35 20% 88% / 0.14);
     color: hsl(35 20% 85%);
-    padding: 6px 12px;
-    border-radius: 5px;
+    padding: 4px 10px;
+    border-radius: 4px;
     font-family: inherit;
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     cursor: pointer;
     transition: border-color 0.12s, color 0.12s;
     white-space: nowrap;
@@ -257,8 +260,12 @@
   button.action.danger:hover { background: hsl(0 55% 12%); }
   .copied { color: hsl(145 55% 52%) !important; border-color: hsl(145 55% 38%) !important; }
 
-  .mode-indicator { font-size: 0.65rem; color: hsl(35 10% 38%); text-align: center; }
+  .mode-indicator { font-size: 0.6rem; color: hsl(35 10% 38%); text-align: center; }
   .mode-indicator b { color: hsl(75 40% 55%); }
+
+  /* two-col footer layout: output left, sidebar right */
+  .footer-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .footer-right { display: flex; gap: 10px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -266,7 +273,7 @@
 <header>
   <h1>Vault Hotspot Editor</h1>
   <span class="instructions">
-    Image shown with <b>exact live-page crop</b> (object-fit: cover, center 30%).
+    Crop: <b>center 15%</b> (matches live).
     <b>Draw:</b> drag to place. <b>Edit:</b> drag corners to skew.
   </span>
   <div class="controls">
@@ -301,27 +308,33 @@
     />
     <!-- viewBox 0 0 100 100 + preserveAspectRatio none means coordinates are percentages -->
     <svg id="hotspot-svg" class="mode-draw" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <rect id="draw-preview" />
+      <rect id="draw-preview" x="0" y="0" width="0" height="0" />
     </svg>
   </div>
 </div>
 
 <footer>
-  <div class="output-section">
-    <div class="output-label">Config output — paste PROJECTS + CATS into Vault.jsx</div>
-    <pre id="output">// Draw hotspots to generate config...</pre>
+  <div class="footer-left">
+    <div class="output-section">
+      <div class="output-label">Config output — paste PROJECTS + CATS into Vault.jsx</div>
+      <pre id="output">// Draw hotspots to generate config...</pre>
+    </div>
   </div>
-  <div class="sidebar">
-    <div class="legend-section-label">Shelves</div>
-    <div class="legend" id="legend-shelves"></div>
-    <div class="legend-section-label" style="margin-top:4px">Cats</div>
-    <div class="legend" id="legend-cats"></div>
-    <div class="mode-indicator" id="mode-indicator"><b>Draw</b> mode</div>
-    <div class="actions">
-      <button class="action primary" id="copy-btn">Copy config</button>
-      <button class="action" id="toggle-mode-btn">Switch to Edit mode</button>
-      <button class="action danger" id="delete-selected-btn" style="display:none">Delete selected</button>
-      <button class="action" id="clear-btn">Clear all</button>
+  <div class="footer-right">
+    <div class="sidebar">
+      <div class="legend-section-label">Shelves</div>
+      <div class="legend" id="legend-shelves"></div>
+      <div class="legend-section-label" style="margin-top:2px">Cats</div>
+      <div class="legend" id="legend-cats"></div>
+    </div>
+    <div class="sidebar">
+      <div class="mode-indicator" id="mode-indicator"><b>Draw</b> mode</div>
+      <div class="actions">
+        <button class="action primary" id="copy-btn">Copy config</button>
+        <button class="action" id="toggle-mode-btn">Switch to Edit mode</button>
+        <button class="action danger" id="delete-selected-btn" style="display:none">Delete selected</button>
+        <button class="action" id="clear-btn">Clear all</button>
+      </div>
     </div>
   </div>
 </footer>
@@ -351,7 +364,7 @@ const SUBTITLES = {
 }
 
 // SVG label sizes -- in SVG user units (1 unit = 1% of container)
-const LABEL_FONT_SIZE  = 1.8   // ~1.8% of container height
+const LABEL_FONT_SIZE  = 1.8
 const LABEL_STROKE_W   = 0.5
 const POLY_STROKE_W    = 0.25
 const HANDLE_RADIUS    = 0.9
@@ -363,6 +376,8 @@ let selectedId = null
 let activeType = 'shelf'
 let isDrawing = false
 let drawStart = { xPct: 0, yPct: 0 }
+// Cache the viewport rect at mousedown so drag doesn't get stale measurements
+let cachedViewportRect = null
 let isDraggingHandle = false
 let dragId = null
 let dragCornerIdx = null
@@ -374,6 +389,7 @@ const output    = document.getElementById('output')
 const modeInd   = document.getElementById('mode-indicator')
 const toggleBtn = document.getElementById('toggle-mode-btn')
 const deleteBtn = document.getElementById('delete-selected-btn')
+const viewportEl = document.getElementById('viewport-sim')
 
 // ---- Type toggle ----
 
@@ -427,12 +443,14 @@ itemSel.addEventListener('change', updateLegend)
 // ---- Coordinates ----
 // SVG is viewBox="0 0 100 100" preserveAspectRatio="none"
 // So x/y in [0,100] map to percentage of container width/height.
+// Always uses the provided rect (cached at mousedown) to avoid
+// stale measurements from layout reflows during drag.
 
-function getContainerPct(e) {
-  const rect = document.getElementById('viewport-sim').getBoundingClientRect()
+function getPct(e, rect) {
+  const r = rect || viewportEl.getBoundingClientRect()
   return {
-    xPct: Math.max(0, Math.min((e.clientX - rect.left) / rect.width  * 100, 100)),
-    yPct: Math.max(0, Math.min((e.clientY - rect.top)  / rect.height * 100, 100)),
+    xPct: Math.max(0, Math.min((e.clientX - r.left) / r.width  * 100, 100)),
+    yPct: Math.max(0, Math.min((e.clientY - r.top)  / r.height * 100, 100)),
   }
 }
 
@@ -482,7 +500,7 @@ function render() {
     lbl.setAttribute('dominant-baseline', 'middle')
     lbl.setAttribute('fill', 'white')
     lbl.setAttribute('stroke', item.colour)
-    lbl.setAttribute('font-size', LABEL_FONT_SIZE)  // SVG user units, NOT px
+    lbl.setAttribute('font-size', LABEL_FONT_SIZE)
     lbl.setAttribute('stroke-width', LABEL_STROKE_W)
     lbl.textContent = item.label
     g.appendChild(lbl)
@@ -494,11 +512,12 @@ function render() {
         c.classList.add('corner-handle')
         c.setAttribute('cx', x)
         c.setAttribute('cy', y)
-        c.setAttribute('r', HANDLE_RADIUS)          // SVG user units
+        c.setAttribute('r', HANDLE_RADIUS)
         c.setAttribute('stroke', item.colour)
         c.setAttribute('stroke-width', HANDLE_STROKE_W)
         c.addEventListener('mousedown', e => {
           e.stopPropagation(); e.preventDefault()
+          cachedViewportRect = viewportEl.getBoundingClientRect()
           isDraggingHandle = true; dragId = id; dragCornerIdx = i
         })
         g.appendChild(c)
@@ -513,26 +532,28 @@ function render() {
 
 svg.addEventListener('mousedown', e => {
   if (mode !== 'draw' || e.button !== 0 || e.target.closest('.hs-group')) return
+  // Cache viewport rect now -- avoids stale measurements during drag
+  cachedViewportRect = viewportEl.getBoundingClientRect()
   isDrawing = true
-  drawStart = getContainerPct(e)
-  drawPrev.style.display = ''
+  drawStart = getPct(e, cachedViewportRect)
   drawPrev.setAttribute('x', drawStart.xPct)
   drawPrev.setAttribute('y', drawStart.yPct)
   drawPrev.setAttribute('width', 0)
   drawPrev.setAttribute('height', 0)
+  drawPrev.style.visibility = 'visible'
   e.preventDefault()
 })
 
 window.addEventListener('mousemove', e => {
   if (isDrawing) {
-    const pos = getContainerPct(e)
+    const pos = getPct(e, cachedViewportRect)
     drawPrev.setAttribute('x', Math.min(drawStart.xPct, pos.xPct))
     drawPrev.setAttribute('y', Math.min(drawStart.yPct, pos.yPct))
     drawPrev.setAttribute('width',  Math.abs(pos.xPct - drawStart.xPct))
     drawPrev.setAttribute('height', Math.abs(pos.yPct - drawStart.yPct))
   }
   if (isDraggingHandle && dragId && dragCornerIdx !== null) {
-    const pos = getContainerPct(e)
+    const pos = getPct(e, cachedViewportRect)
     hotspots[dragId].points[dragCornerIdx] = [+pos.xPct.toFixed(2), +pos.yPct.toFixed(2)]
     render(); updateOutput()
   }
@@ -541,8 +562,11 @@ window.addEventListener('mousemove', e => {
 window.addEventListener('mouseup', e => {
   if (isDrawing) {
     isDrawing = false
-    drawPrev.style.display = 'none'
-    const pos = getContainerPct(e)
+    drawPrev.style.visibility = 'hidden'
+    drawPrev.setAttribute('width', 0)
+    drawPrev.setAttribute('height', 0)
+    const pos = getPct(e, cachedViewportRect)
+    cachedViewportRect = null
     const x1 = +Math.min(drawStart.xPct, pos.xPct).toFixed(2)
     const y1 = +Math.min(drawStart.yPct, pos.yPct).toFixed(2)
     const x2 = +Math.max(drawStart.xPct, pos.xPct).toFixed(2)
@@ -555,7 +579,10 @@ window.addEventListener('mouseup', e => {
     const next = pool.find(k => !hotspots[k])
     if (next) { itemSel.value = next; updateLegend() }
   }
-  if (isDraggingHandle) { isDraggingHandle = false; dragId = null; dragCornerIdx = null }
+  if (isDraggingHandle) {
+    isDraggingHandle = false; dragId = null; dragCornerIdx = null
+    cachedViewportRect = null
+  }
 })
 
 // ---- Mode toggle ----

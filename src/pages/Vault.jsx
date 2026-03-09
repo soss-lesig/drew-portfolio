@@ -131,16 +131,16 @@ function VaultFilterDefs() {
 // CatHotspot
 // ---------------------------------------------------------------------------
 
-function CatHotspot({ cat, onAffirmation }) {
+function CatHotspot({ cat, onAffirmation, disabled }) {
   const [hovered, setHovered] = useState(false)
 
   return (
     <g
       className={`vault-cat-hotspot${hovered ? ' is-hovered' : ''}`}
-      onClick={() => onAffirmation(cat)}
+      onClick={() => { if (!disabled) onAffirmation(cat) }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: disabled ? 'default' : 'pointer' }}
       aria-label={`Wake ${cat.label} for an affirmation`}
       role="button"
     >
@@ -204,6 +204,9 @@ export default function Vault() {
   const meeko = useAffirmation('light')
   const mayu  = useAffirmation('dark')
 
+  // True while either cat hook is fetching -- blocks overlapping clicks
+  const catLoading = meeko.loading || mayu.loading
+
   useEffect(() => {
     // If we arrived via direct URL (no transition), data-page won't be set yet.
     // completeEnter sets it early when arriving via the cinematic transition,
@@ -237,6 +240,10 @@ export default function Vault() {
   }, [catAffirmation])
 
   async function handleCatClick(cat) {
+    // Drop clicks while a fetch is in-flight -- the hook's cancellation handles
+    // rapid clicks from MeekoBubble, but in the vault we want a cleaner UX
+    // where the hotspot simply doesn't respond until the quote is ready.
+    if (catLoading) return
     const hook = cat.affirmationTheme === 'dark' ? mayu : meeko
     setCatAffirmation(null)
     await hook.fetchAffirmation()
@@ -276,7 +283,12 @@ export default function Vault() {
         ))}
 
         {CATS.map(cat => (
-          <CatHotspot key={cat.id} cat={cat} onAffirmation={handleCatClick} />
+          <CatHotspot
+            key={cat.id}
+            cat={cat}
+            onAffirmation={handleCatClick}
+            disabled={catLoading}
+          />
         ))}
       </svg>
 

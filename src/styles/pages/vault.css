@@ -97,7 +97,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center 15%;
   z-index: 0;
   transform: scale(1.03);
 }
@@ -514,7 +514,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   inset: 0;
   background-image: url('/images/vault-background.png');
   background-size: cover;
-  background-position: center 30%;
+  background-position: center 15%;
   opacity: 0;
   transition: opacity 0.35s ease;
   z-index: 0;
@@ -627,7 +627,7 @@ body[data-page="vault"] .footer-copyright     { display: none; }
   inset: 0;
   background-image: url('/images/vault-background.png');
   background-size: cover;
-  background-position: center 30%;
+  background-position: center 15%;
   z-index: 0;
 }
 
