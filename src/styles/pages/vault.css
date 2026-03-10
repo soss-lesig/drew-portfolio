@@ -220,22 +220,23 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
    ------------------------------------------------------------------------- */
 
 @keyframes shelfPulse {
-  0%, 100% { stroke-opacity: 0.12; }
-  50%       { stroke-opacity: 0.4; }
+  0%, 100% { fill-opacity: 0.1; }
+  50%       { fill-opacity: 0.32; }
 }
 
 @keyframes catPulse {
-  0%, 100% { stroke-opacity: 0.1; }
-  50%       { stroke-opacity: 0.35; }
+  0%, 100% { fill-opacity: 0.06; }
+  50%       { fill-opacity: 0.2; }
 }
 
 .vault-hotspot-poly--shelf {
-  stroke-opacity: 0.25;
+  fill-opacity: 0.12;
   animation: shelfPulse 3s ease-in-out infinite;
+  transition: fill-opacity 0.4s ease;
 }
 
 .vault-hotspot-poly--cat {
-  stroke-opacity: 0.2;
+  fill-opacity: 0.1;
   animation: catPulse 4s ease-in-out infinite;
 }
 
@@ -249,11 +250,16 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
 .vault-cat-hotspot:nth-of-type(2)     .vault-hotspot-poly--cat   { animation-delay: 2.4s; }
 
 /* Hover: kill pulse, snap to full brightness */
-.vault-hotspot-poly--shelf.is-hovered,
+.vault-hotspot-poly--shelf.is-hovered {
+  animation: shelfPulse 1.2s ease-in-out infinite;
+  fill-opacity: 0.35;
+  transition: fill-opacity 0.4s ease;
+}
+
 .vault-hotspot-poly--cat.is-hovered {
-  animation: none;
-  stroke-opacity: 1;
-  transition: stroke-opacity 0.15s ease;
+  animation: catPulse 1.5s ease-in-out infinite;
+  fill-opacity: 0.22;
+  transition: fill-opacity 0.4s ease;
 }
 
 /* -------------------------------------------------------------------------

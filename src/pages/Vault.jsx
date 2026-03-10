@@ -61,14 +61,14 @@ const CATS = [
     label: 'Meeko',
     affirmationTheme: 'light',
     points: [[78.26, 51.83], [75.16, 55.49], [73.9, 68.04], [76.93, 84.68], [79.45, 85.79], [84.63, 86.68], [90.47, 84.79], [89.96, 75.58], [84.55, 66.93], [82.7, 64.48], [82.48, 56.94], [80.93, 53.39]],
-    bubbleAnchor: { left: '70.62%', top: '57.55%' },
+    bubbleAnchor: { left: '63%', top: '48%' },
   },
   {
     id: 'mayu',
     label: 'Mayu',
     affirmationTheme: 'dark',
     points: [[14.19, 32.74], [9.53, 36.07], [8.27, 44.06], [7.68, 52.39], [11.08, 53.61], [14.04, 57.27], [19.29, 52.94], [26.32, 54.72], [32.17, 63.71], [33.72, 60.71], [25.66, 47.39], [18.92, 43.84], [18.26, 37.62], [16.48, 34.63]],
-    bubbleAnchor: { left: '7.26%', top: '35.98%' },
+    bubbleAnchor: { left: '1%', top: '28%' },
   },
 ]
 
@@ -98,39 +98,100 @@ function toSVGPoints(points) {
 // Shared filter defs
 // ---------------------------------------------------------------------------
 
+function VaultDust() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+    resize()
+
+    const W = () => canvas.width
+    const H = () => canvas.height
+
+    const motes = Array.from({ length: 80 }, () => ({
+      x:            Math.random() * W(),
+      y:            Math.random() * H(),
+      r:            Math.random() * 1.8 + 0.5,
+      speedX:       (Math.random() - 0.5) * 0.2,
+      speedY:       -(Math.random() * 0.3 + 0.06),
+      opacity:      Math.random() * 0.65 + 0.25,
+      flicker:      Math.random() * Math.PI * 2,
+      flickerSpeed: Math.random() * 0.025 + 0.006,
+    }))
+
+    let raf
+    const tick = () => {
+      ctx.clearRect(0, 0, W(), H())
+      motes.forEach(m => {
+        m.x += m.speedX
+        m.y += m.speedY
+        m.flicker += m.flickerSpeed
+        if (m.y < -2)      m.y = H() + 2
+        if (m.x < -2)      m.x = W() + 2
+        if (m.x > W() + 2) m.x = -2
+        const a = m.opacity * (0.55 + 0.45 * Math.sin(m.flicker))
+        ctx.beginPath()
+        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2)
+        ctx.fillStyle = `hsla(42, 80%, 90%, ${a})`
+        ctx.fill()
+      })
+      raf = requestAnimationFrame(tick)
+    }
+    tick()
+
+    window.addEventListener('resize', resize)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 1,
+      }}
+    />
+  )
+}
+
 function VaultFilterDefs() {
   return (
     <defs>
-      {/* Shelf idle -- amber, tight two-layer spread */}
-      <filter id="shelf-idle" x="-80%" y="-80%" width="260%" height="260%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1"   result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b2" />
+      {/* Shelf idle -- blur the fill outward. fill is our colour so no
+          lantern pixels can bleed in. SourceGraphic is the soft fill,
+          blurred it becomes a haze with no hard edges. */}
+      <filter id="shelf-idle" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="glow" />
+      </filter>
+
+      {/* Shelf hover -- wider, stronger haze */}
+      <filter id="shelf-hover" x="-150%" y="-150%" width="400%" height="400%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b1" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b2" />
         <feMerge>
           <feMergeNode in="b2" />
           <feMergeNode in="b1" />
         </feMerge>
       </filter>
 
-      {/* Shelf hover -- brighter, three layers, still contained */}
-      <filter id="shelf-hover" x="-120%" y="-120%" width="340%" height="340%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b2" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="7"   result="b3" />
-        <feMerge>
-          <feMergeNode in="b3" />
-          <feMergeNode in="b2" />
-          <feMergeNode in="b1" />
-        </feMerge>
-      </filter>
-
-      {/* Cat -- single filter, always idle, no hover variant needed */}
-      <filter id="cat-idle" x="-80%" y="-80%" width="260%" height="260%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1"   result="b1" />
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b2" />
-        <feMerge>
-          <feMergeNode in="b2" />
-          <feMergeNode in="b1" />
-        </feMerge>
+      {/* Cat -- white fill blurs outward, neutral shimmer */}
+      <filter id="cat-idle" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="glow" />
       </filter>
     </defs>
   )
@@ -154,9 +215,9 @@ function CatHotspot({ cat, onAffirmation, disabled }) {
       <polygon
         className="vault-hotspot-poly vault-hotspot-poly--cat"
         points={toSVGPoints(cat.points)}
-        fill="transparent"
-        stroke="hsl(270 65% 72%)"
-        strokeWidth="1.5"
+        fill="white"
+        fillOpacity="0.08"
+        stroke="none"
         filter="url(#cat-idle)"
       />
     </g>
@@ -199,9 +260,9 @@ function ProjectHotspot({ project, isActive, onClick, onTooltip }) {
       <polygon
         className={`vault-hotspot-poly vault-hotspot-poly--shelf${lit ? ' is-hovered' : ''}`}
         points={toSVGPoints(project.hotspot.points)}
-        fill="transparent"
-        stroke="hsl(35 90% 62%)"
-        strokeWidth="1.5"
+        fill="hsl(175 70% 65%)"
+        fillOpacity="0.12"
+        stroke="none"
         filter={lit ? 'url(#shelf-hover)' : 'url(#shelf-idle)'}
       />
     </g>
@@ -357,6 +418,45 @@ export default function Vault() {
           )
         })}
         </svg>
+
+        {meekoBubbleActive && (
+          <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'meeko').bubbleAnchor} aria-live="polite">
+            {meekoDots
+              ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
+              : <p>"{meeko.displayed}"</p>
+            }
+            <span className="vault-cat-bubble__name">-- Meeko</span>
+          </div>
+        )}
+
+        {mayuBubbleActive && (
+          <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'mayu').bubbleAnchor} aria-live="polite">
+            {mayuDots
+              ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
+              : <p>"{mayu.displayed}"</p>
+            }
+            <span className="vault-cat-bubble__name">-- Mayu</span>
+          </div>
+        )}
+
+        {activeProject && !expanded && cardAnchorResolved && (
+          <div
+            className={cardAnchorResolved.className}
+            style={cardAnchorResolved.style}
+            onClick={e => e.stopPropagation()}
+          >
+            <button className="vault-card__dismiss" onClick={handleDismiss} aria-label="Close">✕</button>
+            <p className="vault-card__eyebrow">{activeProject.shelf}</p>
+            <h2 className="vault-card__title">{activeProject.title}</h2>
+            <p className="vault-card__subtitle">{activeProject.subtitle}</p>
+            <button className="vault-card__cta" onClick={handleExpand}>
+              Explore this project
+              <span className="vault-card__cta-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        )}
+
+        <VaultDust />
       </div>{/* end vault-canvas */}
 
       {/* Hover tooltip -- follows cursor, projects only */}
@@ -373,43 +473,6 @@ export default function Vault() {
         onClick={handleDismiss}
         aria-hidden="true"
       />
-
-      {meekoBubbleActive && (
-        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'meeko').bubbleAnchor} aria-live="polite">
-          {meekoDots
-            ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
-            : <p>"{meeko.displayed}"</p>
-          }
-          <span className="vault-cat-bubble__name">-- Meeko</span>
-        </div>
-      )}
-
-      {mayuBubbleActive && (
-        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'mayu').bubbleAnchor} aria-live="polite">
-          {mayuDots
-            ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
-            : <p>"{mayu.displayed}"</p>
-          }
-          <span className="vault-cat-bubble__name">-- Mayu</span>
-        </div>
-      )}
-
-      {activeProject && !expanded && cardAnchorResolved && (
-        <div
-          className={cardAnchorResolved.className}
-          style={cardAnchorResolved.style}
-          onClick={e => e.stopPropagation()}
-        >
-          <button className="vault-card__dismiss" onClick={handleDismiss} aria-label="Close">✕</button>
-          <p className="vault-card__eyebrow">{activeProject.shelf}</p>
-          <h2 className="vault-card__title">{activeProject.title}</h2>
-          <p className="vault-card__subtitle">{activeProject.subtitle}</p>
-          <button className="vault-card__cta" onClick={handleExpand}>
-            Explore this project
-            <span className="vault-card__cta-arrow" aria-hidden="true">→</span>
-          </button>
-        </div>
-      )}
 
       {activeProject && expanded && (
         <div className="vault-panel" onClick={e => e.stopPropagation()}>
