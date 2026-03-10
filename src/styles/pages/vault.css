@@ -602,6 +602,10 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
    Responsive
    ------------------------------------------------------------------------- */
 
+/* Mobile-only components hidden on desktop */
+.vault-mobile-list,
+.vault-mobile-footer { display: none; }
+
 /* Below the image's native width (1536px), the body becomes the scroll
    container at native image dimensions. The scene and canvas fill it exactly
    so nothing squashes, and header/footer/vignettes all remain anchored
@@ -649,10 +653,188 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
 }
 
 @media (max-width: 768px) {
-  .vault-panel { inset: 2% 2%; }
-  .vault-card { width: clamp(240px, 80vw, 320px); }
-  .vault-hint { display: none; }
-  .vault-cat-bubble { width: clamp(180px, 60vw, 240px); }
+  /* Reset the >1535px body scroll hack */
+  body[data-page="vault"],
+  body:has(.vault-scene) {
+    overflow: hidden !important;
+    width: 100% !important;
+    min-height: unset !important;
+  }
+
+  /* Hide desktop-only chrome */
+  .vault-hint,
+  .vault-intro,
+  .vault-tooltip,
+  .vault-dim,
+  .vault-svg,
+  .vault-card,
+  .vault-cat-bubble { display: none; }
+
+  /* Background stays fixed and covers the viewport */
+  .vault-scene {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden;
+  }
+
+  /* Canvas fills the scene as a background cover */
+  .vault-canvas {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    aspect-ratio: unset !important;
+    transform: none !important;
+  }
+
+  .vault-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* -----------------------------------------------------------------------
+     Mobile project list
+     Sits between header and mobile footer, scrollable
+     ----------------------------------------------------------------------- */
+  .vault-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    position: fixed;
+    top: var(--header-h, 98px);
+    bottom: 56px; /* mobile footer height */
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-4);
+    scrollbar-width: none;
+    z-index: 300;
+  }
+
+  .vault-mobile-list::-webkit-scrollbar { display: none; }
+
+  .vault-mobile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    width: 100%;
+    background: hsl(30 8% 6% / 0.55);
+    backdrop-filter: blur(20px) saturate(0.9);
+    -webkit-backdrop-filter: blur(20px) saturate(0.9);
+    border: 1px solid hsl(35 20% 88% / 0.1);
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-5);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    position: relative;
+  }
+
+  .vault-mobile-card:active {
+    background: hsl(30 8% 10% / 0.85);
+    border-color: hsl(35 20% 88% / 0.2);
+  }
+
+  .vault-mobile-card__eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(35 90% 55%);
+    margin: 0;
+  }
+
+  .vault-mobile-card__title {
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    color: hsl(35 20% 92%);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .vault-mobile-card__subtitle {
+    font-size: 0.85rem;
+    color: hsl(35 10% 58%);
+    margin: 0;
+    line-height: 1.5;
+    padding-right: var(--space-7);
+  }
+
+  .vault-mobile-card__arrow {
+    position: absolute;
+    top: 50%;
+    right: var(--space-5);
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: hsl(35 90% 55%);
+    transition: transform 0.2s ease;
+  }
+
+  .vault-mobile-card:active .vault-mobile-card__arrow {
+    transform: translateY(-50%) translateX(3px);
+  }
+
+  /* -----------------------------------------------------------------------
+     Mobile footer
+     Fixed to viewport bottom -- title left, icons right
+     ----------------------------------------------------------------------- */
+  .vault-mobile-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding: 0 var(--space-4);
+    background: hsl(30 5% 2% / 0.6);
+    backdrop-filter: blur(12px) saturate(0.8);
+    -webkit-backdrop-filter: blur(12px) saturate(0.8);
+    border-top: 1px solid hsl(35 20% 88% / 0.06);
+    z-index: 300;
+  }
+
+  .vault-mobile-footer__title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: hsl(35 20% 72%);
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .vault-mobile-footer__icons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .vault-mobile-footer__icons a {
+    color: hsl(35 10% 50%);
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+  }
+
+  .vault-mobile-footer__icons a:hover {
+    color: hsl(35 90% 65%);
+  }
+
+  /* Hide native vault footer, show mobile footer instead */
+  body[data-page="vault"] footer,
+  body:has(.vault-scene) footer { display: none; }
+
+  /* Panel takes full screen on mobile */
+  .vault-panel { inset: var(--header-h, 98px) 0 56px 0; border-radius: 0; }
 }
 
 /* -------------------------------------------------------------------------
