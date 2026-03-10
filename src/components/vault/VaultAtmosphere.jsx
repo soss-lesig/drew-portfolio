@@ -27,11 +27,10 @@ const MAX_EMBERS          = 25
 const NUM_MOTES           = 50
 const RAY_REDRAW_INTERVAL = 4   // redraw offscreen ray canvas every N frames
 
-// Pre-built colour stop strings -- these never change, no need to template them per frame
-const RAY_STOP_0   = 'hsla(45, 90%, 92%,'
-const RAY_STOP_1   = 'hsla(42, 85%, 85%,'
-const RAY_STOP_2   = 'hsla(40, 80%, 80%,'
-
+// Pre-built colour stop strings -- these never change, no per-frame allocation needed
+const RAY_STOP_0      = 'hsla(45, 90%, 92%,'
+const RAY_STOP_1      = 'hsla(42, 85%, 85%,'
+const RAY_STOP_2      = 'hsla(40, 80%, 80%,'
 const LANTERN_OUTER_0 = 'hsla(38, 90%, 75%,'
 const LANTERN_OUTER_1 = 'hsla(35, 80%, 65%,'
 const LANTERN_INNER_0 = 'hsla(50, 100%, 95%,'
@@ -51,15 +50,19 @@ export default function VaultAtmosphere() {
     const ctx = canvas.getContext('2d')
 
     // Offscreen canvas for god rays -- blurred once per RAY_REDRAW_INTERVAL frames
-    const offscreen    = document.createElement('canvas')
-    const offCtx       = offscreen.getContext('2d')
+    const offscreen = document.createElement('canvas')
+    const offCtx    = offscreen.getContext('2d')
+
+    // Declared before resize so the closure can reference them immediately
+    let raysDirty     = true
+    let rayFrameCount = 0
 
     const resize = () => {
       canvas.width     = canvas.offsetWidth
       canvas.height    = canvas.offsetHeight
       offscreen.width  = canvas.width
       offscreen.height = canvas.height
-      raysDirty = true  // force redraw after resize
+      raysDirty = true
     }
     resize()
 
@@ -107,9 +110,7 @@ export default function VaultAtmosphere() {
       }
     }
 
-    const w0 = canvas.width
-    const h0 = canvas.height
-    const embers = Array.from({ length: MAX_EMBERS }, () => spawnEmber(w0, h0))
+    const embers = Array.from({ length: MAX_EMBERS }, () => spawnEmber(canvas.width, canvas.height))
 
     // -------------------------------------------------------------------------
     // God rays -- pre-computed fan from rose window
@@ -122,15 +123,12 @@ export default function VaultAtmosphere() {
       speed:   Math.random() * 0.006 + 0.003,
     }))
 
-    let raysDirty     = true
-    let rayFrameCount = 0
-
     // -------------------------------------------------------------------------
     // Draw helpers
     // -------------------------------------------------------------------------
 
     // Renders god rays onto the offscreen canvas with a single blur pass.
-    // Called only when raysDirty is true (every RAY_REDRAW_INTERVAL frames).
+    // Called only every RAY_REDRAW_INTERVAL frames -- rays change slowly.
     function redrawRays(t, w, h) {
       offCtx.clearRect(0, 0, w, h)
       offCtx.filter = 'blur(8px)'
@@ -156,10 +154,10 @@ export default function VaultAtmosphere() {
         grad.addColorStop(1,   'hsla(38, 70%, 75%, 0)')
 
         offCtx.beginPath()
-        offCtx.moveTo(rx + nx * halfW,        ry + ny * halfW)
-        offCtx.lineTo(ex + nx * halfW * 0.1,  ey + ny * halfW * 0.1)
-        offCtx.lineTo(ex - nx * halfW * 0.1,  ey - ny * halfW * 0.1)
-        offCtx.lineTo(rx - nx * halfW,        ry - ny * halfW)
+        offCtx.moveTo(rx + nx * halfW,       ry + ny * halfW)
+        offCtx.lineTo(ex + nx * halfW * 0.1, ey + ny * halfW * 0.1)
+        offCtx.lineTo(ex - nx * halfW * 0.1, ey - ny * halfW * 0.1)
+        offCtx.lineTo(rx - nx * halfW,       ry - ny * halfW)
         offCtx.closePath()
         offCtx.fillStyle = grad
         offCtx.fill()
@@ -201,10 +199,10 @@ export default function VaultAtmosphere() {
 
     function drawEmbers(w, h) {
       embers.forEach((e, i) => {
-        e.x      += e.speedX
-        e.y      += e.speedY
-        e.speedX += (Math.random() - 0.5) * 0.04
-        e.life   -= e.decay
+        e.x       += e.speedX
+        e.y       += e.speedY
+        e.speedX  += (Math.random() - 0.5) * 0.04
+        e.life    -= e.decay
         e.flicker += e.flickerSpeed
         if (e.life <= 0) { embers[i] = spawnEmber(w, h); return }
         const a = e.life * 0.7 * (0.6 + 0.4 * Math.sin(e.flicker))
@@ -217,8 +215,8 @@ export default function VaultAtmosphere() {
 
     function drawMotes(w, h) {
       motes.forEach(m => {
-        m.x += m.speedX
-        m.y += m.speedY
+        m.x       += m.speedX
+        m.y       += m.speedY
         m.flicker += m.flickerSpeed
         if (m.y < -0.002) m.y = 1.002
         if (m.x < -0.002) m.x = 1.002
@@ -244,7 +242,7 @@ export default function VaultAtmosphere() {
       ctx.clearRect(0, 0, w, h)
       t++
 
-      // Rays: composite from offscreen canvas, only rerender every N frames
+      // Rays: composite from offscreen, only re-render every RAY_REDRAW_INTERVAL frames
       rayFrameCount++
       if (raysDirty || rayFrameCount >= RAY_REDRAW_INTERVAL) {
         redrawRays(t, w, h)
