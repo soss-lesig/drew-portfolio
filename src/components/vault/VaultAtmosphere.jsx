@@ -10,35 +10,65 @@ import { LANTERNS, ROSE_WINDOW } from '../../data/vault.js'
 //   3. Embers      -- short-lived particles spawned from random lanterns, drift upward
 //   4. Dust motes  -- long-lived drifting particles in percentage space (resize-safe)
 //
-// All particle state lives inside the useEffect closure -- no React state involved.
-// The canvas is absolutely positioned to fill its parent (vault-canvas).
+// Performance notes:
+//   - God rays are pre-rendered to an offscreen canvas and composited via drawImage.
+//     This eliminates the per-frame ctx.filter blur pass (the single biggest CPU cost).
+//     The offscreen canvas is only redrawn every RAY_REDRAW_INTERVAL frames since
+//     ray opacity changes slowly.
+//   - W/H are cached at the top of each tick to avoid repeated property lookups.
+//   - Lantern colour stop strings are pre-built as constants -- only gradient
+//     geometry (position, radius) changes per frame.
+//   - Particle counts are tuned to be visually sufficient without excess draw calls.
+//   - prefers-reduced-motion: loop does not start if the user has requested it.
 // ---------------------------------------------------------------------------
 
-const NUM_RAYS   = 8
-const MAX_EMBERS = 40
+const NUM_RAYS            = 8
+const MAX_EMBERS          = 25
+const NUM_MOTES           = 50
+const RAY_REDRAW_INTERVAL = 4   // redraw offscreen ray canvas every N frames
+
+// Pre-built colour stop strings -- these never change, no need to template them per frame
+const RAY_STOP_0   = 'hsla(45, 90%, 92%,'
+const RAY_STOP_1   = 'hsla(42, 85%, 85%,'
+const RAY_STOP_2   = 'hsla(40, 80%, 80%,'
+
+const LANTERN_OUTER_0 = 'hsla(38, 90%, 75%,'
+const LANTERN_OUTER_1 = 'hsla(35, 80%, 65%,'
+const LANTERN_INNER_0 = 'hsla(50, 100%, 95%,'
+const LANTERN_INNER_1 = 'hsla(42,  90%, 80%,'
+const EMBER_COLOUR    = 'hsla(38, 95%, 78%,'
+const MOTE_COLOUR     = 'hsla(42, 80%, 90%,'
 
 export default function VaultAtmosphere() {
   const canvasRef = useRef(null)
 
   useEffect(() => {
+    // Respect prefers-reduced-motion -- skip the loop entirely
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
 
+    // Offscreen canvas for god rays -- blurred once per RAY_REDRAW_INTERVAL frames
+    const offscreen    = document.createElement('canvas')
+    const offCtx       = offscreen.getContext('2d')
+
     const resize = () => {
-      canvas.width  = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
+      canvas.width     = canvas.offsetWidth
+      canvas.height    = canvas.offsetHeight
+      offscreen.width  = canvas.width
+      offscreen.height = canvas.height
+      raysDirty = true  // force redraw after resize
     }
     resize()
 
-    const W = () => canvas.width
-    const H = () => canvas.height
     const px = (pct, dim) => (pct / 100) * dim
 
     // -------------------------------------------------------------------------
     // Dust motes -- stored in 0-1 percentage space so resize doesn't break them
     // -------------------------------------------------------------------------
-    const motes = Array.from({ length: 80 }, () => ({
+    const motes = Array.from({ length: NUM_MOTES }, () => ({
       x:            Math.random(),
       y:            Math.random(),
       r:            Math.random() * 1.8 + 0.5,
@@ -62,11 +92,11 @@ export default function VaultAtmosphere() {
     // -------------------------------------------------------------------------
     // Embers -- pool of particles, respawned from random lanterns
     // -------------------------------------------------------------------------
-    function spawnEmber() {
+    function spawnEmber(w, h) {
       const src = LANTERNS[Math.floor(Math.random() * LANTERNS.length)]
       return {
-        x:            px(src.x, W()) + (Math.random() - 0.5) * 6,
-        y:            px(src.y, H()) + (Math.random() - 0.5) * 4,
+        x:            px(src.x, w) + (Math.random() - 0.5) * 6,
+        y:            px(src.y, h) + (Math.random() - 0.5) * 4,
         r:            Math.random() * 1.2 + 0.3,
         speedX:       (Math.random() - 0.5) * 0.35,
         speedY:       -(Math.random() * 0.6 + 0.2),
@@ -77,7 +107,9 @@ export default function VaultAtmosphere() {
       }
     }
 
-    const embers = Array.from({ length: MAX_EMBERS }, () => spawnEmber())
+    const w0 = canvas.width
+    const h0 = canvas.height
+    const embers = Array.from({ length: MAX_EMBERS }, () => spawnEmber(w0, h0))
 
     // -------------------------------------------------------------------------
     // God rays -- pre-computed fan from rose window
@@ -90,67 +122,76 @@ export default function VaultAtmosphere() {
       speed:   Math.random() * 0.006 + 0.003,
     }))
 
+    let raysDirty     = true
+    let rayFrameCount = 0
+
     // -------------------------------------------------------------------------
     // Draw helpers
     // -------------------------------------------------------------------------
-    function drawRays(t) {
-      ctx.filter = 'blur(8px)'
-      const rx  = px(ROSE_WINDOW.x, W())
-      const ry  = px(ROSE_WINDOW.y, H())
-      const len = Math.max(W(), H()) * 1.4
+
+    // Renders god rays onto the offscreen canvas with a single blur pass.
+    // Called only when raysDirty is true (every RAY_REDRAW_INTERVAL frames).
+    function redrawRays(t, w, h) {
+      offCtx.clearRect(0, 0, w, h)
+      offCtx.filter = 'blur(8px)'
+
+      const rx  = px(ROSE_WINDOW.x, w)
+      const ry  = px(ROSE_WINDOW.y, h)
+      const len = Math.max(w, h) * 1.4
 
       rays.forEach(ray => {
         const a       = ray.angle * (Math.PI / 180)
         const flicker = 0.6 + 0.4 * Math.sin(t * ray.speed + ray.phase)
         const alpha   = ray.opacity * flicker
-        const halfW   = ray.width * W()
+        const halfW   = ray.width * w
         const ex = rx + Math.cos(a) * len
         const ey = ry + Math.sin(a) * len
         const nx = -Math.sin(a)
         const ny =  Math.cos(a)
 
-        const grad = ctx.createLinearGradient(rx, ry, ex, ey)
-        grad.addColorStop(0,   `hsla(45, 90%, 92%, ${alpha})`)
-        grad.addColorStop(0.1, `hsla(42, 85%, 85%, ${alpha * 0.8})`)
-        grad.addColorStop(0.5, `hsla(40, 80%, 80%, ${alpha * 0.35})`)
-        grad.addColorStop(1,   `hsla(38, 70%, 75%, 0)`)
+        const grad = offCtx.createLinearGradient(rx, ry, ex, ey)
+        grad.addColorStop(0,   `${RAY_STOP_0} ${alpha})`)
+        grad.addColorStop(0.1, `${RAY_STOP_1} ${(alpha * 0.8).toFixed(3)})`)
+        grad.addColorStop(0.5, `${RAY_STOP_2} ${(alpha * 0.35).toFixed(3)})`)
+        grad.addColorStop(1,   'hsla(38, 70%, 75%, 0)')
 
-        ctx.beginPath()
-        ctx.moveTo(rx + nx * halfW,        ry + ny * halfW)
-        ctx.lineTo(ex + nx * halfW * 0.1,  ey + ny * halfW * 0.1)
-        ctx.lineTo(ex - nx * halfW * 0.1,  ey - ny * halfW * 0.1)
-        ctx.lineTo(rx - nx * halfW,        ry - ny * halfW)
-        ctx.closePath()
-        ctx.fillStyle = grad
-        ctx.fill()
+        offCtx.beginPath()
+        offCtx.moveTo(rx + nx * halfW,        ry + ny * halfW)
+        offCtx.lineTo(ex + nx * halfW * 0.1,  ey + ny * halfW * 0.1)
+        offCtx.lineTo(ex - nx * halfW * 0.1,  ey - ny * halfW * 0.1)
+        offCtx.lineTo(rx - nx * halfW,        ry - ny * halfW)
+        offCtx.closePath()
+        offCtx.fillStyle = grad
+        offCtx.fill()
       })
-      ctx.filter = 'none'
+
+      offCtx.filter = 'none'
     }
 
-    function drawLanterns() {
+    function drawLanterns(w, h) {
       LANTERNS.forEach((src, i) => {
         const s = lanternState[i]
         s.phase  += s.speed
         s.phase2 += s.speed2
         const flicker = 0.55 + 0.25 * Math.sin(s.phase) + 0.2 * Math.sin(s.phase2 * 2.3)
-        const lx = px(src.x, W())
-        const ly = px(src.y, H())
-        const r1 = W() * 0.012 * flicker
-        const r2 = W() * 0.04  * flicker
+        const lx = px(src.x, w)
+        const ly = px(src.y, h)
+        const r1 = w * 0.012 * flicker
+        const r2 = w * 0.04  * flicker
 
         const outer = ctx.createRadialGradient(lx, ly, 0, lx, ly, r2)
-        outer.addColorStop(0,   `hsla(38, 90%, 75%, ${0.06 * flicker})`)
-        outer.addColorStop(0.5, `hsla(35, 80%, 65%, ${0.025 * flicker})`)
-        outer.addColorStop(1,   `hsla(30, 70%, 55%, 0)`)
+        outer.addColorStop(0,   `${LANTERN_OUTER_0} ${(0.06 * flicker).toFixed(3)})`)
+        outer.addColorStop(0.5, `${LANTERN_OUTER_1} ${(0.025 * flicker).toFixed(3)})`)
+        outer.addColorStop(1,   'hsla(30, 70%, 55%, 0)')
         ctx.beginPath()
         ctx.arc(lx, ly, r2, 0, Math.PI * 2)
         ctx.fillStyle = outer
         ctx.fill()
 
         const inner = ctx.createRadialGradient(lx, ly, 0, lx, ly, r1)
-        inner.addColorStop(0,   `hsla(50, 100%, 95%, ${0.18 * flicker})`)
-        inner.addColorStop(0.5, `hsla(42,  90%, 80%, ${0.08 * flicker})`)
-        inner.addColorStop(1,   `hsla(38,  80%, 70%, 0)`)
+        inner.addColorStop(0,   `${LANTERN_INNER_0} ${(0.18 * flicker).toFixed(3)})`)
+        inner.addColorStop(0.5, `${LANTERN_INNER_1} ${(0.08 * flicker).toFixed(3)})`)
+        inner.addColorStop(1,   'hsla(38, 80%, 70%, 0)')
         ctx.beginPath()
         ctx.arc(lx, ly, r1, 0, Math.PI * 2)
         ctx.fillStyle = inner
@@ -158,23 +199,23 @@ export default function VaultAtmosphere() {
       })
     }
 
-    function drawEmbers() {
+    function drawEmbers(w, h) {
       embers.forEach((e, i) => {
         e.x      += e.speedX
         e.y      += e.speedY
         e.speedX += (Math.random() - 0.5) * 0.04
         e.life   -= e.decay
         e.flicker += e.flickerSpeed
-        if (e.life <= 0) { embers[i] = spawnEmber(); return }
+        if (e.life <= 0) { embers[i] = spawnEmber(w, h); return }
         const a = e.life * 0.7 * (0.6 + 0.4 * Math.sin(e.flicker))
         ctx.beginPath()
         ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(38, 95%, 78%, ${a})`
+        ctx.fillStyle = `${EMBER_COLOUR} ${a.toFixed(3)})`
         ctx.fill()
       })
     }
 
-    function drawMotes() {
+    function drawMotes(w, h) {
       motes.forEach(m => {
         m.x += m.speedX
         m.y += m.speedY
@@ -184,8 +225,8 @@ export default function VaultAtmosphere() {
         if (m.x >  1.002) m.x = -0.002
         const a = m.opacity * (0.55 + 0.45 * Math.sin(m.flicker))
         ctx.beginPath()
-        ctx.arc(m.x * W(), m.y * H(), m.r, 0, Math.PI * 2)
-        ctx.fillStyle = `hsla(42, 80%, 90%, ${a})`
+        ctx.arc(m.x * w, m.y * h, m.r, 0, Math.PI * 2)
+        ctx.fillStyle = `${MOTE_COLOUR} ${a.toFixed(3)})`
         ctx.fill()
       })
     }
@@ -195,13 +236,27 @@ export default function VaultAtmosphere() {
     // -------------------------------------------------------------------------
     let raf
     let t = 0
+
     const tick = () => {
-      ctx.clearRect(0, 0, W(), H())
+      const w = canvas.width
+      const h = canvas.height
+
+      ctx.clearRect(0, 0, w, h)
       t++
-      drawRays(t)
-      drawLanterns()
-      drawEmbers()
-      drawMotes()
+
+      // Rays: composite from offscreen canvas, only rerender every N frames
+      rayFrameCount++
+      if (raysDirty || rayFrameCount >= RAY_REDRAW_INTERVAL) {
+        redrawRays(t, w, h)
+        raysDirty     = false
+        rayFrameCount = 0
+      }
+      ctx.drawImage(offscreen, 0, 0)
+
+      drawLanterns(w, h)
+      drawEmbers(w, h)
+      drawMotes(w, h)
+
       raf = requestAnimationFrame(tick)
     }
     tick()
