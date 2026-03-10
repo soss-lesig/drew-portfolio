@@ -236,6 +236,14 @@ export default function Vault() {
           </div>
         )}
 
+        {/* Dim overlay -- inside vault-canvas so z-index competes correctly
+            with vault-card (z-index 3) rather than escaping to vault-scene level */}
+        <div
+          className={`vault-dim${activeSlug ? ' vault-dim--active' : ''}`}
+          onClick={handleDismiss}
+          aria-hidden="true"
+        />
+
         <VaultAtmosphere />
       </div>{/* end vault-canvas */}
 
@@ -247,13 +255,6 @@ export default function Vault() {
       >
         {tooltip.label}
       </div>
-
-      {/* Dim overlay -- click to dismiss */}
-      <div
-        className={`vault-dim${activeSlug ? ' vault-dim--active' : ''}`}
-        onClick={handleDismiss}
-        aria-hidden="true"
-      />
 
       {/* Project panel -- state 2 */}
       {activeProject && expanded && (

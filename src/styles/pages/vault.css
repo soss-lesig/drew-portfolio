@@ -830,8 +830,15 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
   body[data-page="vault"] footer,
   body:has(.vault-scene) footer { display: none; }
 
-  /* Panel takes full screen on mobile */
-  .vault-panel { inset: var(--header-h, 98px) 0 56px 0; border-radius: 0; }
+  /* Panel takes full screen on mobile.
+     position: fixed escapes the vault-scene stacking context (z-index: 0)
+     so it can sit above the mobile list and footer (both z-index: 300). */
+  .vault-panel {
+    position: fixed;
+    inset: var(--header-h, 98px) 0 56px 0;
+    border-radius: 0;
+    z-index: 350;
+  }
 }
 
 /* -------------------------------------------------------------------------
