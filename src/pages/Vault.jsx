@@ -281,7 +281,7 @@ export default function Vault() {
       <div className={`vault-intro${activeSlug ? ' vault-intro--hidden' : ''}`}>
         <h1 className="vault-intro__title">
           Mayu's Architecture Vault
-          <span className="vault-alpha-badge">ALPHA</span>
+          <span className="vault-alpha-badge">BETA</span>
         </h1>
         <p className="vault-intro__subtitle">
           Architectural decisions, system design, and honest post-mortems across every project.

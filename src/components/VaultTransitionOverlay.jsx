@@ -76,7 +76,7 @@ export default function VaultTransitionOverlay() {
           <div className={`vault-transition-centre${stage !== 'centre' ? ' vault-transition-centre--out' : ''}`}>
             <h1 className="vault-transition-title">
               Mayu's Architecture Vault
-              <span className="vault-transition-alpha">ALPHA</span>
+              <span className="vault-transition-alpha">BETA</span>
             </h1>
           </div>
 
@@ -84,7 +84,7 @@ export default function VaultTransitionOverlay() {
           <div className={`vault-transition-bottomleft${stage === 'bottomleft' ? ' vault-transition-bottomleft--in' : ''}`}>
             <h1 className="vault-transition-title">
               Mayu's Architecture Vault
-              <span className="vault-transition-alpha">ALPHA</span>
+              <span className="vault-transition-alpha">BETA</span>
             </h1>
             <p className="vault-transition-subtitle">
               Architectural decisions, system design, and honest post-mortems across every project.

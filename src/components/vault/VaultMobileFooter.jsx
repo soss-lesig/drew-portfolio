@@ -11,7 +11,7 @@ export default function VaultMobileFooter() {
     <div className="vault-mobile-footer">
       <p className="vault-mobile-footer__title">
         Mayu's Architecture Vault
-        <span className="vault-alpha-badge">ALPHA</span>
+        <span className="vault-alpha-badge">BETA</span>
       </p>
       <div className="vault-mobile-footer__icons">
         <a href="https://github.com/soss-lesig/drew-portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
