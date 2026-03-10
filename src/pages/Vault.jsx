@@ -138,7 +138,6 @@ function VaultFilterDefs() {
 
 // ---------------------------------------------------------------------------
 // CatHotspot -- no tooltip, no hover glow change; cats are easter eggs.
-// Clicking is still fully functional -- only the visual feedback is removed.
 // ---------------------------------------------------------------------------
 
 function CatHotspot({ cat, onAffirmation, disabled }) {
@@ -209,6 +208,44 @@ function ProjectHotspot({ project, isActive, onClick, onTooltip }) {
 }
 
 // ---------------------------------------------------------------------------
+// VaultMobileList -- shown only at mobile breakpoint (<=640px).
+// ---------------------------------------------------------------------------
+
+function VaultMobileList({ projects, onSelect }) {
+  return (
+    <div className="vault-mobile-list" aria-label="Project list">
+      <div className="vault-mobile-list__header">
+        <h1 className="vault-mobile-list__title">
+          Mayu's Architecture Vault
+          <span className="vault-alpha-badge">ALPHA</span>
+        </h1>
+        <p className="vault-mobile-list__subtitle">
+          Architectural decisions, system design, and honest post-mortems across every project.
+        </p>
+      </div>
+      <ul className="vault-mobile-list__cards" role="list">
+        {projects.map(project => (
+          <li key={project.slug}>
+            <button
+              className="vault-mobile-card"
+              onClick={() => onSelect(project.slug)}
+              aria-label={`Open ${project.title} architecture vault`}
+            >
+              <p className="vault-mobile-card__eyebrow">{project.shelf}</p>
+              <h2 className="vault-mobile-card__title">{project.title}</h2>
+              <p className="vault-mobile-card__subtitle">{project.subtitle}</p>
+              <span className="vault-mobile-card__cta" aria-hidden="true">
+                Explore this project <span className="vault-mobile-card__arrow">→</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Vault page
 // ---------------------------------------------------------------------------
 
@@ -226,9 +263,10 @@ export default function Vault() {
   const meekoDotsRef = useRef(null)
   const mayuDotsRef  = useRef(null)
 
-  // Tooltip state -- single object to avoid multiple re-renders
   const [tooltip, setTooltip] = useState({ visible: false, label: '', x: 0, y: 0 })
   const handleTooltip = useCallback((next) => setTooltip(next), [])
+
+  const sceneRef = useRef(null)
 
   const activeProject = PROJECTS.find(p => p.slug === activeSlug) ?? null
 
@@ -291,6 +329,33 @@ export default function Vault() {
     return () => { clearInterval(mayuDotsRef.current); mayuDotsRef.current = null }
   }, [mayuBubbleActive, mayu.displayed])
 
+  // -------------------------------------------------------------------------
+  // Vault scene scale -- keeps the 1536x1024 scene filling the viewport
+  // at any size below 1920px without distorting the SVG hotspot grid.
+  // We scale the __inner wrapper (which contains bg + SVG) uniformly so
+  // both layers stay locked together. Scale = vw/1536 so the image always
+  // fills the full viewport width; height may overflow (user scrolls down).
+  // At >=1920px this useEffect sets scale=1 and CSS takes over (no transform).
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    const scene = sceneRef.current
+    if (!scene) return
+    function applyScale() {
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      // Scale so the scene covers the full viewport (cover behaviour).
+      // max(scaleX, scaleY) means neither dimension shows a gap.
+      // Only active below 1920px breakpoint -- at 1920px+ desktop CSS takes over.
+      const scaleX = vw / 1536
+      const scaleY = vh / 1024
+      const scale = Math.max(scaleX, scaleY)
+      scene.style.setProperty('--vault-scale', scale)
+    }
+    applyScale()
+    window.addEventListener('resize', applyScale)
+    return () => window.removeEventListener('resize', applyScale)
+  }, [])
+
   function handleCatClick(cat) {
     const ismayu = cat.affirmationTheme === 'dark'
     const hook   = ismayu ? mayu : meeko
@@ -312,7 +377,14 @@ export default function Vault() {
   const cardAnchorResolved = activeProject ? resolveCardAnchor(activeProject.cardAnchor) : null
 
   return (
-    <div className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
+    <div ref={sceneRef} className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
+
+      {/* ----------------------------------------------------------------
+          Background image: sibling of __inner.
+          At tablet/desktop, CSS and JS scale it identically to __inner
+          so it stays pixel-aligned behind the SVG.
+          At mobile, CSS makes it position: fixed as a static backdrop.
+          --------------------------------------------------------------- */}
       <img
         src="/images/vault-background.png"
         alt="Mayu's Architecture Vault - an ancient candlelit library"
@@ -320,90 +392,124 @@ export default function Vault() {
         draggable={false}
       />
 
-      <svg
-        className="vault-svg"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden="false"
-      >
-        <VaultFilterDefs />
+      {/* ----------------------------------------------------------------
+          Scene inner wrapper: SVG + hotspots + cards.
+          JS --vault-scale is applied to both bg and __inner via CSS
+          so they scale identically. At <=640px hidden by CSS.
+          --------------------------------------------------------------- */}
+      <div className="vault-scene__inner">
 
-        {PROJECTS.map(project => (
-          <ProjectHotspot
-            key={project.slug}
-            project={project}
-            isActive={activeSlug === project.slug}
-            onClick={handleHotspotClick}
-            onTooltip={handleTooltip}
-          />
-        ))}
+        <svg
+          className="vault-svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="false"
+        >
+          <VaultFilterDefs />
 
-        {CATS.map(cat => {
-          const ismayu = cat.affirmationTheme === 'dark'
-          const busy   = ismayu ? (mayu.rendering || mayuBubbleActive) : (meeko.rendering || meekoBubbleActive)
-          return (
-            <CatHotspot
-              key={cat.id}
-              cat={cat}
-              onAffirmation={handleCatClick}
-              disabled={busy}
+          {PROJECTS.map(project => (
+            <ProjectHotspot
+              key={project.slug}
+              project={project}
+              isActive={activeSlug === project.slug}
+              onClick={handleHotspotClick}
+              onTooltip={handleTooltip}
             />
-          )
-        })}
-      </svg>
+          ))}
 
-      {/* Hover tooltip -- follows cursor, projects only */}
-      <div
-        className={`vault-tooltip${tooltip.visible ? ' vault-tooltip--visible' : ''}`}
-        style={{ left: tooltip.x, top: tooltip.y }}
-        aria-hidden="true"
-      >
-        {tooltip.label}
+          {CATS.map(cat => {
+            const ismayu = cat.affirmationTheme === 'dark'
+            const busy   = ismayu ? (mayu.rendering || mayuBubbleActive) : (meeko.rendering || meekoBubbleActive)
+            return (
+              <CatHotspot
+                key={cat.id}
+                cat={cat}
+                onAffirmation={handleCatClick}
+                disabled={busy}
+              />
+            )
+          })}
+        </svg>
+
+        <div
+          className={`vault-tooltip${tooltip.visible ? ' vault-tooltip--visible' : ''}`}
+          style={{ left: tooltip.x, top: tooltip.y }}
+          aria-hidden="true"
+        >
+          {tooltip.label}
+        </div>
+
+        <div
+          className={`vault-dim${activeSlug ? ' vault-dim--active' : ''}`}
+          onClick={handleDismiss}
+          aria-hidden="true"
+        />
+
+        {meekoBubbleActive && (
+          <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'meeko').bubbleAnchor} aria-live="polite">
+            {meekoDots
+              ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
+              : <p>"{meeko.displayed}"</p>
+            }
+            <span className="vault-cat-bubble__name">-- Meeko</span>
+          </div>
+        )}
+
+        {mayuBubbleActive && (
+          <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'mayu').bubbleAnchor} aria-live="polite">
+            {mayuDots
+              ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
+              : <p>"{mayu.displayed}"</p>
+            }
+            <span className="vault-cat-bubble__name">-- Mayu</span>
+          </div>
+        )}
+
+        {activeProject && !expanded && cardAnchorResolved && (
+          <div
+            className={cardAnchorResolved.className}
+            style={cardAnchorResolved.style}
+            onClick={e => e.stopPropagation()}
+          >
+            <button className="vault-card__dismiss" onClick={handleDismiss} aria-label="Close">✕</button>
+            <p className="vault-card__eyebrow">{activeProject.shelf}</p>
+            <h2 className="vault-card__title">{activeProject.title}</h2>
+            <p className="vault-card__subtitle">{activeProject.subtitle}</p>
+            <button className="vault-card__cta" onClick={handleExpand}>
+              Explore this project
+              <span className="vault-card__cta-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        )}
+
+        <div className={`vault-intro${activeSlug ? ' vault-intro--hidden' : ''}`}>
+          <h1 className="vault-intro__title">
+            Mayu's Architecture Vault
+            <span className="vault-alpha-badge">ALPHA</span>
+          </h1>
+          <p className="vault-intro__subtitle">
+            Architectural decisions, system design, and honest post-mortems across every project.
+          </p>
+        </div>
+
+        {!activeSlug && <p className="vault-hint" aria-hidden="true">select a bookshelf to begin</p>}
+      </div>
+      {/* end .vault-scene__inner */}
+
+      {/* ----------------------------------------------------------------
+          Responsive title bar: shown at tablet (641-1536px) only via CSS.
+          Pinned bottom-left alongside the fixed footer.
+          Desktop uses .vault-intro inside __inner.
+          Mobile uses VaultMobileList header.
+          --------------------------------------------------------------- */}
+      <div className="vault-responsive-title" aria-hidden="true">
+        <span className="vault-intro__title">
+          Mayu's Architecture Vault
+          <span className="vault-alpha-badge">ALPHA</span>
+        </span>
       </div>
 
-      <div
-        className={`vault-dim${activeSlug ? ' vault-dim--active' : ''}`}
-        onClick={handleDismiss}
-        aria-hidden="true"
-      />
-
-      {meekoBubbleActive && (
-        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'meeko').bubbleAnchor} aria-live="polite">
-          {meekoDots
-            ? <p className="vault-cat-bubble__dots">{meekoDots}</p>
-            : <p>"{meeko.displayed}"</p>
-          }
-          <span className="vault-cat-bubble__name">-- Meeko</span>
-        </div>
-      )}
-
-      {mayuBubbleActive && (
-        <div className="vault-cat-bubble" style={CATS.find(c => c.id === 'mayu').bubbleAnchor} aria-live="polite">
-          {mayuDots
-            ? <p className="vault-cat-bubble__dots">{mayuDots}</p>
-            : <p>"{mayu.displayed}"</p>
-          }
-          <span className="vault-cat-bubble__name">-- Mayu</span>
-        </div>
-      )}
-
-      {activeProject && !expanded && cardAnchorResolved && (
-        <div
-          className={cardAnchorResolved.className}
-          style={cardAnchorResolved.style}
-          onClick={e => e.stopPropagation()}
-        >
-          <button className="vault-card__dismiss" onClick={handleDismiss} aria-label="Close">✕</button>
-          <p className="vault-card__eyebrow">{activeProject.shelf}</p>
-          <h2 className="vault-card__title">{activeProject.title}</h2>
-          <p className="vault-card__subtitle">{activeProject.subtitle}</p>
-          <button className="vault-card__cta" onClick={handleExpand}>
-            Explore this project
-            <span className="vault-card__cta-arrow" aria-hidden="true">→</span>
-          </button>
-        </div>
-      )}
-
+      {/* Vault panel: outside __inner so it overlays full viewport */}
       {activeProject && expanded && (
         <div className="vault-panel" onClick={e => e.stopPropagation()}>
           <div className="vault-panel__header">
@@ -424,17 +530,11 @@ export default function Vault() {
         </div>
       )}
 
-      <div className={`vault-intro${activeSlug ? ' vault-intro--hidden' : ''}`}>
-        <h1 className="vault-intro__title">
-          Mayu's Architecture Vault
-          <span className="vault-alpha-badge">ALPHA</span>
-        </h1>
-        <p className="vault-intro__subtitle">
-          Architectural decisions, system design, and honest post-mortems across every project.
-        </p>
-      </div>
+      <VaultMobileList
+        projects={PROJECTS}
+        onSelect={(slug) => { handleHotspotClick(slug); handleExpand() }}
+      />
 
-      {!activeSlug && <p className="vault-hint" aria-hidden="true">select a bookshelf to begin</p>}
     </div>
   )
 }
