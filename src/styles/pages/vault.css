@@ -111,15 +111,69 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
   z-index: 0;
 }
 
+/* .vault-canvas is the shared coordinate space for image + SVG.
+   It's locked to the 3:2 aspect ratio of the source image and scaled
+   to cover the viewport -- same idea as object-fit: cover but applied
+   to a block element so the SVG shares the exact same box. */
+.vault-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 3 / 2;
+  /* Scale to cover: whichever dimension hits the viewport edge first,
+     the other overflows and is clipped by vault-scene overflow:hidden */
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  min-width: calc(100vh * 3 / 2);
+}
+
 .vault-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 60%;
+  object-fit: fill;
   z-index: 0;
-  transform: scale(1.03);
+}
+
+/* __inner sits over vault-bg and holds the SVG + all interactive elements.
+   Shares the same box as vault-canvas so the SVG viewBox maps
+   pixel-perfectly to the image at any viewport size. */
+.vault-scene__inner {
+  position: absolute;
+  inset: 0;
+}
+
+/* All four edge vignettes live on __inner so they're anchored to the
+   image edges, not the viewport. Negative offsets bleed the gradient
+   into the letterbox bars, giving a true dissolve rather than a dark
+   overlay on the image edge. Each pseudo-element carries two edges:
+   ::before = left + top, ::after = right + bottom. */
+.vault-scene__inner::before,
+.vault-scene__inner::after {
+  content: '';
+  position: absolute;
+  inset: -120px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vault-scene__inner::before {
+  background:
+    linear-gradient(to right, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+      left / 22% 100% no-repeat,
+    linear-gradient(to bottom, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+      top / 100% 22% no-repeat;
+}
+
+.vault-scene__inner::after {
+  background:
+    linear-gradient(to left, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+      right / 22% 100% no-repeat,
+    linear-gradient(to top, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+      bottom / 100% 22% no-repeat;
 }
 
 /* -------------------------------------------------------------------------
@@ -131,49 +185,26 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
    breathe and text reads cleanly at any viewport height.
    ------------------------------------------------------------------------- */
 
+/* No vignettes needed on .vault-scene pseudo-elements -- all four edges
+   are now handled by .vault-scene__inner pseudo-elements so they are
+   anchored to the image edges, not the viewport edges. */
 .vault-scene::before,
 .vault-scene::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.vault-scene::before {
-  top: 0;
-  height: 22%;
-  background: linear-gradient(
-    to bottom,
-    hsl(30 8% 4% / 0.82) 0%,
-    hsl(30 8% 4% / 0.45) 55%,
-    transparent 100%
-  );
-}
-
-.vault-scene::after {
-  bottom: 0;
-  height: 22%;
-  background: linear-gradient(
-    to top,
-    hsl(30 8% 4% / 0.82) 0%,
-    hsl(30 8% 4% / 0.45) 55%,
-    transparent 100%
-  );
+  content: none;
 }
 
 /* -------------------------------------------------------------------------
    SVG hotspot overlay
    ------------------------------------------------------------------------- */
 
+/* SVG must be positioned identically to vault-bg so the viewBox
+   coordinates map pixel-perfectly to the image. */
 .vault-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: 2;
-  overflow: visible;
 }
 
 /* -------------------------------------------------------------------------
@@ -488,7 +519,7 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
 .vault-intro {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  z-index: 1;
+  z-index: 3;
   padding: var(--space-8) var(--space-6) calc(var(--space-6) + 48px);
   background: linear-gradient(
     to top,
@@ -731,13 +762,14 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
   justify-content: center;
 }
 
-/* The vault background image fills the overlay */
+/* The vault background image matches the live vault layout:
+   centred at native 1536x1024, letterboxed on dark bg, not cropped. */
 .vault-transition-bg {
   position: absolute;
   inset: 0;
   background-image: url('/images/vault-background.png');
   background-size: cover;
-  background-position: center 60%;
+  background-position: center center;
   z-index: 0;
 }
 

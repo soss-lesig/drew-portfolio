@@ -104,30 +104,28 @@
     padding: 8px;
   }
 
-  .viewport-sim {
-    position: relative;
-    width: 100%;
-    max-height: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    flex-shrink: 0;
-    user-select: none;
+  /* Editor canvas: image renders at exactly 1536x1024, then JS scales it
+     down uniformly to fit the available canvas-area. transform-origin: top
+     centre so it stays centred after scaling. */
+  .canvas-area {
+    align-items: flex-start;
+    padding: 12px;
   }
 
-  @media (max-aspect-ratio: 16/9) {
-    .viewport-sim {
-      width: auto;
-      height: 100%;
-    }
+  .viewport-sim {
+    position: relative;
+    width: 1536px;
+    height: 1024px;
+    flex-shrink: 0;
+    user-select: none;
+    transform-origin: top center;
   }
 
   #vault-img {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 60%;
+    width: 1536px;
+    height: 1024px;
     pointer-events: none;
     display: block;
   }
@@ -448,8 +446,8 @@ itemSel.addEventListener('change', updateLegend)
 function getPct(e, rect) {
   const r = rect || viewportEl.getBoundingClientRect()
   return {
-    xPct: Math.max(0, Math.min((e.clientX - r.left)  / r.width  * 100, 100)),
-    yPct: Math.max(0, Math.min((e.clientY - r.top)   / r.height * 100, 100)),
+    xPct: Math.max(0, Math.min((e.clientX - r.left) / r.width  * 100, 100)),
+    yPct: Math.max(0, Math.min((e.clientY - r.top)  / r.height * 100, 100)),
   }
 }
 
@@ -799,6 +797,30 @@ document.getElementById('copy-btn').addEventListener('click', async function () 
     setTimeout(() => { this.textContent = 'Copy config'; this.classList.remove('copied') }, 2000)
   } catch { this.textContent = 'Select + copy manually' }
 })
+
+// ---------------------------------------------------------------------------
+// Scale viewport-sim to fit available canvas area
+// Coordinates are always in 1536x1024 space; getPct divides by the
+// *unscaled* dimensions so the scale factor doesn't affect output values.
+// ---------------------------------------------------------------------------
+
+let currentScale = 1
+
+function scaleEditor() {
+  const canvasArea = document.querySelector('.canvas-area')
+  const padding = 24 // 12px each side
+  const availW = canvasArea.clientWidth  - padding
+  const availH = canvasArea.clientHeight - padding
+  const scaleW = availW / 1536
+  const scaleH = availH / 1024
+  currentScale = Math.min(scaleW, scaleH, 1) // never scale up
+  viewportEl.style.transform = `scale(${currentScale})`
+  // Adjust container height so scaled element doesn't leave a gap
+  viewportEl.style.marginBottom = `${(1024 * currentScale) - 1024}px`
+}
+
+window.addEventListener('resize', scaleEditor)
+scaleEditor()
 
 buildLegend()
 updateLegend()

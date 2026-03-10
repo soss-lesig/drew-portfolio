@@ -10,48 +10,48 @@ const PROJECTS = [
     title: 'IronIQ',
     subtitle: 'Offline-first workout tracking. The most technically ambitious project in the vault.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[28.38, 32.74], [38.44, 37.54], [39.19, 49.27], [29.13, 46.7], [28.25, 40]] },
-    cardAnchor: { left: '32.68%', top: '41.25%' },
+    hotspot: { points: [[29.21, 37.96], [38.46, 42.18], [38.38, 50.28], [29.87, 47.72], [28.84, 45.06]] },
+    cardAnchor: { left: '32.95%', top: '44.64%' },
   },
   {
     slug: 'engineering-gym',
-    title: 'Engineering Gym',
+    title: 'Eng Gym',
     subtitle: 'Quiz-based learning system. Doubles as a teaching tool for A-Level CS.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[99.65, 50.61], [86.52, 51.84], [86.01, 62.01], [99.78, 61.79]] },
-    cardAnchor: { left: '92.99%', top: '56.56%' },
+    hotspot: { points: [[29.5, 23.64], [37.13, 29.08], [37.27, 35.96], [29.21, 31.96]] },
+    cardAnchor: { left: '33.28%', top: '30.16%' },
   },
   {
     slug: 'homeserver',
     title: 'HomeServer',
     subtitle: 'Self-hosted VPS infrastructure. The backbone that unblocks everything else.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[29.26, 15.64], [37.49, 22.91], [37.81, 33.07], [28.57, 27.6], [28.44, 21.56]] },
-    cardAnchor: { left: '32.31%', top: '24.16%' },
+    hotspot: { points: [[99.5, 53.05], [87.51, 54.27], [87.14, 60.93], [99.13, 60.71]] },
+    cardAnchor: { left: '93.32%', top: '57.24%' },
   },
   {
     slug: 'drewbrew',
     title: 'drewBrew',
     subtitle: 'Coffee tracking app. An architecture case study in earning complexity.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[27.94, 68.72], [0.66, 68.6], [1.92, 75.87], [18.95, 77.43], [28.13, 75.42], [27.56, 72.4]] },
-    cardAnchor: { left: '17.53%', top: '73.07%' },
+    hotspot: { points: [[86.77, 44.06], [86.92, 49.83], [99.13, 48.39], [98.98, 41.29], [92.18, 42.73]] },
+    cardAnchor: { left: '92.8%', top: '45.26%' },
   },
   {
     slug: 'drew-portfolio',
     title: 'drew-portfolio',
     subtitle: 'This site. The meta-narrative: building a portfolio that documents itself being built.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[99.59, 36.09], [86.26, 39.89], [86.33, 48.94], [99.59, 46.93]] },
-    cardAnchor: { left: '92.94%', top: '42.96%' },
+    hotspot: { points: [[39.12, 54.94], [34.02, 54.5], [35.72, 59.16], [35.5, 63.04], [39.05, 63.04]] },
+    cardAnchor: { left: '36.68%', top: '58.94%' },
   },
   {
     slug: 'quitrx',
     title: 'QuitRx',
     subtitle: 'Cross-platform stop-smoking tracker. Local-first health data, honest stats, and a one-time Pro unlock -- no subscriptions, no data leaving your device.',
     shelf: 'Architecture vault',
-    hotspot: { points: [[98.9, 17.32], [87.27, 21.9], [79.54, 28.04], [79.41, 34.3], [89.22, 29.61], [99.27, 26.15]] },
-    cardAnchor: { left: '88.94%', top: '26.22%' },
+    hotspot: { points: [[98.02, 25.31], [87.74, 28.63], [80.04, 32.96], [79.97, 37.62], [87.88, 33.85], [98.24, 30.85]] },
+    cardAnchor: { left: '88.65%', top: '31.54%' },
   },
 ]
 
@@ -60,15 +60,15 @@ const CATS = [
     id: 'meeko',
     label: 'Meeko',
     affirmationTheme: 'light',
-    points: [[78.28, 49.27], [74.01, 54.64], [72.81, 67.04], [76.46, 90.28], [85.7, 91.62], [90.92, 88.27], [88.9, 72.18], [84, 64.69], [81.8, 52.18]],
-    bubbleAnchor: { right: '30%', top: '52%' },
+    points: [[78.26, 51.83], [75.16, 55.49], [73.9, 68.04], [76.93, 84.68], [79.45, 85.79], [84.63, 86.68], [90.47, 84.79], [89.96, 75.58], [84.55, 66.93], [82.7, 64.48], [82.48, 56.94], [80.93, 53.39]],
+    bubbleAnchor: { left: '70.62%', top: '57.55%' },
   },
   {
     id: 'mayu',
     label: 'Mayu',
     affirmationTheme: 'dark',
-    points: [[14.43, 27.26], [9.21, 29.61], [7.14, 51.28], [14.24, 57.32], [19.64, 53.18], [25.61, 53.97], [27.81, 60.56], [31.71, 75.87], [34.29, 60.89], [29.64, 51.17], [26.18, 42.91], [19.77, 41.01], [18.32, 30.06]],
-    bubbleAnchor: { left: '2%', top: '10%' },
+    points: [[14.19, 32.74], [9.53, 36.07], [8.27, 44.06], [7.68, 52.39], [11.08, 53.61], [14.04, 57.27], [19.29, 52.94], [26.32, 54.72], [32.17, 63.71], [33.72, 60.71], [25.66, 47.39], [18.92, 43.84], [18.26, 37.62], [16.48, 34.63]],
+    bubbleAnchor: { left: '7.26%', top: '35.98%' },
   },
 ]
 
@@ -313,19 +313,25 @@ export default function Vault() {
 
   return (
     <div className={`vault-scene${phase === 'exiting' ? ' vault-scene--exiting' : ''}`}>
-      <img
-        src="/images/vault-background.png"
-        alt="Mayu's Architecture Vault - an ancient candlelit library"
-        className="vault-bg"
-        draggable={false}
-      />
+      {/* vault-canvas: shared 3:2 coordinate space for image + SVG overlay.
+          Both children fill this box identically so hotspot percentages
+          map pixel-perfectly to the image at any viewport size. */}
+      <div className="vault-canvas">
+        <img
+          src="/images/vault-background.png"
+          alt="Mayu's Architecture Vault - an ancient candlelit library"
+          className="vault-bg"
+          draggable={false}
+        />
+        {/* Carries the vignette pseudo-elements anchored to the image edges */}
+        <div className="vault-scene__inner" aria-hidden="true" />
 
-      <svg
-        className="vault-svg"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden="false"
-      >
+        <svg
+          className="vault-svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="false"
+        >
         <VaultFilterDefs />
 
         {PROJECTS.map(project => (
@@ -350,7 +356,8 @@ export default function Vault() {
             />
           )
         })}
-      </svg>
+        </svg>
+      </div>{/* end vault-canvas */}
 
       {/* Hover tooltip -- follows cursor, projects only */}
       <div
