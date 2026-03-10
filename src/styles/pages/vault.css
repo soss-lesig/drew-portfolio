@@ -602,6 +602,52 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
    Responsive
    ------------------------------------------------------------------------- */
 
+/* Below the image's native width (1536px), the body becomes the scroll
+   container at native image dimensions. The scene and canvas fill it exactly
+   so nothing squashes, and header/footer/vignettes all remain anchored
+   correctly inside the scene. */
+@media (max-width: 1535px) {
+  body[data-page="vault"],
+  body:has(.vault-scene) {
+    overflow: auto !important;
+    width: 1536px;
+    min-height: 1024px;
+  }
+
+  .vault-scene {
+    position: absolute;
+    inset: unset;
+    width: 1536px;
+    height: 1024px;
+  }
+
+  .vault-canvas {
+    width: 1536px !important;
+    height: 1024px !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    aspect-ratio: unset !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+
+  /* Intro and hint anchor to the visible viewport bottom in scroll mode,
+     not the scene bottom which may be scrolled out of view. */
+  .vault-intro {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .vault-hint {
+    position: fixed;
+    bottom: calc(var(--space-6) + 44px);
+    right: var(--space-6);
+  }
+}
+
 @media (max-width: 768px) {
   .vault-panel { inset: 2% 2%; }
   .vault-card { width: clamp(240px, 80vw, 320px); }
