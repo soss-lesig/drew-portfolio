@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vault Hotspot Editor</title>
+  <!-- Point picker additions -->
+  <style>
+    .picker-marker {
+      pointer-events: none;
+    }
+    #point-output {
+      color: hsl(185 70% 65%);
+    }
+    button.action.picker-active {
+      background: hsl(185 50% 18%);
+      border-color: hsl(185 60% 45%);
+      color: hsl(185 60% 72%);
+    }
+    #hotspot-svg.mode-pick { cursor: crosshair; }
+  </style>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -91,6 +106,12 @@
   .type-toggle button.active {
     background: hsl(35 20% 88% / 0.08);
     color: hsl(35 20% 85%);
+  }
+
+  .type-toggle button.pick-active {
+    background: hsl(185 50% 18%);
+    color: hsl(185 60% 72%);
+    border-left: 1px solid hsl(35 20% 88% / 0.15);
   }
 
   .type-toggle button:first-child { border-right: 1px solid hsl(35 20% 88% / 0.15); }
@@ -265,9 +286,10 @@
   </span>
   <div class="controls">
     <div class="type-toggle">
-      <button id="type-shelf" class="active">📚 Shelf</button>
-      <button id="type-cat">🐱 Cat</button>
-    </div>
+    <button id="type-shelf" class="active">📚 Shelf</button>
+    <button id="type-cat">🐱 Cat</button>
+      <button id="type-pick">✦ Pick</button>
+      </div>
     <label for="item-select">Drawing:</label>
     <select id="item-select">
       <optgroup label="Shelves">
@@ -304,6 +326,10 @@
     <div class="output-section">
       <div class="output-label">Config output — paste PROJECTS + CATS into Vault.jsx</div>
       <pre id="output">// Click on the image to start placing vertices...</pre>
+    <div class="output-section" id="point-output-section" style="display:none;margin-top:6px">
+      <div class="output-label">Point picker — light source coordinates</div>
+      <pre id="point-output">// Switch to ✦ Pick mode, then click to place named points...</pre>
+    </div>
     </div>
   </div>
   <div class="footer-right">
@@ -367,6 +393,21 @@ let mode = 'draw'
 let selectedId = null
 let activeType = 'shelf'
 
+// Point picker state
+const PICK_POINTS = [
+  { id: 'rose-window',  label: 'Rose Window',  colour: '#ffe8a0', icon: '✦' },
+  { id: 'lantern-1',   label: 'Lantern 1',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-2',   label: 'Lantern 2',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-3',   label: 'Lantern 3',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-4',   label: 'Lantern 4',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-5',   label: 'Lantern 5',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-6',   label: 'Lantern 6',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-7',   label: 'Lantern 7',    colour: '#ffb347', icon: '🕯' },
+  { id: 'lantern-8',   label: 'Lantern 8',    colour: '#ffb347', icon: '🕯' },
+]
+const pickedPoints = {}   // id -> [x, y]
+let pickIdx = 0           // which PICK_POINTS we're placing next
+
 // In-progress polygon drawing
 let inProgress = null          // { id, points: [[x,y]...] } | null
 let mousePos = null            // current mouse position in SVG units
@@ -392,15 +433,98 @@ const viewportEl = document.getElementById('viewport-sim')
 
 document.getElementById('type-shelf').addEventListener('click', () => setActiveType('shelf'))
 document.getElementById('type-cat').addEventListener('click',   () => setActiveType('cat'))
+document.getElementById('type-pick').addEventListener('click',  () => setActiveType('pick'))
 
 function setActiveType(t) {
   activeType = t
-  document.getElementById('type-shelf').classList.toggle('active', t === 'shelf')
-  document.getElementById('type-cat').classList.toggle('active',   t === 'cat')
-  const first = Object.keys(t === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)[0]
-  itemSel.value = first
-  updateLegend()
+  document.getElementById('type-shelf').classList.toggle('active',      t === 'shelf')
+  document.getElementById('type-cat').classList.toggle('active',        t === 'cat')
+  document.getElementById('type-pick').classList.toggle('pick-active',  t === 'pick')
+
+  if (t === 'pick') {
+    // Cancel any in-progress polygon, switch svg cursor
+    if (inProgress) { inProgress = null; mousePos = null; closeBtn.style.display = 'none' }
+    mode = 'pick'
+    svg.className = 'mode-pick'
+    document.getElementById('point-output-section').style.display = ''
+    toggleBtn.style.display = 'none'
+    updatePickIndicator()
+  } else {
+    mode = 'draw'
+    svg.className = 'mode-draw'
+    toggleBtn.style.display = ''
+    document.getElementById('type-shelf').classList.remove('pick-active')
+    document.getElementById('type-cat').classList.remove('pick-active')
+    const first = Object.keys(t === 'shelf' ? SHELF_ITEMS : CAT_ITEMS)[0]
+    itemSel.value = first
+    updateLegend()
+    updateModeIndicator()
+  }
+  renderPickMarkers()
 }
+
+function updatePickIndicator() {
+  const next = PICK_POINTS[pickIdx]
+  modeInd.innerHTML = next
+    ? `<b>Pick</b> — click to place: <span style="color:${next.colour}">${next.icon} ${next.label}</span>`
+    : `<b>Pick</b> — all points placed! Copy output below.`
+}
+
+function renderPickMarkers() {
+  svg.querySelectorAll('.picker-marker').forEach(el => el.remove())
+  Object.entries(pickedPoints).forEach(([id, [x, y]]) => {
+    const info = PICK_POINTS.find(p => p.id === id)
+    if (!info) return
+    const g = svgEl('g')
+    g.classList.add('picker-marker')
+    // Crosshair
+    const h = svgEl('line')
+    h.setAttribute('x1', x - 1.5); h.setAttribute('y1', y)
+    h.setAttribute('x2', x + 1.5); h.setAttribute('y2', y)
+    h.setAttribute('stroke', info.colour); h.setAttribute('stroke-width', '0.25')
+    const v = svgEl('line')
+    v.setAttribute('x1', x); v.setAttribute('y1', y - 1.5)
+    v.setAttribute('x2', x); v.setAttribute('y2', y + 1.5)
+    v.setAttribute('stroke', info.colour); v.setAttribute('stroke-width', '0.25')
+    const dot = svgEl('circle')
+    dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', '0.5')
+    dot.setAttribute('fill', info.colour)
+    const lbl = svgEl('text')
+    lbl.setAttribute('x', x + 1.8); lbl.setAttribute('y', y - 1)
+    lbl.setAttribute('fill', info.colour); lbl.setAttribute('font-size', '1.6')
+    lbl.setAttribute('stroke', 'hsl(30 8% 6%)'); lbl.setAttribute('stroke-width', '0.4')
+    lbl.setAttribute('paint-order', 'stroke fill')
+    lbl.textContent = info.label
+    g.append(h, v, dot, lbl)
+    svg.appendChild(g)
+  })
+}
+
+function updatePickOutput() {
+  const lines = ['// Paste into VaultAtmosphere / VaultDust as LIGHT_SOURCES']
+  lines.push('const LIGHT_SOURCES = {')
+  PICK_POINTS.forEach(({ id, label }) => {
+    const pt = pickedPoints[id]
+    if (pt) lines.push(`  '${id}': { label: '${label}', x: ${pt[0].toFixed(2)}, y: ${pt[1].toFixed(2)} },`)
+  })
+  lines.push('}')
+  document.getElementById('point-output').textContent = lines.join('\n')
+}
+
+// Pick mode click handler -- intercept before the main svg click handler
+svg.addEventListener('click', e => {
+  if (mode !== 'pick') return
+  e.stopPropagation()
+  const rect = viewportEl.getBoundingClientRect()
+  const { xPct, yPct } = getPct(e, rect)
+  const next = PICK_POINTS[pickIdx]
+  if (!next) return
+  pickedPoints[next.id] = [+xPct.toFixed(2), +yPct.toFixed(2)]
+  pickIdx = Math.min(pickIdx + 1, PICK_POINTS.length)
+  renderPickMarkers()
+  updatePickOutput()
+  updatePickIndicator()
+}, true) // capture phase so it fires before the draw handler
 
 // ---------------------------------------------------------------------------
 // Legend
@@ -742,6 +866,12 @@ deleteBtn.addEventListener('click', () => {
 
 document.getElementById('clear-btn').addEventListener('click', () => {
   Object.keys(hotspots).forEach(k => delete hotspots[k])
+  // Also clear picked points
+  Object.keys(pickedPoints).forEach(k => delete pickedPoints[k])
+  pickIdx = 0
+  renderPickMarkers()
+  updatePickOutput()
+  updatePickIndicator()
   inProgress = null; mousePos = null; selectedId = null
   deleteBtn.style.display = 'none'; closeBtn.style.display = 'none'
   render(); updateOutput(); updateLegend()

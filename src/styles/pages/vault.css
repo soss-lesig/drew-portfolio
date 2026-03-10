@@ -30,20 +30,14 @@ body[data-page="vault"] .site-header,
 body:has(.vault-scene) .site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: transparent;
-  border-bottom: none;
+  background: hsl(30 5% 2% / 0.45);
+  backdrop-filter: blur(12px) saturate(0.8);
+  -webkit-backdrop-filter: blur(12px) saturate(0.8);
+  border-bottom: 1px solid hsl(35 20% 88% / 0.06);
   z-index: 200;
 }
 
-body[data-page="vault"] .site-header::after,
-body:has(.vault-scene) .site-header::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, hsl(30 8% 4% / 0.65) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: -1;
-}
+/* site-header::after gradient removed -- frosted glass background replaces it */
 
 body[data-page="vault"] .header-inner,
 body:has(.vault-scene) .header-inner {
@@ -107,7 +101,7 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background-color: hsl(30 8% 6%);
+  background-color: hsl(30 5% 2%);
   z-index: 0;
 }
 
@@ -162,17 +156,17 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
 
 .vault-scene__inner::before {
   background:
-    linear-gradient(to right, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+    linear-gradient(to right, hsl(30 5% 2%) 0%, hsl(30 5% 2% / 0.85) 25%, hsl(30 5% 2% / 0.3) 60%, transparent 100%)
       left / 22% 100% no-repeat,
-    linear-gradient(to bottom, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+    linear-gradient(to bottom, hsl(30 5% 2%) 0%, hsl(30 5% 2% / 0.85) 25%, hsl(30 5% 2% / 0.3) 60%, transparent 100%)
       top / 100% 22% no-repeat;
 }
 
 .vault-scene__inner::after {
   background:
-    linear-gradient(to left, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+    linear-gradient(to left, hsl(30 5% 2%) 0%, hsl(30 5% 2% / 0.85) 25%, hsl(30 5% 2% / 0.3) 60%, transparent 100%)
       right / 22% 100% no-repeat,
-    linear-gradient(to top, hsl(30 8% 6%) 0%, hsl(30 8% 6% / 0.85) 25%, hsl(30 8% 6% / 0.3) 60%, transparent 100%)
+    linear-gradient(to top, hsl(30 5% 2%) 0%, hsl(30 5% 2% / 0.85) 25%, hsl(30 5% 2% / 0.3) 60%, transparent 100%)
       bottom / 100% 22% no-repeat;
 }
 
