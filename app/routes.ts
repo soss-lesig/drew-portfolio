@@ -10,7 +10,9 @@ export default [
     route("blog/:slug", "../src/pages/BlogPost.jsx"),
     route("vault", "../src/pages/Vault.jsx"),
     route("studio/login", "../src/pages/Login.jsx"),
-    route("studio", "../src/pages/Admin.jsx"),
+    layout("../src/components/admin/AdminLayout.jsx", [
+      route("studio", "../src/pages/Admin.jsx"),
+    ]),
   ]),
   route("*", "../src/pages/NotFound.jsx"),
 ] satisfies RouteConfig;
