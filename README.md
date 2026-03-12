@@ -106,15 +106,17 @@ The Git history shows the evolution. The blog posts explain the reasoning.
 - Full-viewport interactive library scene at `/vault`
 - SVG hotspot layer with `viewBox="0 0 100 100" preserveAspectRatio="none"` -- coordinates map to percentages of the container, stable at any viewport
 - Five bookshelf polygons (amber glow) + two cat polygons (violet glow) using `feGaussianBlur` multi-pass filters
-- Pure glow approach: `fill="transparent"` + hairline stroke as blur source -- no visible overlays, fully clickable interiors
-- CSS `stroke-opacity` keyframe pulse, staggered delays per hotspot, hover snaps bright instantly
+- Fill-based glow approach: `fill` colour + `fillOpacity` as blur source -- no hard edges, no background image bleed
+- CSS `fill-opacity` keyframe pulse with dual animation speeds (idle slow, hover fast), transition fires on class toggle
 - Cat affirmation system: Meeko (light table) + Mayu (dark table), typewriter display, 5s auto-dismiss
 - Cinematic entry/exit transition system: state machine (`idle → entering → revealing → idle`), full-screen overlay, cross-dissolve title sequence
 - Header vault hover preview: vault bg fades into header on nav hover, amber colour tinting throughout
 - `useVaultTransition` context shared between Header (intercepts) and VaultTransitionOverlay (runs sequence)
 - `data-page="vault"` set before navigation (not after paint) to eliminate header/footer flash on transition
-- Dev tool: `scripts/hotspot-editor.html` -- SVG polygon editor rendered with exact live-page image crop
-- ALPHA state: interaction layer complete, content pipeline (vault_entries table, sync) pending
+- Dev tool: `scripts/hotspot-editor.html` -- SVG polygon editor + ✦ Pick mode for extracting light source coordinates
+- **`VaultAtmosphere` canvas** -- single RAF loop: god rays (8-ray fan from rose window, `blur(8px)` ctx filter, slow shimmer), lantern flicker (dual-oscillator radial bloom at 8 lantern positions), embers (40-particle rising pool), dust motes (percentage-space coordinates, resize-stable)
+- Frosted glass nav on vault page: `backdrop-filter: blur(12px)`, near-black background
+- ALPHA state: atmosphere layer complete, content pipeline (vault_entries table, sync) pending
 
 **Phase 12: Engineering Gym (planned)**
 

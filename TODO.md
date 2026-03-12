@@ -10,6 +10,7 @@
 
 ### UX
 
+- [ ] **Vault: atmosphere settings panel** -- gear icon (bottom-right of vault scene), opens upward panel with sliders for: ray opacity, ray width, lantern brightness, ember count, mote count. Settings stored in component state, passed as props/refs into VaultAtmosphere. Nice portfolio talking point and genuinely useful for tuning.
 - [ ] **Vault: residual orange header/footer flash on transition** -- believed to be vault hover preview pseudo-element related (not `data-page` timing, already fixed). Small, scoped. Fix next session.
 - [ ] **Vault: Engineering Gym project card clips outside viewport** -- `cardAnchor` position puts the card partially off-screen at standard viewport sizes. Needs viewport clamping on card position (e.g. `Math.min(cardAnchor.right, 100vw - cardWidth)`) or a CSS `clamp()` on the inline style. Fix next session.
 - [ ] **Vault: transition title text wrapping on narrow screens** -- `white-space: nowrap` (or equivalent) on `.vault-transition-title` will cause overflow on viewports narrower than the title's natural width. Remove the constraint or add `max-width: 90vw` + `text-align: center` on the centred stage. Fix alongside mobile work.
