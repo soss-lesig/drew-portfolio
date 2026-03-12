@@ -14,28 +14,34 @@ export default function About() {
         <Link to="/" className="back-link">
           ← Back to home
         </Link>
-        <h1><em>about me.</em></h1>
+        <h1>
+          <em>about me.</em>
+        </h1>
       </header>
 
       <section className="about">
         <p>
-          I didn't take the straight line into software. I took the scenic
-          route - picked up a degree, ended up teaching A-Level Computer
-          Science, shipped production code at a large engineering org, and
-          somehow came out the other side with a clearer idea of what I actually
-          want to build and how I want to build it.
+          I didn't take the straight line into software. EEE degree first, then
+          teacher training, then production code at a large engineering org, and
+          out the other side with a clearer idea of what I actually want to
+          build and how. The scenic route, but I'd argue it was the right one.
         </p>
         <p>
-          That background turns out to be useful. I've explained recursion to
-          a seventeen-year-old who definitely wasn't listening, debugged a
-          live incident at 4pm on a Friday, and sat in enough architecture
-          meetings to know the difference between a good trade-off and someone
-          just vibing with microservices.
+          That background turns out to be useful. I've had to explain my own
+          code to a classroom and realised I didn't understand it as well as I
+          thought, survived a live incident at 4pm on a Friday, and refactored
+          enough of my own early work to understand why the person who wrote it
+          was wrong, even when the person who wrote it was me.
         </p>
         <p>
           I care about code that's readable, maintainable, and doesn't make the
-          next person swear. I'm not allergic to complexity - I just want it to
-          earn its place.
+          next person swear. I'm not allergic to complexity, I just want it to
+          earn its place. This portfolio is the most honest version of that I
+          can give you: built from scratch, with every decision documented, and
+          deliberately honest about what I'm still working out, including the
+          fact that AI gets me to the answer faster while occasionally making me
+          less sure I could find it on my own. Which is a problem worth solving,
+          and one I'm actively working on.
         </p>
       </section>
 
@@ -88,8 +94,8 @@ export default function About() {
           abstraction.
         </p>
         <p>
-          I've also thought carefully about how to work with AI tooling in a
-          way that actually builds understanding rather than bypassing it. The
+          I've also thought carefully about how to work with AI tooling in a way
+          that actually builds understanding rather than bypassing it. The
           landscape is changing fast enough that knowing how to learn alongside
           AI - using it for pair programming, technical validation, and targeted
           explanation rather than copy-paste generation - is its own skill. I
@@ -102,11 +108,12 @@ export default function About() {
 
       <section className="experience">
         <h3>Experience</h3>
+        <h4>sorted by relevance, time is a flat circle anyway</h4>
 
         <article className="role">
           <header className="role-header">
             <h4>Graduate Software Engineer</h4>
-            <p className="role-meta">Flutter UK &amp; Ireland · 2022–2024</p>
+            <p className="role-meta">Flutter UK &amp; Ireland · 2023–2025</p>
           </header>
           <p>
             Worked in a cross-functional product team on a large React and
@@ -132,7 +139,7 @@ export default function About() {
         <article className="role">
           <header className="role-header">
             <h4>Computer Science Teacher · Supply &amp; Long-Term</h4>
-            <p className="role-meta">A-Level &amp; T-Level · 2024–present</p>
+            <p className="role-meta">A-Level &amp; T-Level · 2025–present</p>
           </header>
           <p>
             Teaching programming and systems thinking to people who range from
@@ -150,9 +157,40 @@ export default function About() {
               deadline.
             </li>
             <li>
-              Significantly improved my ability to debug under pressure, because
-              a Year 12 class is effectively a live incident with 25 concurrent
-              users.
+              Significantly improved my ability to stay calm when things break
+              in public. Ask me to fix something in front of 25 students and I'm
+              fine. Ask me to type while someone tells me what to write and I'll
+              forget the syntax for a for loop.
+            </li>
+          </ul>
+        </article>
+
+        <article className="role">
+          <header className="role-header">
+            <h4>Computer Science Teacher · ECT &amp; Long-Term</h4>
+            <p className="role-meta">KS3 &amp; KS4 · 2022–2023</p>
+          </header>
+          <p>
+            Designed and delivered KS3-KS4 Computer Science curriculum as an
+            Early Career Teacher. Planned and delivered lessons across a full
+            secondary CS curriculum, built resources and schemes of work from
+            scratch, and developed the ability to explain the same concept six
+            different ways until one of them lands -- which turns out to be
+            useful in code review too.
+          </p>
+          <ul>
+            <li>
+              Discovered that writing a mark scheme and writing a test suite
+              require suspiciously similar thinking.
+            </li>
+            <li>
+              Developed a forensic ability to identify exactly which line of
+              code a student had changed to break everything, without touching
+              the keyboard.
+            </li>
+            <li>
+              Got very good at rubber duck debugging, except the rubber duck had
+              opinions and hadn't done the homework.
             </li>
           </ul>
         </article>
