@@ -512,6 +512,204 @@ body:has(.vault-scene) .footer-copyright     { display: none; }
 .vault-panel__placeholder-icon { font-size: 3rem; opacity: 0.4; }
 .vault-panel__placeholder-text { font-size: 0.9rem; font-style: italic; }
 
+/* Panel back button */
+.vault-panel__back {
+  background: none;
+  border: none;
+  color: hsl(35 10% 55%);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: var(--space-5);
+  transition: color 0.2s ease;
+}
+
+.vault-panel__back:hover {
+  color: hsl(35 20% 80%);
+}
+
+.vault-panel__loading {
+  color: hsl(35 10% 50%);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------------------------
+   Vault content - markdown rendered inside the panel
+   Warm hsl(35) palette matching the vault colour scheme
+   ------------------------------------------------------------------------- */
+
+.vault-content h1,
+.vault-content h2,
+.vault-content h3,
+.vault-content h4,
+.vault-content h5,
+.vault-content h6 {
+  color: hsl(35 20% 92%);
+  border-top-color: hsl(35 20% 88% / 0.08);
+}
+
+.vault-content p,
+.vault-content li,
+.vault-content td,
+.vault-content th,
+.vault-content dd,
+.vault-content dt {
+  color: hsl(35 20% 72%);
+}
+
+.vault-content strong,
+.vault-content b {
+  color: hsl(35 20% 88%);
+}
+
+.vault-content a {
+  color: hsl(35 90% 65%);
+  border-bottom-color: hsl(35 90% 65% / 0.3);
+}
+
+.vault-content a:hover {
+  color: hsl(35 95% 72%);
+}
+
+.vault-content blockquote {
+  border-left-color: hsl(35 90% 55%);
+  color: hsl(35 10% 60%);
+}
+
+.vault-content hr {
+  border-top-color: hsl(35 20% 88% / 0.08);
+}
+
+.vault-content table {
+  border-color: hsl(35 20% 88% / 0.12);
+}
+
+.vault-content th,
+.vault-content td {
+  border-color: hsl(35 20% 88% / 0.12);
+}
+
+.vault-content thead th {
+  background: hsl(35 10% 20% / 0.4);
+}
+
+.vault-content code:not(pre code) {
+  background: hsl(35 10% 18%);
+  color: hsl(35 90% 65%);
+  border: 1px solid hsl(35 20% 88% / 0.1);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+}
+
+.vault-content pre {
+  background: hsl(35 8% 12%);
+  border: 1px solid hsl(35 20% 88% / 0.08);
+  border-radius: 8px;
+}
+
+.vault-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: hsl(35 15% 75%);
+}
+
+.vault-content .hljs {
+  background: hsl(35 8% 12%);
+  color: hsl(35 15% 75%);
+}
+
+.vault-content .hljs-keyword,
+.vault-content .hljs-selector-tag,
+.vault-content .hljs-operator {
+  color: hsl(35 90% 65%);
+}
+
+.vault-content .hljs-string,
+.vault-content .hljs-symbol,
+.vault-content .hljs-bullet,
+.vault-content .hljs-addition {
+  color: hsl(150 50% 55%);
+}
+
+.vault-content .hljs-comment,
+.vault-content .hljs-quote {
+  color: hsl(35 10% 40%);
+}
+
+.vault-content .hljs-title,
+.vault-content .hljs-title.function_,
+.vault-content .hljs-title.class_,
+.vault-content .hljs-title.class_.inherited__ {
+  color: hsl(200 60% 65%);
+}
+
+.vault-content .hljs-number,
+.vault-content .hljs-literal,
+.vault-content .hljs-type,
+.vault-content .hljs-link {
+  color: hsl(25 80% 60%);
+}
+
+.vault-content .hljs-params {
+  color: hsl(35 15% 70%);
+}
+
+.vault-content .hljs-variable,
+.vault-content .hljs-template-variable {
+  color: hsl(35 30% 65%);
+}
+
+.vault-content .hljs-attr,
+.vault-content .hljs-attribute {
+  color: hsl(35 60% 65%);
+}
+
+.vault-content .hljs-built_in,
+.vault-content .hljs-selector-attr,
+.vault-content .hljs-selector-pseudo {
+  color: hsl(175 50% 55%);
+}
+
+.vault-content .hljs-tag,
+.vault-content .hljs-name,
+.vault-content .hljs-selector-id,
+.vault-content .hljs-selector-class {
+  color: hsl(200 60% 65%);
+}
+
+.vault-content .hljs-meta,
+.vault-content .hljs-doctag {
+  color: hsl(35 10% 45%);
+}
+
+.vault-content .hljs-punctuation {
+  color: hsl(35 10% 55%);
+}
+
+.vault-content .hljs-property,
+.vault-content .hljs-subst {
+  color: hsl(35 15% 70%);
+}
+
+.vault-content .hljs-section {
+  color: hsl(35 90% 65%);
+  font-weight: bold;
+}
+
+.vault-content .hljs-deletion {
+  color: hsl(0 55% 65%);
+  background: hsl(0 40% 18%);
+}
+
+.vault-content .hljs-addition {
+  color: hsl(120 35% 60%);
+  background: hsl(120 25% 16%);
+}
+
 /* -------------------------------------------------------------------------
    Intro text
    ------------------------------------------------------------------------- */
