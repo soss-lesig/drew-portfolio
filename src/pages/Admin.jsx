@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import AffirmationsPanel from "../components/admin/AffirmationsPanel";
 import BlogPanel from "../components/admin/BlogPanel";
 import QuizPanel from "../components/admin/QuizPanel";
+import VaultPanel from "../components/admin/VaultPanel";
 
 export default function Admin() {
   const [openPanel, setOpenPanel] = useState(null);
@@ -103,6 +104,18 @@ export default function Admin() {
         <div className="accordion-panel">
           <div className="accordion-panel-inner">
             <QuizPanel />
+          </div>
+        </div>
+      </div>
+
+      <div className={`accordion-item${openPanel === "vault" ? " is-open" : ""}`}>
+        <button onClick={() => togglePanel("vault")}>
+          Vault
+          <span className="accordion-chevron">{openPanel === "vault" ? "▲" : "▼"}</span>
+        </button>
+        <div className="accordion-panel">
+          <div className="accordion-panel-inner">
+            <VaultPanel />
           </div>
         </div>
       </div>
