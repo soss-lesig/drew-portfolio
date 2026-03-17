@@ -25,10 +25,19 @@ build/
 # Vite
 .vite/
 
+# React Router generated types
+.react-router/
+
 # Claude context
 CLAUDE.md
 context/
 
-# Generated at build time
-content/
-public/content/
+# Claude Code
+.claude/
+
+# Generated at build time (blog posts fetched from Supabase)
+/content/
+public/content/*
+# But vault markdown bodies are static seed files (Phase 1)
+!public/content/vault/
+.react-router/types/+routes.ts
