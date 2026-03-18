@@ -9,6 +9,15 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const SUPABASE_JWT_ANON_KEY = import.meta.env.VITE_SUPABASE_JWT_ANON_KEY;
 
+const PROJECT_OPTIONS = [
+  { value: "portfolio", label: "Portfolio" },
+  { value: "vault", label: "Vault" },
+  { value: "project_void", label: "project_void" },
+  { value: "ironiq", label: "IronIQ" },
+  { value: "drewbrew", label: "drewBrew" },
+  { value: "engineering_gym", label: "Engineering Gym" },
+];
+
 async function callBlogFunction(body) {
   const { data } = await supabaseClient.auth.getSession();
   const token = data?.session?.access_token ?? SUPABASE_ANON_KEY;
@@ -33,7 +42,7 @@ async function callBlogFunction(body) {
 
 async function fetchPosts() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=id,slug,title,subtitle,date,tags,published&order=date.desc`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=id,slug,title,subtitle,date,tags,published,project&order=date.desc`,
     {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -57,6 +66,7 @@ const EMPTY_FORM = {
   tags: "",
   body: "",
   published: false,
+  project: "portfolio",
 };
 
 function slugify(title) {
@@ -80,6 +90,7 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
         tags: post.tags ? post.tags.join(", ") : "",
         body: post.body,
         published: post.published,
+        project: post.project || "portfolio",
       };
     }
     if (initialForm) return { ...EMPTY_FORM, ...initialForm };
@@ -147,6 +158,7 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
         : [],
       body: form.body,
       published: form.published,
+      project: form.project,
     };
 
     if (!post) {
@@ -243,6 +255,14 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
                 placeholder="react, supabase, css"
               />
             </label>
+            <label>
+              Project
+              <select value={form.project} onChange={set("project")}>
+                {PROJECT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div className="blog-form-row">
@@ -310,6 +330,7 @@ export default function BlogPanel() {
           tags: tags ? tags.join(", ") : "",
           body,
           published: false,
+          project: "portfolio",
         };
         setImportedForm(form);
         setEditing("new");
@@ -385,7 +406,7 @@ export default function BlogPanel() {
     try {
       // Fetch metadata from DB (no body column - that lives in Storage now)
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=id,slug,title,subtitle,date,tags,published,body_path`,
+        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=id,slug,title,subtitle,date,tags,published,project,body_path`,
         {
           headers: {
             apikey: SUPABASE_ANON_KEY,
@@ -430,6 +451,9 @@ export default function BlogPanel() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
+  const projectLabel = (value) =>
+    PROJECT_OPTIONS.find((o) => o.value === value)?.label ?? value;
+
   return (
     <div className="blog-panel">
       <Toast toasts={toasts} />
@@ -469,7 +493,12 @@ export default function BlogPanel() {
                 <li key={post.id} className="blog-post-item">
                   <div className="blog-post-item-meta">
                     <span className="blog-post-item-title">{post.title}</span>
-                    <span className="blog-post-item-date">{new Date(post.date).toLocaleString("en-GB")}</span>
+                    <span className="blog-post-item-date">
+                      {new Date(post.date).toLocaleString("en-GB")}
+                      {post.project !== "portfolio" && (
+                        <span className="blog-post-item-project"> · {projectLabel(post.project)}</span>
+                      )}
+                    </span>
                   </div>
                   <div className="blog-post-item-actions">
                     <button
