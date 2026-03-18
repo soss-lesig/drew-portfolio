@@ -3,6 +3,8 @@ import { useAffirmation } from '../hooks/useAffirmation'
 import { useVaultTransition } from '../hooks/useVaultTransition.jsx'
 import { resolveCardAnchor } from '../utils/vaultHelpers.js'
 import { PROJECTS, CATS } from '../data/vault.js'
+import { VAULT_ENTRIES } from '../data/vaultContent.js'
+import { marked } from '../lib/markedConfig.js'
 import VaultAtmosphere, { VaultFilterDefs } from '../components/vault/VaultAtmosphere.jsx'
 import CatHotspot from '../components/vault/CatHotspot.jsx'
 import ProjectHotspot from '../components/vault/ProjectHotspot.jsx'
@@ -27,6 +29,7 @@ export default function Vault() {
 
   const [activeSlug, setActiveSlug]         = useState(null)
   const [expanded, setExpanded]             = useState(false)
+  const [panelContent, setPanelContent]     = useState(null)
   const [meekoBubbleActive, setMeekoBubbleActive] = useState(false)
   const [mayuBubbleActive,  setMayuBubbleActive]  = useState(false)
   const [meekoDots, setMeekoDots] = useState('')
@@ -136,9 +139,26 @@ export default function Vault() {
     setExpanded(false)
   }
 
-  function handleDismiss()          { setActiveSlug(null); setExpanded(false) }
-  function handleExpand()           { setExpanded(true) }
-  function handleMobileOpen(slug)   { setActiveSlug(slug); setExpanded(true) }
+  function handleDismiss()          { setActiveSlug(null); setExpanded(false); setPanelContent(null) }
+  function handleCollapsePanel()    { setExpanded(false); setPanelContent(null) }
+  function handleMobileOpen(slug)   { setActiveSlug(slug); fetchReadme(slug) }
+
+  async function fetchReadme(slug) {
+    setExpanded(true)
+    setPanelContent(null)
+    const firstEntry = VAULT_ENTRIES[slug]?.[0]
+    if (!firstEntry) { setPanelContent('<p>No content available.</p>'); return }
+    try {
+      const res = await fetch(`/content/vault/${slug}/${firstEntry.slug}.md`)
+      if (!res.ok) throw new Error(res.status)
+      const md = await res.text()
+      setPanelContent(marked.parse(md))
+    } catch {
+      setPanelContent('<p>Failed to load content.</p>')
+    }
+  }
+
+  function handleExpand() { if (activeSlug) fetchReadme(activeSlug) }
 
   const cardAnchorResolved = activeProject ? resolveCardAnchor(activeProject.cardAnchor) : null
 
@@ -267,12 +287,13 @@ export default function Vault() {
             <button className="vault-panel__close" onClick={handleDismiss}>← Back to vault</button>
           </div>
           <div className="vault-panel__body">
-            <div className="vault-panel__placeholder">
-              <span className="vault-panel__placeholder-icon" aria-hidden="true">📚</span>
-              <p className="vault-panel__placeholder-text">
-                Architecture docs for {activeProject.title} are being catalogued.
-              </p>
-            </div>
+            <button className="vault-panel__back" onClick={handleCollapsePanel}>
+              ← Back
+            </button>
+            {panelContent
+              ? <div className="post-content vault-content" dangerouslySetInnerHTML={{ __html: panelContent }} />
+              : <p className="vault-panel__loading">Loading...</p>
+            }
           </div>
         </div>
       )}
