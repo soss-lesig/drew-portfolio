@@ -30,19 +30,64 @@
   margin: 0;
 }
 
-/* Post list: no cards, clean editorial rows */
+/* ---- Post cards ---- */
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
 .posts-list .post-preview {
-  padding: var(--space-6) 0;
-  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: var(--space-6);
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.4s ease, transform 0.4s ease;
-  /* No background, no border-radius, no box shadow */
 }
 
 .posts-list .post-preview.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Background image layer -- real div for parallax.
+   25px overshoot top+bottom so the shift never exposes card edges. */
+.post-preview-bg {
+  position: absolute;
+  top: -25px;
+  left: 0;
+  right: 0;
+  bottom: -25px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Portfolio: more saturated pink */
+.post-preview[data-project="portfolio"] .post-preview-bg {
+  filter: saturate(1.6);
+}
+
+.post-preview.revealed .post-preview-bg {
+  opacity: 0.35;
+}
+
+.post-preview:hover .post-preview-bg {
+  opacity: 0.55;
+}
+
+/* Content sits above the background */
+.post-preview-content {
+  position: relative;
+  z-index: 1;
 }
 
 .post-preview h2 {
@@ -84,9 +129,149 @@
   flex-shrink: 0;
 }
 
-/* Tags inline with date, smaller and more subtle than before */
+/* Tags inline with date */
 .post-preview .tags {
   margin: 0;
+}
+
+/* ---- Project badge (non-portfolio posts) ---- */
+
+.project-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.12);
+  color: var(--accent);
+}
+
+.project-badge[data-project="vault"] {
+  background: hsl(35 90% 55% / 0.2);
+  color: hsl(35 90% 65%);
+}
+
+.project-badge[data-project="project_void"] {
+  background: hsl(270 30% 30% / 0.3);
+  color: hsl(35 60% 75%);
+}
+
+/* ---- Dark island shared text treatment ----
+   Text shadow helps readability over busy background images. */
+
+.post-preview[data-project="vault"] .post-preview-content,
+.post-preview[data-project="project_void"] .post-preview-content {
+  text-shadow: 0 1px 4px hsl(0 0% 0% / 0.6), 0 0 12px hsl(0 0% 0% / 0.3);
+}
+
+.post-preview[data-project="vault"] .tag,
+.post-preview[data-project="project_void"] .tag,
+.post-preview[data-project="vault"] .project-badge,
+.post-preview[data-project="project_void"] .project-badge {
+  text-shadow: none;
+}
+
+/* ---- project_void dark island ---- */
+
+.post-preview[data-project="project_void"] {
+  background-color: hsl(20 8% 10%);
+  border-color: hsl(35 30% 25% / 0.4);
+}
+
+.post-preview[data-project="project_void"].revealed .post-preview-bg {
+  opacity: 0.6;
+}
+
+.post-preview[data-project="project_void"]:hover .post-preview-bg {
+  opacity: 0.8;
+}
+
+.post-preview[data-project="project_void"] h2 a {
+  color: hsl(35 30% 85%);
+}
+
+.post-preview[data-project="project_void"] h2 a:hover {
+  color: hsl(35 60% 65%);
+}
+
+.post-preview[data-project="project_void"] .subtitle {
+  color: hsl(35 15% 65%);
+}
+
+.post-preview[data-project="project_void"] .post-meta time {
+  color: hsl(35 15% 60%);
+}
+
+.post-preview[data-project="project_void"] .tag {
+  background: hsl(20 10% 18%);
+  border-color: hsl(35 20% 30%);
+  color: hsl(35 15% 55%);
+}
+
+/* ---- Vault warm island (colours from vault.css) ---- */
+
+.post-preview[data-project="vault"] {
+  background-color: hsl(30 20% 14%);
+  border-color: hsl(35 20% 88% / 0.12);
+}
+
+.post-preview[data-project="vault"].revealed .post-preview-bg {
+  opacity: 0.55;
+}
+
+.post-preview[data-project="vault"]:hover .post-preview-bg {
+  opacity: 0.75;
+}
+
+.post-preview[data-project="vault"] h2 a {
+  color: hsl(35 20% 92%);
+}
+
+.post-preview[data-project="vault"] h2 a:hover {
+  color: hsl(35 90% 65%);
+}
+
+.post-preview[data-project="vault"] .subtitle {
+  color: hsl(35 15% 70%);
+}
+
+.post-preview[data-project="vault"] .post-meta time {
+  color: hsl(35 10% 55%);
+}
+
+.post-preview[data-project="vault"] .tag {
+  background: hsl(35 10% 20% / 0.6);
+  border-color: hsl(35 20% 88% / 0.1);
+  color: hsl(35 10% 60%);
+}
+
+.post-preview[data-project="vault"] .project-badge {
+  background: hsl(35 90% 55% / 0.2);
+  color: hsl(35 90% 65%);
+}
+
+/* ---- Dark theme adjustments (index cards) ---- */
+
+[data-theme="dark"] .post-preview[data-project="portfolio"].revealed .post-preview-bg {
+  opacity: 0.25;
+}
+
+[data-theme="dark"] .post-preview[data-project="portfolio"]:hover .post-preview-bg {
+  opacity: 0.4;
+}
+
+[data-theme="dark"] .project-badge[data-project="vault"] {
+  background: hsl(35 90% 55% / 0.15);
+  color: hsl(35 90% 65%);
+}
+
+/* ---- Reduced motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .post-preview-bg {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Pagination controls */
@@ -166,15 +351,121 @@
    Blog Post
    ========================================================================= */
 
+/* Base post header -- card treatment for all projects */
 .blog-post .post-header {
-  padding: var(--space-8) 0 var(--space-6);
-  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: var(--space-6);
   margin-bottom: var(--space-7);
   animation: fadeIn 0.6s ease var(--animation-delay) forwards;
   opacity: 0;
 }
 
-/* Display-scale post title - posts deserve the same typographic weight as the homepage */
+/* Post header background image */
+.post-header-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.blog-post[data-project="portfolio"] .post-header-bg {
+  filter: saturate(1.6);
+}
+
+.post-header-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Blog post: project_void header ---- */
+
+.blog-post[data-project="project_void"] .post-header {
+  background-color: hsl(20 8% 10%);
+  border-color: hsl(35 30% 25% / 0.4);
+}
+
+.blog-post[data-project="project_void"] .post-header-bg {
+  opacity: 0.6;
+}
+
+.blog-post[data-project="project_void"] .post-header-content {
+  text-shadow: 0 1px 4px hsl(0 0% 0% / 0.6), 0 0 12px hsl(0 0% 0% / 0.3);
+}
+
+.blog-post[data-project="project_void"] .post-header h1 {
+  color: hsl(35 30% 85%);
+}
+
+.blog-post[data-project="project_void"] .post-header .subtitle {
+  color: hsl(35 15% 65%);
+}
+
+.blog-post[data-project="project_void"] .post-header .post-meta time {
+  color: hsl(35 15% 60%);
+}
+
+.blog-post[data-project="project_void"] .post-header .back-link {
+  color: hsl(35 15% 55%);
+}
+
+.blog-post[data-project="project_void"] .post-header .tag {
+  background: hsl(20 10% 18%);
+  border-color: hsl(35 20% 30%);
+  color: hsl(35 15% 55%);
+  text-shadow: none;
+}
+
+/* ---- Blog post: vault header ---- */
+
+.blog-post[data-project="vault"] .post-header {
+  background-color: hsl(30 20% 14%);
+  border-color: hsl(35 20% 88% / 0.12);
+}
+
+.blog-post[data-project="vault"] .post-header-bg {
+  opacity: 0.55;
+}
+
+.blog-post[data-project="vault"] .post-header-content {
+  text-shadow: 0 1px 4px hsl(0 0% 0% / 0.6), 0 0 12px hsl(0 0% 0% / 0.3);
+}
+
+.blog-post[data-project="vault"] .post-header h1 {
+  color: hsl(35 20% 92%);
+}
+
+.blog-post[data-project="vault"] .post-header .subtitle {
+  color: hsl(35 15% 70%);
+}
+
+.blog-post[data-project="vault"] .post-header .post-meta time {
+  color: hsl(35 10% 55%);
+}
+
+.blog-post[data-project="vault"] .post-header .back-link {
+  color: hsl(35 10% 50%);
+}
+
+.blog-post[data-project="vault"] .post-header .tag {
+  background: hsl(35 10% 20% / 0.6);
+  border-color: hsl(35 20% 88% / 0.1);
+  color: hsl(35 10% 60%);
+  text-shadow: none;
+}
+
+/* ---- Dark theme: portfolio post header ---- */
+
+[data-theme="dark"] .blog-post[data-project="portfolio"] .post-header-bg {
+  opacity: 0.2;
+}
+
+/* Display-scale post title */
 .blog-post .post-header h1 {
   font-size: clamp(2rem, 1.2rem + 3.5vw, 4rem);
   font-weight: 900;
@@ -189,8 +480,6 @@
   margin: 0 0 var(--space-5);
   line-height: 1.5;
   font-weight: 400;
-  /* No quotes - the parseFrontmatter issue adds them, we remove via CSS display only
-     but the real fix is in parseFrontmatter */
 }
 
 .blog-post .post-header .post-meta {
@@ -206,9 +495,6 @@
   font-weight: 500;
 }
 
-/* Constrain body text width for readability.
-   ~680px is the accepted sweet spot - wide lines cause eye fatigue.
-   This is a well-established typographic principle, not arbitrary. */
 .post-content {
   max-width: 680px;
   animation: fadeIn 0.6s ease calc(var(--animation-delay) * 2) forwards;
@@ -242,8 +528,6 @@
   color: var(--muted);
 }
 
-/* Inline links: accent underline rather than pill/badge style.
-   The old pill style (border + background) was heavy and interrupted reading flow. */
 .post-content a {
   color: var(--text);
   text-decoration: none;

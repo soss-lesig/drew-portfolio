@@ -5,6 +5,12 @@ import { marked } from "../lib/markedConfig.js";
 import { formatDate } from "../utils/helpers.js";
 import allPosts from "../../public/content/posts.json";
 
+const PROJECT_IMAGES = {
+  portfolio: "/images/portfolio-blog-background.png",
+  vault: "/images/vault-background.png",
+  project_void: "/images/project-void-background.jpeg",
+};
+
 export async function loader({ params }) {
   const { slug } = params;
 
@@ -18,29 +24,38 @@ export async function loader({ params }) {
   return { post: meta, content };
 }
 
-
 export default function BlogPost() {
   const { post, content } = useLoaderData();
+  const bgImage = PROJECT_IMAGES[post.project];
 
   return (
-    <article className="blog-post">
+    <article className="blog-post" data-project={post.project}>
       <header className="post-header">
-        <Link to="/blog" className="back-link">
-          ← Back to blog
-        </Link>
-        <h1>{post.title}</h1>
-        {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
-        <div className="post-meta">
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
-          {post.tags && (
-            <div className="tags">
-              {post.tags.map((tag) => (
-                <span key={tag} className="tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+        {bgImage && (
+          <div
+            className="post-header-bg"
+            style={{ backgroundImage: `url(${bgImage})` }}
+            aria-hidden="true"
+          />
+        )}
+        <div className="post-header-content">
+          <Link to="/blog" className="back-link">
+            ← Back to blog
+          </Link>
+          <h1>{post.title}</h1>
+          {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
+          <div className="post-meta">
+            <time dateTime={post.date}>{formatDate(post.date)}</time>
+            {post.tags && (
+              <div className="tags">
+                {post.tags.map((tag) => (
+                  <span key={tag} className="tag">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </header>
       <div

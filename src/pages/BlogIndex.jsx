@@ -10,26 +10,97 @@ export function loader() {
 
 const POSTS_PER_PAGE = 10;
 
+const PROJECT_LABELS = {
+  vault: "vault",
+  project_void: "project_void",
+  ironiq: "ironiq",
+  drewbrew: "drewbrew",
+  engineering_gym: "engineering_gym",
+};
+
+const PROJECT_IMAGES = {
+  portfolio: "/images/portfolio-blog-background.png",
+  vault: "/images/vault-background.png",
+  project_void: "/images/project-void-background.jpeg",
+};
+
+function useParallax(ref, amount = 25) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    let ticking = false;
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const viewH = window.innerHeight;
+        const progress = 1 - (rect.top + rect.height) / (viewH + rect.height);
+        const offset = (progress - 0.5) * 2 * amount;
+        const bg = el.querySelector(".post-preview-bg");
+        if (bg) {
+          bg.style.transform = `translateY(${offset}px)`;
+        }
+        ticking = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [ref, amount]);
+}
+
 function PostPreview({ post }) {
   const ref = useScrollReveal({ threshold: 0.1 });
+  const cardRef = useRef(null);
+  useParallax(cardRef, 25);
+
+  const bgImage = PROJECT_IMAGES[post.project];
 
   return (
-    <article ref={ref} className="post-preview">
-      <h2>
-        <Link to={`/blog/${post.slug}`}>{post.title}</Link>
-      </h2>
-      {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
-      <div className="post-meta">
-        <time dateTime={post.date}>{formatDate(post.date)}</time>
-        {post.tags && (
-          <div className="tags">
-            {post.tags.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
+    <article
+      ref={(node) => {
+        ref.current = node;
+        cardRef.current = node;
+      }}
+      className="post-preview"
+      data-project={post.project}
+    >
+      {bgImage && (
+        <div
+          className="post-preview-bg"
+          style={{ backgroundImage: `url(${bgImage})` }}
+          aria-hidden="true"
+        />
+      )}
+      <div className="post-preview-content">
+        <h2>
+          <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+        </h2>
+        {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
+        <div className="post-meta">
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          {post.tags && (
+            <div className="tags">
+              {post.tags.map((tag) => (
+                <span key={tag} className="tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          {PROJECT_LABELS[post.project] && (
+            <span className="project-badge" data-project={post.project}>
+              {PROJECT_LABELS[post.project]}
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );
