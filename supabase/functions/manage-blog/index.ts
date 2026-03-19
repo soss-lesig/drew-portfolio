@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
 
     // Parse the request
     // body is the raw markdown string, separate from metadata payload
-    const { action, id, payload, body } = await req.json();
+    const { action, id, payload, body, order } = await req.json();
 
     let result;
 
@@ -72,6 +72,7 @@ Deno.serve(async (req) => {
       if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
 
       // Insert metadata row with body_path pointer
+      // status defaults to 'draft' via DB default if not provided
       const { data, error } = await supabaseAdmin
         .schema("drew_portfolio")
         .from("blog_posts")
@@ -85,7 +86,6 @@ Deno.serve(async (req) => {
     } else if (action === "update") {
       // If body content is provided, update the Storage file
       if (body !== undefined) {
-        // Fetch current slug to derive the file path (slug shouldn't change but be safe)
         const { data: existing, error: fetchError } = await supabaseAdmin
           .schema("drew_portfolio")
           .from("blog_posts")
@@ -106,7 +106,28 @@ Deno.serve(async (req) => {
         if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`);
       }
 
-      // Update metadata in DB (body_path doesn't change on update)
+      // If manually publishing, auto-set published_at if not already set
+      if (payload.status === "published") {
+        const { data: current } = await supabaseAdmin
+          .schema("drew_portfolio")
+          .from("blog_posts")
+          .select("published_at")
+          .eq("id", id)
+          .single();
+
+        if (!current?.published_at) {
+          payload.published_at = new Date().toISOString();
+        }
+        // Clear queue_position when publishing (may have been queued before)
+        payload.queue_position = null;
+      }
+
+      // If moving back to draft, clear queue_position
+      if (payload.status === "draft") {
+        payload.queue_position = null;
+      }
+
+      // Update metadata in DB
       const { data, error } = await supabaseAdmin
         .schema("drew_portfolio")
         .from("blog_posts")
@@ -117,6 +138,100 @@ Deno.serve(async (req) => {
 
       if (error) throw error;
       result = data;
+
+    } else if (action === "queue") {
+      // Add a post to the publish queue
+      // Find the current highest queue position
+      const { data: maxRow } = await supabaseAdmin
+        .schema("drew_portfolio")
+        .from("blog_posts")
+        .select("queue_position")
+        .eq("status", "queued")
+        .order("queue_position", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const nextPosition = (maxRow?.queue_position ?? 0) + 1;
+
+      if (nextPosition > 20) {
+        return new Response(
+          JSON.stringify({ error: "Queue is full (max 20 posts)" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { data, error } = await supabaseAdmin
+        .schema("drew_portfolio")
+        .from("blog_posts")
+        .update({ status: "queued", queue_position: nextPosition })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      result = data;
+
+    } else if (action === "dequeue") {
+      // Remove a post from the queue back to draft
+      const { data, error } = await supabaseAdmin
+        .schema("drew_portfolio")
+        .from("blog_posts")
+        .update({ status: "draft", queue_position: null })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Resequence remaining queued posts to close the gap
+      const { data: remaining } = await supabaseAdmin
+        .schema("drew_portfolio")
+        .from("blog_posts")
+        .select("id")
+        .eq("status", "queued")
+        .order("queue_position", { ascending: true });
+
+      if (remaining) {
+        for (let i = 0; i < remaining.length; i++) {
+          await supabaseAdmin
+            .schema("drew_portfolio")
+            .from("blog_posts")
+            .update({ queue_position: i + 1 })
+            .eq("id", remaining[i].id);
+        }
+      }
+
+      result = data;
+
+    } else if (action === "reorder") {
+      // Reorder the queue. `order` is an array of post IDs in the desired order.
+      if (!Array.isArray(order) || order.length === 0) {
+        return new Response(
+          JSON.stringify({ error: "order must be a non-empty array of post IDs" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (order.length > 20) {
+        return new Response(
+          JSON.stringify({ error: "Queue cannot exceed 20 posts" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Update each post's queue_position
+      for (let i = 0; i < order.length; i++) {
+        const { error } = await supabaseAdmin
+          .schema("drew_portfolio")
+          .from("blog_posts")
+          .update({ queue_position: i + 1 })
+          .eq("id", order[i])
+          .eq("status", "queued");
+
+        if (error) throw error;
+      }
+
+      result = { success: true, count: order.length };
 
     } else if (action === "delete") {
       // Fetch the slug so we can remove the Storage file

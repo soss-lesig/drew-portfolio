@@ -18,6 +18,8 @@ const PROJECT_OPTIONS = [
   { value: "engineering_gym", label: "Engineering Gym" },
 ];
 
+const CRON_DAYS = [1, 3, 5]; // Monday, Wednesday, Friday
+
 async function callBlogFunction(body) {
   const { data } = await supabaseClient.auth.getSession();
   const token = data?.session?.access_token ?? SUPABASE_ANON_KEY;
@@ -42,7 +44,7 @@ async function callBlogFunction(body) {
 
 async function fetchPosts() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=id,slug,title,subtitle,date,tags,published,project&order=date.desc`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=id,slug,title,subtitle,date,tags,status,queue_position,published_at,project&order=date.desc`,
     {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -55,7 +57,27 @@ async function fetchPosts() {
   return res.json();
 }
 
-// ─── Editor ──────────────────────────────────────────────────────────────────
+/**
+ * Get the next N cron dates (Mon/Wed/Fri at 6am UTC) from now.
+ */
+function getNextCronDates(count) {
+  const dates = [];
+  const now = new Date();
+  const d = new Date(now);
+  // Start from tomorrow to avoid partial-day edge case
+  d.setUTCDate(d.getUTCDate() + 1);
+  d.setUTCHours(6, 0, 0, 0);
+
+  while (dates.length < count) {
+    if (CRON_DAYS.includes(d.getUTCDay())) {
+      dates.push(new Date(d));
+    }
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  return dates;
+}
+
+// ─── Editor ─────────────────────────────────────────────────────────────────
 
 const DRAFT_KEY = "blog-editor-draft";
 
@@ -65,7 +87,7 @@ const EMPTY_FORM = {
   date: new Date().toISOString().slice(0, 16),
   tags: "",
   body: "",
-  published: false,
+  status: "draft",
   project: "portfolio",
 };
 
@@ -89,7 +111,7 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
         date: post.date ? new Date(post.date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
         tags: post.tags ? post.tags.join(", ") : "",
         body: post.body,
-        published: post.published,
+        status: post.status || "draft",
         project: post.project || "portfolio",
       };
     }
@@ -140,9 +162,6 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-  const setChecked = (field) => (e) =>
-    setForm((prev) => ({ ...prev, [field]: e.target.checked }));
-
   const handleSave = async (e) => {
     e.preventDefault();
     if (!form.title.trim() || !form.body.trim() || !form.date) return;
@@ -157,7 +176,7 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
         ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
         : [],
       body: form.body,
-      published: form.published,
+      status: form.status,
       project: form.project,
     };
 
@@ -280,12 +299,11 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
 
           <div className="blog-form-footer">
             <label className="blog-form-published">
-              <input
-                type="checkbox"
-                checked={form.published}
-                onChange={setChecked("published")}
-              />
-              Publish
+              Status:
+              <select value={form.status} onChange={set("status")}>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
             </label>
             <div className="blog-form-actions">
               <button type="button" className="btn-secondary" onClick={() => { sessionStorage.removeItem(DRAFT_KEY); onCancel(); }}>
@@ -302,7 +320,7 @@ function BlogEditor({ post, initialForm, onSave, onCancel }) {
   );
 }
 
-// ─── Main panel ──────────────────────────────────────────────────────────────
+// ─── Panel ──────────────────────────────────────────────────────────────────
 
 export default function BlogPanel() {
   const [posts, setPosts] = useState([]);
@@ -329,7 +347,7 @@ export default function BlogPanel() {
             : new Date().toISOString().slice(0, 16),
           tags: tags ? tags.join(", ") : "",
           body,
-          published: false,
+          status: "draft",
           project: "portfolio",
         };
         setImportedForm(form);
@@ -383,30 +401,84 @@ export default function BlogPanel() {
     }
   };
 
-  const handleTogglePublished = async (post) => {
+  const handleToggleStatus = async (post) => {
+    // Cycle: draft -> published, published -> draft, queued -> draft
+    const nextStatus = post.status === "published" ? "draft" : "published";
     try {
       await callBlogFunction({
         action: "update",
         id: post.id,
-        payload: { published: !post.published },
+        payload: { status: nextStatus },
       });
       setPosts((prev) =>
         prev.map((p) =>
-          p.id === post.id ? { ...p, published: !post.published } : p
+          p.id === post.id ? { ...p, status: nextStatus, queue_position: null } : p
         )
       );
-      addToast(post.published ? "Post unpublished" : "Post published", "success");
+      addToast(nextStatus === "published" ? "Post published" : "Post moved to drafts", "success");
     } catch (err) {
       console.error(err);
       addToast("Failed to update post", "error");
     }
   };
 
+  const handleQueue = async (post) => {
+    try {
+      const result = await callBlogFunction({ action: "queue", id: post.id });
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === post.id ? { ...p, status: "queued", queue_position: result.queue_position } : p
+        )
+      );
+      addToast(`"${post.title}" added to queue`, "success");
+    } catch (err) {
+      console.error(err);
+      addToast(err.message || "Failed to queue post", "error");
+    }
+  };
+
+  const handleDequeue = async (post) => {
+    try {
+      await callBlogFunction({ action: "dequeue", id: post.id });
+      // Reload to get resequenced positions
+      loadPosts();
+      addToast(`"${post.title}" removed from queue`, "success");
+    } catch (err) {
+      console.error(err);
+      addToast("Failed to remove from queue", "error");
+    }
+  };
+
+  const handleMoveInQueue = async (post, direction) => {
+    const queued = posts
+      .filter((p) => p.status === "queued")
+      .sort((a, b) => a.queue_position - b.queue_position);
+
+    const idx = queued.findIndex((p) => p.id === post.id);
+    if (idx === -1) return;
+
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= queued.length) return;
+
+    // Swap positions in the array
+    const newOrder = queued.map((p) => p.id);
+    [newOrder[idx], newOrder[targetIdx]] = [newOrder[targetIdx], newOrder[idx]];
+
+    try {
+      await callBlogFunction({ action: "reorder", order: newOrder });
+      // Reload to get updated positions
+      loadPosts();
+    } catch (err) {
+      console.error(err);
+      addToast("Failed to reorder queue", "error");
+    }
+  };
+
   const handleEdit = async (post) => {
     try {
-      // Fetch metadata from DB (no body column - that lives in Storage now)
+      // Fetch metadata from DB
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=id,slug,title,subtitle,date,tags,published,project,body_path`,
+        `${SUPABASE_URL}/rest/v1/blog_posts?id=eq.${post.id}&select=id,slug,title,subtitle,date,tags,status,project,body_path`,
         {
           headers: {
             apikey: SUPABASE_ANON_KEY,
@@ -449,10 +521,30 @@ export default function BlogPanel() {
     }
   };
 
-  // ─── Render ───────────────────────────────────────────────────────────────
+  // ─── Render ─────────────────────────────────────────────────────────────────
 
   const projectLabel = (value) =>
     PROJECT_OPTIONS.find((o) => o.value === value)?.label ?? value;
+
+  const statusClass = (status) => {
+    if (status === "published") return "toggle-active";
+    if (status === "queued") return "toggle-queued";
+    return "toggle-inactive";
+  };
+
+  const statusLabel = (status) => {
+    if (status === "published") return "Published";
+    if (status === "queued") return "Queued";
+    return "Draft";
+  };
+
+  const queuedPosts = posts
+    .filter((p) => p.status === "queued")
+    .sort((a, b) => a.queue_position - b.queue_position);
+
+  const draftPosts = posts.filter((p) => p.status === "draft");
+  const publishedPosts = posts.filter((p) => p.status === "published");
+  const cronDates = getNextCronDates(queuedPosts.length);
 
   return (
     <div className="blog-panel">
@@ -485,44 +577,152 @@ export default function BlogPanel() {
 
           {loading ? (
             <p>Loading...</p>
-          ) : posts.length === 0 ? (
-            <p className="blog-panel-empty">No posts yet.</p>
           ) : (
-            <ul className="blog-post-list">
-              {posts.map((post) => (
-                <li key={post.id} className="blog-post-item">
-                  <div className="blog-post-item-meta">
-                    <span className="blog-post-item-title">{post.title}</span>
-                    <span className="blog-post-item-date">
-                      {new Date(post.date).toLocaleString("en-GB")}
-                      {post.project !== "portfolio" && (
-                        <span className="blog-post-item-project"> · {projectLabel(post.project)}</span>
-                      )}
-                    </span>
-                  </div>
-                  <div className="blog-post-item-actions">
-                    <button
-                      className={post.published ? "toggle-active" : "toggle-inactive"}
-                      onClick={() => handleTogglePublished(post)}
-                    >
-                      {post.published ? "Published" : "Draft"}
-                    </button>
-                    <button
-                      className="btn-secondary"
-                      onClick={() => handleEdit(post)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(post)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <>
+              {/* ─── Publish Queue ─────────────────────────────── */}
+              {queuedPosts.length > 0 && (
+                <div className="blog-queue-section">
+                  <h3 className="blog-queue-heading">Publish Queue</h3>
+                  <p className="blog-queue-info">
+                    Posts publish automatically at 6am UTC on Mon/Wed/Fri.
+                  </p>
+                  <ul className="blog-queue-list">
+                    {queuedPosts.map((post, idx) => (
+                      <li key={post.id} className="blog-queue-item">
+                        <span className="blog-queue-position">{post.queue_position}</span>
+                        <div className="blog-queue-item-meta">
+                          <span className="blog-queue-item-title">{post.title}</span>
+                          <span className="blog-queue-item-date">
+                            {cronDates[idx]
+                              ? cronDates[idx].toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })
+                              : "—"}
+                          </span>
+                        </div>
+                        <div className="blog-queue-item-actions">
+                          <button
+                            className="btn-queue-move"
+                            disabled={idx === 0}
+                            onClick={() => handleMoveInQueue(post, -1)}
+                            title="Move up"
+                          >
+                            ▲
+                          </button>
+                          <button
+                            className="btn-queue-move"
+                            disabled={idx === queuedPosts.length - 1}
+                            onClick={() => handleMoveInQueue(post, 1)}
+                            title="Move down"
+                          >
+                            ▼
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => handleDequeue(post)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* ─── Draft Posts ───────────────────────────────── */}
+              {draftPosts.length > 0 && (
+                <div className="blog-section">
+                  <h3 className="blog-section-heading">Drafts ({draftPosts.length})</h3>
+                  <ul className="blog-post-list">
+                    {draftPosts.map((post) => (
+                      <li key={post.id} className="blog-post-item">
+                        <div className="blog-post-item-meta">
+                          <span className="blog-post-item-title">{post.title}</span>
+                          <span className="blog-post-item-date">
+                            {new Date(post.date).toLocaleString("en-GB")}
+                            {post.project !== "portfolio" && (
+                              <span className="blog-post-item-project"> · {projectLabel(post.project)}</span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="blog-post-item-actions">
+                          <button
+                            className="btn-queue"
+                            onClick={() => handleQueue(post)}
+                            title="Add to publish queue"
+                          >
+                            Queue
+                          </button>
+                          <button
+                            className={statusClass(post.status)}
+                            onClick={() => handleToggleStatus(post)}
+                          >
+                            {statusLabel(post.status)}
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => handleEdit(post)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn-delete"
+                            onClick={() => handleDelete(post)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* ─── Published Posts ───────────────────────────── */}
+              {publishedPosts.length > 0 && (
+                <div className="blog-section">
+                  <h3 className="blog-section-heading">Published ({publishedPosts.length})</h3>
+                  <ul className="blog-post-list">
+                    {publishedPosts.map((post) => (
+                      <li key={post.id} className="blog-post-item">
+                        <div className="blog-post-item-meta">
+                          <span className="blog-post-item-title">{post.title}</span>
+                          <span className="blog-post-item-date">
+                            {new Date(post.date).toLocaleString("en-GB")}
+                            {post.project !== "portfolio" && (
+                              <span className="blog-post-item-project"> · {projectLabel(post.project)}</span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="blog-post-item-actions">
+                          <button
+                            className={statusClass(post.status)}
+                            onClick={() => handleToggleStatus(post)}
+                          >
+                            {statusLabel(post.status)}
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => handleEdit(post)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn-delete"
+                            onClick={() => handleDelete(post)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {posts.length === 0 && (
+                <p className="blog-panel-empty">No posts yet.</p>
+              )}
+            </>
           )}
         </>
       )}

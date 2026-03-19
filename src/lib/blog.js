@@ -14,7 +14,7 @@ const headers = {
  */
 export async function getAllPosts() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags&published=eq.true&order=date.desc`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags&status=eq.published&order=date.desc`,
     { headers }
   );
 
@@ -27,7 +27,7 @@ export async function getAllPosts() {
  */
 export async function getPostCount() {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=count&published=eq.true`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=count&status=eq.published`,
     { headers }
   );
 
@@ -41,7 +41,7 @@ export async function getPostCount() {
  */
 export async function getPostBySlug(slug) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags,body_path&published=eq.true&slug=eq.${slug}`,
+    `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title,subtitle,date,tags,body_path&status=eq.published&slug=eq.${slug}`,
     {
       headers: {
         ...headers,
