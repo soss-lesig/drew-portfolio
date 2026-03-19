@@ -1,11 +1,9 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://drewbs.dev",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const ADMIN_USER_ID = "96f377d6-8599-489e-93d0-d7e407d9b223";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -39,6 +37,8 @@ Deno.serve(async (req) => {
     }
 
     // Verify the user is the admin
+    const ADMIN_USER_ID = Deno.env.get("ADMIN_USER_ID");
+    if (!ADMIN_USER_ID) throw new Error("ADMIN_USER_ID env var not set");
     if (user.id !== ADMIN_USER_ID) {
       return new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403,

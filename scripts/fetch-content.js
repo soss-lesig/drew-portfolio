@@ -6,7 +6,7 @@
  * so Vite can bundle them as static assets at build time.
  *
  * Output:
- *   content/posts.json          - metadata index (slug, title, subtitle, date, tags, project)
+ *   content/posts.json          - metadata index (slug, title, subtitle, date, tags, project, published_at)
  *   content/posts/<slug>.md     - raw markdown body per post
  *
  * Run with: node --env-file=.env scripts/fetch-content.js
@@ -38,8 +38,8 @@ async function fetchContent() {
   const { data: posts, error } = await supabase
     .schema("drew_portfolio")
     .from("blog_posts")
-    .select("slug,title,subtitle,date,tags,body_path,project")
-    .eq("published", true)
+    .select("slug,title,subtitle,date,tags,body_path,project,published_at")
+    .eq("status", "published")
     .order("date", { ascending: false });
 
   if (error) {
