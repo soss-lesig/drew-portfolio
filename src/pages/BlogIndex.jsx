@@ -85,7 +85,7 @@ function PostPreview({ post }) {
         </h2>
         {post.subtitle && <p className="subtitle">{post.subtitle}</p>}
         <div className="post-meta">
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
           {post.tags && (
             <div className="tags">
               {post.tags.map((tag) => (

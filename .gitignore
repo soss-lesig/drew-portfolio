@@ -35,6 +35,9 @@ context/
 # Claude Code
 .claude/
 
+# Supabase CLI temp files
+supabase/.temp/
+
 # Generated at build time (blog posts fetched from Supabase)
 /content/
 public/content/*

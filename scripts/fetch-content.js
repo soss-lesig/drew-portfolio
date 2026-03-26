@@ -40,7 +40,7 @@ async function fetchContent() {
     .from("blog_posts")
     .select("slug,title,subtitle,date,tags,body_path,project,published_at")
     .eq("status", "published")
-    .order("date", { ascending: false });
+    .order("published_at", { ascending: false });
 
   if (error) {
     console.error("Failed to fetch post metadata:", error.message);
